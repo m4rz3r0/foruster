@@ -6,6 +6,7 @@
 mod resources;
 use std::collections::HashMap;
 
+use document::{eval, Stylesheet};
 use resources::*;
 
 mod components;
@@ -104,8 +105,8 @@ fn App() -> Element {
     let modal_info_content = modal_info.read().content.clone();
 
     rsx! {
-        style {
-            { TAILWIND_CSS_URL }
+        Stylesheet {
+            href: TAILWIND_CSS_URL
         }
 
         main {
