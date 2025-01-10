@@ -11,7 +11,42 @@ pub const THUMBNAIL_SIZE: u32 = 350;
 pub const TAILWIND_CSS_URL: Asset = asset!("/assets/tailwind.css");
 
 // Default Profiles
-pub const DEFAULT_PROFILES_URL: Asset = asset!("/assets/default_profiles.json");
+pub const DEFAULT_PROFILES: &str = r#"
+[
+    {
+        "type": "image",
+        "name": "Imágenes"
+    },
+    {
+        "type": "video",
+        "name": "Vídeos"
+    },
+    {
+        "type": "audio",
+        "name": "Audio"
+    },
+    {
+        "type": "archive",
+        "name": "Archivos"
+    },
+    {
+        "type": "book",
+        "name": "Libros"
+    },
+    {
+        "type": "document",
+        "name": "Documentos"
+    },
+    {
+        "type": "application",
+        "name": "Aplicaciones"
+    },
+    {
+        "type": "custom",
+        "name": "Solo PDFs",
+        "extensions": ["pdf"]
+    }
+]"#;
 
 // Report Template
 pub const REPORT_TEMPLATE_HTML_URL: Asset = asset!("/assets/report_template.html");

@@ -2,12 +2,18 @@
 use charts_rs::Color;
 use dioxus::prelude::*;
 
-use crate::{read_magic_bytes, AppState, FileEntry, Profile, ProfileType, Report, APLLICATION_PROFILE_COLOR, ARCHIVE_PROFILE_COLOR, AUDIO_PROFILE_COLOR, BOOK_PROFILE_COLOR, CUSTOM_PROFILE_COLOR, DEFAULT_PROFILES_URL, DOCUMENT_PROFILE_COLOR, IMAGE_PROFILE_COLOR, VIDEO_PROFILE_COLOR};
+use crate::{read_magic_bytes, AppState, FileEntry, Profile, ProfileType, Report, APLLICATION_PROFILE_COLOR, ARCHIVE_PROFILE_COLOR, AUDIO_PROFILE_COLOR, BOOK_PROFILE_COLOR, CUSTOM_PROFILE_COLOR, DEFAULT_PROFILES, DOCUMENT_PROFILE_COLOR, IMAGE_PROFILE_COLOR, VIDEO_PROFILE_COLOR};
 
-pub fn get_profiles() -> Result<Vec<Profile>, std::io::Error> {
-    let s = std::fs::read_to_string(format!("dist{}", DEFAULT_PROFILES_URL))?;
+pub fn load_default_profiles() -> Vec<Profile> {
+    let profiles_str = DEFAULT_PROFILES;
+    match get_profiles(profiles_str) {
+        Ok(profiles) => profiles,
+        Err(_) => Vec::new(),
+    }
+}
 
-    let mut profiles = serde_json::from_str::<Vec<Profile>>(&s)?;
+pub fn get_profiles(profiles_str: &str) -> Result<Vec<Profile>, std::io::Error> {
+    let mut profiles = serde_json::from_str::<Vec<Profile>>(profiles_str)?;
     for (profile_index, profile) in profiles.iter_mut().enumerate() {
         profile.set_id(profile_index);
     }

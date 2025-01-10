@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use dioxus::prelude::*;
 
-use crate::{get_disks, get_profiles, AppState};
+use crate::{get_disks, load_default_profiles, AppState};
 
 #[component]
 pub fn Home() -> Element {
@@ -23,13 +23,10 @@ pub fn Home() -> Element {
 
     let mut profiles_loading_status = use_signal(|| String::from("Cargando perfiles"));
     let future_profiles = use_resource(move || async move {
-        match tokio::task::spawn_blocking(get_profiles).await {
-            Ok(profiles_result) => match profiles_result {
-                Ok(profiles) => {
-                    *profiles_loading_status.write() = String::from("Perfiles cargados");
-                    profiles
-                }
-                Err(_) => Vec::new(),
+        match tokio::task::spawn_blocking(load_default_profiles).await {
+            Ok(profiles_result) => {
+                *profiles_loading_status.write() = String::from("Perfiles cargados");
+                profiles_result
             },
             Err(_) => Vec::new(),
         }
