@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.group {
+    transition: filter 0.3s;
+}
+.container:hover .group {
+    filter: blur(5px);
+}
+.container .group:hover {
+    filter: none;
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title></title>
+    </head>
+
+    <body>
+        <div class="w-screen h-screen">
+            <h1>Informe</h1>
+            <h2>Fecha: %%date%%</h2>
+            
+            <h3>Configuración</h3>
+            <h4>Perfil seleccionado: %%profile_name%%</h4>
+
+            <h4>Discos:</h4>
+            <inject-table items="selected_disks" class="table" style="text-align: center;">
+                <inject-column prop="model" label="Modelo" style="width:30%" />
+                <inject-column prop="serial" label="Número de serie" style="width:40%" />
+                <inject-column prop="kind" label="Tipo" style="width:10%" />
+                <inject-column prop="size" label="Capacidad" style="width:10%" />
+                <inject-column prop="removable" label="Extraíble" style="width:10%" />
+            </inject-table>
+
+            <h3>Resultados</h3>
+            <h4>Archivos encontrados</h4>
+            <inject-table items="filtered_files" class="table">
+                <inject-column prop="path" label="Ruta" style="width:75%" />
+                <inject-column prop="hash" label="Hash" style="width:25%" />
+            </inject-table>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,35 @@
+[
+    {
+        "type": "image",
+        "name": "Imágenes"
+    },
+    {
+        "type": "video",
+        "name": "Vídeos"
+    },
+    {
+        "type": "audio",
+        "name": "Audio"
+    },
+    {
+        "type": "archive",
+        "name": "Archivos"
+    },
+    {
+        "type": "book",
+        "name": "Libros"
+    },
+    {
+        "type": "document",
+        "name": "Documentos"
+    },
+    {
+        "type": "application",
+        "name": "Aplicaciones"
+    },
+    {
+        "type": "custom",
+        "name": "Solo PDFs",
+        "extensions": ["pdf"]
+    }
+]

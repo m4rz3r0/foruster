@@ -1,0 +1,45 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+[package]
+name = "foruster"
+version = "0.3.0"
+authors = ["M4RZ3R0 <30533649+M4RZ3R0@users.noreply.github.com>"]
+edition = "2021"
+
+[dependencies]
+dioxus = { version = "0.5", features = ["desktop", "router"]}
+dioxus-free-icons = { version = "0.8", features = ["bootstrap"] }
+manganis = "0.2.2"
+walkdir = "2.5.0"
+native-dialog = "0.7.0"
+chrono = { version = "0.4.38", features = ["serde"] }
+simple_pdf_generator_derive = "0.2.1"
+simple_pdf_generator = "0.3.0"
+serde = "1.0.203"
+serde_json = "1.0.117"
+infer = "0.16.0"
+sha256 = "1.5.0"
+sysinfo = "0.30.12"
+tokio = "1.38.0"
+glob = "0.3.1"
+regex = "1.10.4"
+open = "5.1.4"
+charts-rs = "0.3.11"
+
+# Debug
+tracing = "0.1.40"
+dioxus-logger = "0.5.0"
+select = "0.6.0"
+image = "0.25.1"
+base64 = "0.22.1"
+
+[target.'cfg(windows)'.dependencies]
+wmi = "0.13.3"
+
+[profile.release]
+opt-level = "z"
+debug = false
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+incremental = false
