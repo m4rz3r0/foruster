@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "foruster_app",
+			"path": "foruster_app"
+		},
+		{
+			"path": "crates/foruster_core"
+		},
+		{
+			"path": "crates/foruster_profiles"
+		},
+		{
+			"path": "crates/foruster_reporting"
+		},
+		{
+			"path": "crates/foruster_storage"
+		}
+	],
+	"settings": {}
+}

@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+import { VerticalBox } from "std-widgets.slint";
+
+export component AppWindow inherits Window {
+    title: "Foruster";
+    width: 400px;
+    height: 300px;
+
+    in property <string> dynamicText;
+    
+    VerticalBox {
+        Text {
+            text: dynamicText;
+        }
+    }
+}

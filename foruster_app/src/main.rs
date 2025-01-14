@@ -9,6 +9,8 @@ slint::include_modules!();
 fn main() -> Result<(), Box<dyn Error>> {
     let ui = AppWindow::new()?;
 
+    ui.set_dynamicText("Texto de ejemplo".into());
+
     ui.run()?;
 
     Ok(())
