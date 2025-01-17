@@ -1,15 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+mod disk;
+mod identification_data;
+mod partition;
+mod filesystem;
+mod volume;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+pub use volume::Volume;
