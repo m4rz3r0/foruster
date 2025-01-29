@@ -49,7 +49,8 @@ pub fn get_volume_partitions(volume_guid: &str) -> Result<Vec<Partition>, window
         let size = extent.ExtentLength;
         let volume_guid = volume_guid.to_string();
 
-        partitions.push(Partition::new(starting_offset, size, volume_guid));
+        // TODO: Fix this
+        //partitions.push(Partition::new(starting_offset, size, volume_guid));
     }
 
     Ok(partitions)

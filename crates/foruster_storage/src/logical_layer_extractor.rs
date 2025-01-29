@@ -2,28 +2,18 @@
 use windows::{
     core::{Error, PCWSTR},
     Win32::{
-        Foundation::{HANDLE, MAX_PATH},
+        Foundation::MAX_PATH,
         Storage::FileSystem::{
-            FindFirstVolumeW, FindNextVolumeW, FindVolumeClose, GetDiskFreeSpaceExW,
-            GetVolumeInformationW, GetVolumePathNamesForVolumeNameW,
+            FindFirstVolumeW, FindNextVolumeW, GetDiskFreeSpaceExW, GetVolumeInformationW,
+            GetVolumePathNamesForVolumeNameW,
         },
     },
 };
 
-use crate::utils::{string_to_pcwstr, utf16_to_multiple_strings, utf16_to_string};
+use crate::utils::{string_to_pcwstr, utf16_to_multiple_strings, utf16_to_string, VolumeHandle};
 use foruster_core::Volume;
 
 const BUFFER_SIZE: usize = MAX_PATH as usize;
-
-struct VolumeHandle(HANDLE);
-
-impl Drop for VolumeHandle {
-    fn drop(&mut self) {
-        unsafe {
-            FindVolumeClose(self.0).ok();
-        }
-    }
-}
 
 #[derive(Debug)]
 struct VolumeInfo {
@@ -99,8 +89,6 @@ pub fn enumerate_volumes() -> Result<Vec<Volume>, Error> {
             .map_err(|_| Error::from_win32())?;
 
         let volume_guid_pcwstr = string_to_pcwstr(&volume_guid);
-
-        println!("Volume GUID: {:?}", volume_guid_pcwstr);
 
         match get_volume_info(volume_guid_pcwstr) {
             Ok(info) => {

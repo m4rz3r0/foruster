@@ -5,19 +5,16 @@ use crate::{identification_data::IdentificationData, partition::Partition};
 pub struct Disk {
     identification_data: IdentificationData,
     partitions: Vec<Partition>,
-    removable: bool,
 }
 
 impl Disk {
     pub fn new(
         identification_data: IdentificationData,
         partitions: Vec<Partition>,
-        removable: bool,
     ) -> Self {
         Self {
             identification_data,
             partitions,
-            removable,
         }
     }
 
@@ -27,9 +24,5 @@ impl Disk {
 
     pub fn partitions(&self) -> &[Partition] {
         &self.partitions
-    }
-
-    pub fn removable(&self) -> bool {
-        self.removable
     }
 }

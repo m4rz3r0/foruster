@@ -1,47 +1,56 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+use crate::storage_bus_type::StorageBusType;
+
 #[derive(Debug)]
 pub struct IdentificationData {
-    manufacturer: String,
-    model: String,
-    serial_number: String,
-    firmware_revision: String,
-    user_capacity: u64,
+    vendor: Option<String>,
+    model: Option<String>,
+    serial_number: Option<String>,
+    product_revision: Option<String>,
+    bus_type: StorageBusType,
+    removable: bool,
 }
 
 impl IdentificationData {
     pub fn new(
-        model: String,
-        serial_number: String,
-        firmware_revision: String,
-        user_capacity: u64,
-        manufacturer: String,
+        vendor: Option<String>,
+        model: Option<String>,
+        serial_number: Option<String>,
+        product_revision: Option<String>,
+        bus_type: StorageBusType,
+        removable: bool,
     ) -> Self {
         Self {
             model,
             serial_number,
-            firmware_revision,
-            user_capacity,
-            manufacturer,
+            product_revision,
+            vendor,
+            bus_type,
+            removable,
         }
     }
 
-    pub fn model(&self) -> &str {
+    pub fn vendor(&self) -> &Option<String> {
+        &self.vendor
+    }
+
+    pub fn model(&self) -> &Option<String> {
         &self.model
     }
 
-    pub fn serial_number(&self) -> &str {
+    pub fn serial_number(&self) -> &Option<String> {
         &self.serial_number
     }
 
-    pub fn firmware_revision(&self) -> &str {
-        &self.firmware_revision
+    pub fn product_revision(&self) -> &Option<String> {
+        &self.product_revision
     }
 
-    pub fn user_capacity(&self) -> u64 {
-        self.user_capacity
+    pub fn bus_type(&self) -> &StorageBusType {
+        &self.bus_type
     }
 
-    pub fn manufacturer(&self) -> &str {
-        &self.manufacturer
+    pub fn removable(&self) -> bool {
+        self.removable
     }
 }
