@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use windows::{
-    core::Error,
+    core::{Error, PCWSTR},
     Win32::{
         Foundation::{HANDLE, MAX_PATH},
         Storage::FileSystem::{
@@ -10,8 +10,8 @@ use windows::{
     },
 };
 
-use foruster_core::Volume;
 use crate::utils::{string_to_pcwstr, utf16_to_multiple_strings, utf16_to_string};
+use foruster_core::Volume;
 
 const BUFFER_SIZE: usize = MAX_PATH as usize;
 
@@ -33,7 +33,7 @@ struct VolumeInfo {
     paths: Vec<String>,
 }
 
-fn get_volume_info(volume_guid_pcwstr: windows::core::PCWSTR) -> Result<VolumeInfo, Error> {
+fn get_volume_info(volume_guid_pcwstr: PCWSTR) -> Result<VolumeInfo, Error> {
     let mut filesystem_name = vec![0; BUFFER_SIZE];
     let mut total_bytes = 0;
     let mut free_bytes = 0;
@@ -95,9 +95,12 @@ pub fn enumerate_volumes() -> Result<Vec<Volume>, Error> {
     let volume_handle = VolumeHandle(handle);
 
     loop {
-        let guid_string = utf16_to_string(&volume_guid).map_err(|_| Error::from_win32())?;
+        let guid_string = utf16_to_string(&volume_guid[..volume_guid.len() - 1])
+            .map_err(|_| Error::from_win32())?;
 
         let volume_guid_pcwstr = string_to_pcwstr(&volume_guid);
+
+        println!("Volume GUID: {:?}", volume_guid_pcwstr);
 
         match get_volume_info(volume_guid_pcwstr) {
             Ok(info) => {

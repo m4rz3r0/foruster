@@ -6,3 +6,5 @@ mod filesystem;
 mod volume;
 
 pub use volume::Volume;
+pub use partition::Partition;
+pub use disk::Disk;

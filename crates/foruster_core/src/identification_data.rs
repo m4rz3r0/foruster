@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+#[derive(Debug)]
 pub struct IdentificationData {
+    manufacturer: String,
     model: String,
     serial_number: String,
     firmware_revision: String,
     user_capacity: u64,
-    manufacturer: String,
 }
 
 impl IdentificationData {

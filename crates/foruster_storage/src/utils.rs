@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use windows::core::PCWSTR;
+use windows::{core::PCWSTR, Win32::System::Ioctl::{DRIVE_LAYOUT_INFORMATION_EX, PARTITION_INFORMATION_EX}};
 
 pub fn utf16_to_string(wide: &[u16]) -> Result<String, std::string::FromUtf16Error> {
     // Find the position of the first null terminator
@@ -37,4 +37,28 @@ pub fn string_to_pcwstr(slice: &[u16]) -> PCWSTR {
         // Note: In production code, you might want to create a new null-terminated buffer
         PCWSTR::null()
     }
+}
+
+pub fn safe_layout_cast(buffer: &[u8]) -> Option<&DRIVE_LAYOUT_INFORMATION_EX> {
+    // Verificar tamaño mínimo y alineación
+    if buffer.len() < size_of::<DRIVE_LAYOUT_INFORMATION_EX>() {
+        return None;
+    }
+    
+    // Verificar alineación del buffer
+    let align = align_of::<DRIVE_LAYOUT_INFORMATION_EX>();
+    if (buffer.as_ptr() as usize) % align != 0 {
+        return None;
+    }
+
+    // Verificar PartitionCount no excede el buffer
+    let layout = unsafe { &*(buffer.as_ptr() as *const DRIVE_LAYOUT_INFORMATION_EX) };
+    let required_size = size_of::<DRIVE_LAYOUT_INFORMATION_EX>() 
+        + size_of::<PARTITION_INFORMATION_EX>() * layout.PartitionCount as usize;
+    
+    if buffer.len() < required_size {
+        return None;
+    }
+
+    Some(layout)
 }

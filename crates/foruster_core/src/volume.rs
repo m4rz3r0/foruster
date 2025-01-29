@@ -5,7 +5,7 @@ use crate::filesystem::Filesystem;
 
 #[derive(Debug)]
 pub struct Volume {
-    id: String,
+    guid: String,
     filesystem: Filesystem,
     size: u64,
     free_space: u64,
@@ -15,7 +15,7 @@ pub struct Volume {
 
 impl Volume {
     pub fn new(
-        id: String,
+        guid: String,
         filesystem: Option<String>,
         size: u64,
         free_space: u64,
@@ -32,7 +32,7 @@ impl Volume {
         let mount_points = mount_points.into_iter().map(PathBuf::from).collect();
 
         Self {
-            id,
+            guid,
             filesystem: Filesystem::from(filesystem),
             size,
             free_space,
@@ -43,7 +43,7 @@ impl Volume {
 
     #[inline]
     pub fn id(&self) -> &str {
-        &self.id
+        &self.guid
     }
 
     #[inline]

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use crate::{identification_data::IdentificationData, partition::Partition};
 
+#[derive(Debug)]
 pub struct Disk {
     identification_data: IdentificationData,
     partitions: Vec<Partition>,

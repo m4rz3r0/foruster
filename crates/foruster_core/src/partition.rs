@@ -1,47 +1,33 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use crate::volume::Volume;
-
-enum PartitionType {
-    Primary,
-    Extended,
-    Logical,
-}
-
+#[derive(Debug)]
 pub struct Partition {
-    starting_offset: u64,
-    size: u64,
-    partition_type: PartitionType,
-    volume: Volume,
+    starting_offset: i64,
+    size: i64,
+    volume_guid: String,
 }
 
 impl Partition {
     pub fn new(
-        starting_offset: u64,
-        size: u64,
-        partition_type: PartitionType,
-        volume: Volume,
+        starting_offset: i64,
+        size: i64,
+        volume_guid: String,
     ) -> Self {
         Self {
             starting_offset,
             size,
-            partition_type,
-            volume,
+            volume_guid,
         }
     }
 
-    pub fn starting_offset(&self) -> u64 {
+    pub fn starting_offset(&self) -> i64 {
         self.starting_offset
     }
 
-    pub fn size(&self) -> u64 {
+    pub fn size(&self) -> i64 {
         self.size
     }
 
-    pub fn partition_type(&self) -> &PartitionType {
-        &self.partition_type
-    }
-
-    pub fn volume(&self) -> &Volume {
-        &self.volume
+    pub fn volume_guid(&self) -> &str {
+        &self.volume_guid
     }
 }
