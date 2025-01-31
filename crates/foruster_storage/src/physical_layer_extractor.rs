@@ -188,7 +188,7 @@ pub fn enumerate_disks() -> Result<Vec<Disk>, windows::core::Error> {
 
         let identification_data = get_disk_identification_data(&disk_handle)?;
 
-        disks.push(Disk::new(identification_data, partitions));
+        disks.push(Disk::new(disk_number, identification_data, partitions));
 
         disk_number += 1;
     }

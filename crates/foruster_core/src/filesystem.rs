@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#[derive(Debug)]
+use std::fmt;
+
+#[derive(Debug, Clone)]
 pub enum Filesystem {
     FAT32,
     NTFS,
@@ -56,5 +58,36 @@ impl From<Option<String>> for Filesystem {
             Some(fs) => Self::from(fs),
             None => Self::UNKNOWN,
         }
+    }
+}
+
+impl fmt::Display for Filesystem {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::FAT32 => "FAT32",
+                Self::NTFS => "NTFS",
+                Self::EXT4 => "EXT4",
+                Self::XFS => "XFS",
+                Self::BTRFS => "BTRFS",
+                Self::ZFS => "ZFS",
+                Self::APFS => "APFS",
+                Self::HFS => "HFS",
+                Self::UFS => "UFS",
+                Self::EXFAT => "EXFAT",
+                Self::FAT16 => "FAT16",
+                Self::FAT12 => "FAT12",
+                Self::FAT => "FAT",
+                Self::EXT3 => "EXT3",
+                Self::EXT2 => "EXT2",
+                Self::REFS => "REFS",
+                Self::JFS => "JFS",
+                Self::NILFS => "NILFS",
+                Self::F2FS => "F2FS",
+                Self::UNKNOWN => "Unknown",
+            }
+        )
     }
 }

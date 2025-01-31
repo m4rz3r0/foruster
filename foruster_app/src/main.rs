@@ -9,7 +9,13 @@ slint::include_modules!();
 fn main() -> Result<(), Box<dyn Error>> {
     let ui = AppWindow::new()?;
 
-    ui.set_dynamicText("Texto de ejemplo".into());
+    let disks = foruster_storage::storage_extractor()?;
+
+    let disks_str = disks.iter().map(|disk| disk.to_string()).collect::<Vec<String>>().join("\n");
+    // Replace tabs with spaces to avoid text wrapping in Slint
+    let disks_str = disks_str.replace("\t", "    ");
+
+    ui.set_dynamicText(disks_str.into());
 
     ui.run()?;
 

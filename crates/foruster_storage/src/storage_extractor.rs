@@ -1,28 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+use foruster_core::Disk;
+
 use crate::{
-    logical_layer_extractor::enumerate_volumes, physical_layer_extractor::enumerate_disks,
+    link_layers::link_volume_to_partition, logical_layer_extractor::enumerate_volumes, physical_layer_extractor::enumerate_disks
 };
 
-pub fn storage_extractor() -> Result<(), windows::core::Error> {
+pub fn storage_extractor() -> Result<Vec<Disk>, windows::core::Error> {
     println!("storage_extractor");
 
     let volumes = enumerate_volumes()?;
 
-    println!("Volumes: {:?}", volumes);
+    let mut disks = enumerate_disks()?;
 
-    /*let mut partitions = vec![];
-    for volume in volumes {
-        let volume_id = volume.id();
-        let volume_partitions = get_volume_partitions(&volume_id[..volume_id.len() - 1])?;
+    link_volume_to_partition(&volumes, &mut disks)?;
 
-        partitions.push(volume_partitions);
-    }
-
-    println!("Partitions: {:?}", partitions);*/
-
-    let disks = enumerate_disks()?;
-
-    println!("Disks: {:?}", disks);
-
-    Ok(())
+    Ok(disks)
 }

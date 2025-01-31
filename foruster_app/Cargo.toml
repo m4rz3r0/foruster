@@ -9,5 +9,7 @@ edition = "2021"
 [dependencies]
 slint = "1.9.2"
 
+foruster_storage = { path = "../crates/foruster_storage" }
+
 [build-dependencies]
 slint-build = "1.9.2"

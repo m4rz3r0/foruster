@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { VerticalBox } from "std-widgets.slint";
+import { VerticalBox, TextEdit } from "std-widgets.slint";
 
 export component AppWindow inherits Window {
+    resize-border-width: 0mm;
     title: "Foruster";
-    width: 400px;
-    height: 300px;
+    min-width: 800px;
+    min-height: 600px;
 
     in property <string> dynamicText;
     
     VerticalBox {
-        Text {
+        TextEdit {
             text: dynamicText;
         }
     }

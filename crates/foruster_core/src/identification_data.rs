@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+use std::fmt;
+
 use crate::storage_bus_type::StorageBusType;
 
 #[derive(Debug)]
@@ -52,5 +54,30 @@ impl IdentificationData {
 
     pub fn removable(&self) -> bool {
         self.removable
+    }
+}
+
+impl fmt::Display for IdentificationData {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if let Some(vendor) = &self.vendor {
+            writeln!(f, "Vendor: {}", vendor)?;
+        }
+
+        if let Some(model) = &self.model {
+            writeln!(f, "Model: {}", model)?;
+        }
+
+        if let Some(serial_number) = &self.serial_number {
+            writeln!(f, "Serial number: {}", serial_number)?;
+        }
+        
+        if let Some(product_revision) = &self.product_revision {
+            writeln!(f, "Product revision: {}", product_revision)?;
+        }
+        
+        writeln!(f, "Bus type: {}", self.bus_type)?;
+        writeln!(f, "Removable: {}", self.removable)?;
+
+        Ok(())
     }
 }
