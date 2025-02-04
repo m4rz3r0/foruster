@@ -1,0 +1,5 @@
+/target
+.vscode
+.idea
+/packages
+**/.DS_Store

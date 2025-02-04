@@ -70,11 +70,11 @@ impl fmt::Display for IdentificationData {
         if let Some(serial_number) = &self.serial_number {
             writeln!(f, "Serial number: {}", serial_number)?;
         }
-        
+
         if let Some(product_revision) = &self.product_revision {
             writeln!(f, "Product revision: {}", product_revision)?;
         }
-        
+
         writeln!(f, "Bus type: {}", self.bus_type)?;
         writeln!(f, "Removable: {}", self.removable)?;
 

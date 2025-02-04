@@ -7,5 +7,4 @@ members = [
     "crates/foruster_profiles",
     "crates/foruster_reporting",
 ]
-
 resolver = "2"

@@ -112,7 +112,7 @@ impl fmt::Display for Partition {
                 if !partition_name.is_empty() {
                     writeln!(f, "\t\tPartition name: {}", partition_name)?;
                 }
-                
+
                 if !attributes.is_empty() {
                     writeln!(f, "\t\tAttributes:")?;
                     for attribute in attributes {

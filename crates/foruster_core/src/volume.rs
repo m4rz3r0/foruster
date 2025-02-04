@@ -109,7 +109,11 @@ impl fmt::Display for Volume {
         }
 
         if !self.drive_letters.is_empty() {
-            write!(f, " - Drive letter(s): {}", self.drive_letters.iter().collect::<String>())?;
+            write!(
+                f,
+                " - Drive letter(s): {}",
+                self.drive_letters.iter().collect::<String>()
+            )?;
         }
 
         if !self.mount_points.is_empty() {
