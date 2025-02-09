@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import { Themes } from "./modules/surrealism-ui/use/index.slint";
+//import { Disk } from "./components/index.slint";
 
-//! global styles
 export global ROOT_GLOBAL {
     in-out property <length> min-window-height: 600px;
     in-out property <length> min-window-width: 800px;
@@ -11,4 +11,16 @@ export global ROOT_GLOBAL {
     in-out property <image> icon: @image-url("assets/surrealism.png");
 
     in-out property <Themes> theme: Themes.Dark;
+}
+
+export global GLOBAL_DATA {
+    //in-out property <[Disk]> disks_data;
+
+    // Error Handling
+    in-out property <bool> error_occurred: false;
+    in-out property <string> error_message: "";
+    public function show_error(message: string) {
+        GLOBAL_DATA.error_occurred = true;
+        GLOBAL_DATA.error_message = message;
+    }
 }

@@ -1,0 +1,117 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Disk Component for List Checkboxes
+import { Themes, UseSurrealismFn, ColorLevel } from "../modules/surrealism-ui/use/index.slint";
+import { SText, SIcon, SCard } from "../modules/surrealism-ui/index.slint";
+import { GLOBAL_DATA, ROOT_GLOBAL } from "../global.slint";
+import { VerticalBox } from "std-widgets.slint";
+import { SButton } from "../modules/surrealism-ui/src/button/index.slint";
+import { SelectionListView, SelectionListViewItem } from "selection_list_view.slint";
+import { Icons } from "styling.slint";
+
+export global DiskListAdapter {
+    in-out property <[SelectionListViewItem]> disks: [
+        // this is only dummy data for the preview
+        {
+            name: "Disk 1",
+            size: "1TB",
+            serial_number: "123456",
+            type: "SSD",
+        },
+        {
+            name: "Disk 2",
+            size: "2TB",
+            serial_number: "654321",
+            type: "HDD",
+        },
+    ];
+
+    callback toggle-disk-checked(/* index */ int);
+    callback remove-disk(/* index */ int);
+    callback show-create-disk();
+
+    // this is only a dummy implementation for the preview
+    toggle-disk-checked(index) => {
+        root.disks[index] = {
+            name: root.disks[index].name,
+            size: root.disks[index].size,
+            serial_number: root.disks[index].serial_number,
+            type: root.disks[index].type,
+        };
+    }
+
+    function item(index: int) -> SelectionListViewItem {
+        root.disks[index]
+    }
+}
+
+/*export component DiskItem inherits SCard {
+    in property <Disk> disk: {
+        name: "No definido",
+        size: "No definido",
+        serial_number: "No definido",
+        type: "No definido",
+    };
+    in-out property <bool> is-selected: false;
+    theme: ROOT_GLOBAL.theme;
+    width: 100%;
+    card-height: icon.height + 40px;
+    border-width: is-selected ? 2px : 0px;
+    border-color: is-selected ? UseSurrealismFn.get-color(Themes.Primary, ColorLevel.Deepest) : UseSurrealismFn.get-color(Themes.Primary, ColorLevel.Deeper);
+    border-radius: 16px;
+    background: is-selected ? UseSurrealismFn.get-color(root.theme, ColorLevel.Deepest) : UseSurrealismFn.get-color(root.theme, ColorLevel.Deeper);
+    drop-shadow-blur: is-selected ? 8px : 0px;
+    drop-shadow-color: is-selected ? UseSurrealismFn.get-color(Themes.Primary, ColorLevel.Deepest) : UseSurrealismFn.get-color(Themes.Primary, ColorLevel.Deeper);
+    drop-shadow-offset-x: 0px;
+    TouchArea {
+        clicked => {
+            root.is-selected = !root.is-selected;
+        }
+        HorizontalLayout {
+            padding: 20px;
+            spacing: 16px;
+            icon := SIcon {
+                width: 18rem;
+                height: 18rem;
+                source: @image-url("../assets/hard-drive.svg");
+            }
+
+            VerticalLayout {
+                spacing: 6px;
+                alignment: start;
+                SText {
+                    theme: root.theme;
+                    text: disk.name;
+                    font-size: 20px;
+                    font-weight: 800;
+                    padding-bottom: 4px;
+                }
+
+                SText {
+                    theme: root.theme;
+                    text: "Tipo: " + disk.type;
+                    font-size: 16px;
+                }
+
+                SText {
+                    theme: root.theme;
+                    text: "Tamaño: " + disk.size;
+                    font-size: 16px;
+                }
+
+                SText {
+                    theme: root.theme;
+                    text: "Serial: " + disk.serial_number;
+                    font-size: 16px;
+                }
+            }
+
+            if is-selected: SIcon {
+                theme: root.theme;
+                colorize: UseSurrealismFn.get-color(Themes.Primary, ColorLevel.Normal);
+                width: 2.5rem;
+                height: 2.5rem;
+                source: @image-url("../assets/check-circle.svg");
+            }
+        }
+    }
+}*/

@@ -1,0 +1,144 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright © SixtyFPS GmbH <info@slint.dev>
+// SPDX-License-Identifier: MIT
+
+import { CheckBox, ListView, HorizontalBox, ScrollView } from "std-widgets.slint";
+import { StateLayer } from "./state_layer.slint";
+import { FocusTouchArea } from "./focus_touch_area.slint";
+import { SizeSettings, TodoPalette, FontSettings, Icons } from "styling.slint";
+import { IconButton } from "icon_button.slint";
+import { SCard } from "../modules/surrealism-ui/src/card/index.slint";
+import { SIcon, SCheckbox } from "../modules/surrealism-ui/index.slint";
+import { SText } from "../modules/surrealism-ui/src/text/index.slint";
+import { ROOT_GLOBAL } from "../global.slint";
+import { Themes, UseSurrealismFn, ColorLevel } from "../modules/surrealism-ui/use/index.slint";
+
+
+//@rust-attr(derive(serde::Serialize, serde::Deserialize))
+export struct SelectionListViewItem {
+    name: string,
+    size: string,
+    serial_number: string,
+    type: string,
+
+    checked: bool,
+}
+
+export component SelectionListViewItemDelegate inherits SCard {
+    theme: ROOT_GLOBAL.theme;
+    width: 100%;
+    card-height: icon.height + 40px;
+    border-width: check-box.actived ? 2px : 0px;
+    border-color: check-box.actived ? UseSurrealismFn.get-color(Themes.Primary, ColorLevel.Deepest) : UseSurrealismFn.get-color(Themes.Primary, ColorLevel.Deeper);
+    border-radius: 16px;
+    background: check-box.actived ? UseSurrealismFn.get-color(root.theme, ColorLevel.Deepest) : UseSurrealismFn.get-color(root.theme, ColorLevel.Deeper);
+    drop-shadow-blur: check-box.actived ? 8px : 0px;
+    drop-shadow-color: check-box.actived ? UseSurrealismFn.get-color(Themes.Primary, ColorLevel.Deepest) : UseSurrealismFn.get-color(Themes.Primary, ColorLevel.Deeper);
+    drop-shadow-offset-x: 0px;
+
+    callback toggle;
+    callback remove;
+
+    in property <string> name;
+    in property <string> size;
+    in property <string> serial_number;
+    in property <string> type;
+    in-out property <bool> checked <=> check-box.actived;
+    
+    forward-focus: touch-area;
+
+    touch-area := FocusTouchArea {
+        width: 100%;
+        height: 100%;
+
+        clicked => {
+            root.toggle();
+        }
+    }
+
+    StateLayer {
+        width: 100%;
+        height: 100%;
+        focus-padding: -1px;
+        pressed: touch-area.pressed || touch-area.enter-pressed;
+        has-focus: touch-area.has-focus;
+        has-hover: touch-area.has-hover;
+    }
+
+    content-layer := HorizontalLayout {
+        padding: 20px;
+        spacing: 16px;
+        icon := SIcon {
+            width: 18rem;
+            height: 18rem;
+            source: @image-url("../assets/hard-drive.svg");
+        }
+
+        VerticalLayout {
+            spacing: 6px;
+            alignment: start;
+            SText {
+                theme: root.theme;
+                text: name;
+                font-size: 20px;
+                font-weight: 800;
+                padding-bottom: 4px;
+            }
+
+            SText {
+                theme: root.theme;
+                text: "Tipo: " + type;
+                font-size: 16px;
+            }
+
+            SText {
+                theme: root.theme;
+                text: "Tamaño: " + size;
+                font-size: 16px;
+            }
+
+            SText {
+                theme: root.theme;
+                text: "Serial: " + serial_number;
+                font-size: 16px;
+            }
+        }
+
+        check-box := SCheckbox {
+            theme: root.theme;
+            width: 2.5rem;
+            height: 2.5rem;
+            text: "";
+            active-color: UseSurrealismFn.get-color(Themes.Primary, ColorLevel.Normal);
+        }
+    }
+}
+
+export component SelectionListView inherits ScrollView {
+    in property <[SelectionListViewItem]> model;
+
+    callback toggle(/* index */ int);
+    callback remove(/* index */ int);
+
+    accessible-role: list;
+
+    VerticalLayout {
+        spacing: 12px;
+
+        for item[index] in root.model: SelectionListViewItemDelegate {
+            width: root.visible-width;
+            name: item.name;
+            size: item.size;
+            serial_number: item.serial_number;
+            type: item.type;
+            checked: item.checked;
+            toggle => {
+                root.toggle(index);
+            }
+
+            remove => {
+                root.remove(index);
+            }
+        }
+    }
+}

@@ -2,7 +2,7 @@
 use std::fmt;
 
 #[repr(u8)]
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum StorageBusType {
     Scsi = 0x01,
     Atapi = 0x02,

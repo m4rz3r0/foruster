@@ -3,7 +3,7 @@ use std::fmt;
 
 use crate::Volume;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum GPTPartitionAttribute {
     LegacyBiosBootable,
     NoBlockIoProtocol,
@@ -18,7 +18,7 @@ pub enum GPTPartitionAttribute {
     SpacesNoMetadata,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum PartitionType {
     MBR {
         bootable: bool,
@@ -31,7 +31,7 @@ pub enum PartitionType {
     },
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Partition {
     number: u32,
     starting_offset: u64,

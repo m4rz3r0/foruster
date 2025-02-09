@@ -9,10 +9,11 @@ use windows::{
         },
         System::{
             Ioctl::{
-                PropertyStandardQuery, StorageDeviceProperty, DRIVE_LAYOUT_INFORMATION_EX,
-                IOCTL_DISK_GET_DRIVE_LAYOUT_EX, IOCTL_STORAGE_QUERY_PROPERTY,
-                PARTITION_INFORMATION_EX, PARTITION_STYLE, PARTITION_STYLE_GPT,
-                PARTITION_STYLE_MBR, STORAGE_DEVICE_DESCRIPTOR, STORAGE_PROPERTY_QUERY,
+                PropertyStandardQuery, StorageDeviceProperty, DISK_GEOMETRY_EX,
+                DRIVE_LAYOUT_INFORMATION_EX, IOCTL_DISK_GET_DRIVE_GEOMETRY, IOCTL_DISK_GET_DRIVE_LAYOUT_EX,
+                IOCTL_STORAGE_QUERY_PROPERTY, PARTITION_INFORMATION_EX, PARTITION_STYLE,
+                PARTITION_STYLE_GPT, PARTITION_STYLE_MBR, STORAGE_DEVICE_DESCRIPTOR,
+                STORAGE_PROPERTY_QUERY,
             },
             IO::DeviceIoControl,
         },
@@ -147,6 +148,28 @@ pub fn enumerate_disks() -> Result<Vec<Disk>, windows::core::Error> {
 
         let disk_handle = SafeHandle(disk_handle_result?);
 
+        // Get drive geometry
+        let mut geometry = DISK_GEOMETRY_EX::default();
+
+        unsafe {
+            DeviceIoControl(
+                disk_handle.0,
+                IOCTL_DISK_GET_DRIVE_GEOMETRY,
+                None,
+                0,
+                Some(&mut geometry as *mut _ as *mut _),
+                size_of::<DISK_GEOMETRY_EX>() as u32,
+                None,
+                None,
+            )?;
+        };
+
+        let geometry = geometry.Geometry;
+        let total_size = geometry.Cylinders
+            * geometry.TracksPerCylinder as i64
+            * geometry.SectorsPerTrack as i64
+            * geometry.BytesPerSector as i64;
+
         // Get drive layout
         let mut layout = vec![
             0u8;
@@ -188,7 +211,12 @@ pub fn enumerate_disks() -> Result<Vec<Disk>, windows::core::Error> {
 
         let identification_data = get_disk_identification_data(&disk_handle)?;
 
-        disks.push(Disk::new(disk_number, identification_data, partitions));
+        disks.push(Disk::new(
+            disk_number,
+            identification_data,
+            partitions,
+            total_size as u64,
+        ));
 
         disk_number += 1;
     }

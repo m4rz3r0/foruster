@@ -3,11 +3,12 @@ use std::fmt;
 
 use crate::{identification_data::IdentificationData, partition::Partition};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Disk {
     number: u32,
     identification_data: IdentificationData,
     partitions: Vec<Partition>,
+    total_size: u64,
 }
 
 impl Disk {
@@ -15,11 +16,13 @@ impl Disk {
         number: u32,
         identification_data: IdentificationData,
         partitions: Vec<Partition>,
+        total_size: u64,
     ) -> Self {
         Self {
             number,
             identification_data,
             partitions,
+            total_size,
         }
     }
 
@@ -35,8 +38,38 @@ impl Disk {
         &self.partitions
     }
 
+    pub fn total_size(&self) -> u64 {
+        self.total_size
+    }
+
     pub fn partitions_mut(&mut self) -> &mut Vec<Partition> {
         &mut self.partitions
+    }
+
+    pub fn name(&self) -> String {
+        match (
+            self.identification_data.vendor(),
+            self.identification_data.model(),
+        ) {
+            (Some(vendor), Some(model)) => format!("{} {}", vendor, model),
+            (Some(vendor), None) => vendor.clone(),
+            (None, Some(model)) => model.clone(),
+            (None, None) => "Unknown".to_string(),
+        }
+    }
+
+    pub fn total_size_str(&self) -> String {
+        let size = self.total_size as f64;
+        let units = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+        let mut index = 0;
+        let mut size = size;
+
+        while size >= 1024.0 {
+            size /= 1024.0;
+            index += 1;
+        }
+
+        format!("{:.2} {}", size, units[index])
     }
 }
 

@@ -9,11 +9,20 @@ use crate::{
 pub fn storage_extractor() -> Result<Vec<Disk>, windows::core::Error> {
     println!("storage_extractor");
 
+    // Medir tiempo de ejecución
+    let start = std::time::Instant::now();
+
     let volumes = enumerate_volumes()?;
 
     let mut disks = enumerate_disks()?;
 
     link_volume_to_partition(&volumes, &mut disks)?;
+
+    for disk in &disks {
+        println!("Disk: {}", disk);
+    }
+
+    println!("Elapsed time: {:?}", start.elapsed());
 
     Ok(disks)
 }

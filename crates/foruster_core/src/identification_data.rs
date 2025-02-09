@@ -3,7 +3,7 @@ use std::fmt;
 
 use crate::storage_bus_type::StorageBusType;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct IdentificationData {
     vendor: Option<String>,
     model: Option<String>,
@@ -22,6 +22,9 @@ impl IdentificationData {
         bus_type: StorageBusType,
         removable: bool,
     ) -> Self {
+        let vendor = vendor.map(|v| v.trim().to_string());
+        let model = model.map(|m| m.trim().to_string());
+
         Self {
             model,
             serial_number,
