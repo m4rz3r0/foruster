@@ -1,26 +1,45 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { Themes } from "./modules/surrealism-ui/use/index.slint";
-//import { Disk } from "./components/index.slint";
-
-export global ROOT_GLOBAL {
-    in-out property <length> min-window-height: 600px;
-    in-out property <length> min-window-width: 800px;
-    in-out property <length> font-size: 16px;
-    in-out property <length> padding: 0px;
-    in-out property <string> title: "Foruster";
-    in-out property <image> icon: @image-url("assets/surrealism.png");
-
-    in-out property <Themes> theme: Themes.Dark;
+import { Palette } from "std-widgets.slint";
+export global WindowSettings {
+    out property <length> min-window-width: 900px;
+    out property <length> min-window-height: 600px;
+    out property <string> title: @tr("Foruster");
+    out property <image> icon: @image-url("assets/icon.png");
 }
 
-export global GLOBAL_DATA {
-    //in-out property <[Disk]> disks_data;
+export global Styling {
+    out property <brush> background: Palette.background;
+    out property <brush> alternate-background: Palette.alternate-background;
+    out property <brush> primary: Palette.accent-background;
+    out property <brush> secondary: Palette.accent-foreground;
+    out property <brush> accent: Palette.selection-background;
+    out property <brush> text: Palette.foreground;
+    out property <brush> text-secondary: Palette.alternate-foreground;
+    out property <brush> border: Palette.border;
+    out property <brush> hover: Palette.control-background;
+    out property <brush> disabled: Palette.control-foreground;
 
-    // Error Handling
-    in-out property <bool> error_occurred: false;
-    in-out property <string> error_message: "";
-    public function show_error(message: string) {
-        GLOBAL_DATA.error_occurred = true;
-        GLOBAL_DATA.error_message = message;
-    }
+    // New derived colors
+    out property <brush> background-deeper: background.darker(5%);
+    out property <brush> background-deepest: background.darker(10%);
+    out property <brush> background-weaker: background.brighter(5%);
+    out property <brush> background-weakest: background.brighter(10%);
+
+    out property <brush> primary-deeper: primary.darker(5%);
+    out property <brush> primary-deepest: primary.darker(10%);
+    out property <brush> primary-weaker: primary.brighter(5%);
+    out property <brush> primary-weakest: primary.brighter(10%);
+
+    out property <brush> border-deeper: border.darker(5%);
+    out property <brush> border-deepest: border.darker(10%);
+    out property <brush> border-weaker: border.brighter(5%);
+    out property <brush> border-weakest: border.brighter(10%);
+
+    out property <brush> primary-light: primary.brighter(20%);
+    out property <brush> primary-dark: primary.darker(20%);
+    out property <brush> accent-light: accent.brighter(15%);
+    out property <brush> accent-dark: accent.darker(15%);
+    out property <brush> text-muted: text.transparentize(40%);
+    out property <brush> border-strong: border.darker(20%);
+    out property <brush> hover-active: hover.darker(10%);
 }

@@ -1,43 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { MainView } from "./index.slint";
-import { ROOT_GLOBAL } from "./global.slint";
-import { SText, SIcon } from "./modules/surrealism-ui/index.slint";
-import { UseSurrealismFn, ColorLevel, ResultType } from "./modules/surrealism-ui/use/index.slint";
-import { ROOT_GLOBAL, GLOBAL_DATA } from "./global.slint";
-import { StandardButton } from "std-widgets.slint";
-import { SButton } from "modules/surrealism-ui/src/button/index.slint";
-import { SResult } from "modules/surrealism-ui/index.slint";
+import { DiskListView } from "index.slint";
+import { WindowSettings } from "global.slint";
+import { VerticalBox } from "std-widgets.slint";
 
-export { GLOBAL_DATA } from "./global.slint";
-export { DiskListAdapter } from "./components/disk_selection_list.slint";
+export { DiskListAdapter } from "components/index.slint";
 
 export component App inherits Window {
-    min-height: ROOT-GLOBAL.min-window-height;
-    min-width: ROOT-GLOBAL.min-window-width;
-    title: ROOT-GLOBAL.title;
-    icon: ROOT-GLOBAL.icon;
-    background: UseSurrealismFn.get-color(ROOT-GLOBAL.theme, ColorLevel.Normal);
+    min-width: WindowSettings.min-window-width;
+    min-height: WindowSettings.min-window-height;
+    title: WindowSettings.title;
+    icon: WindowSettings.icon;
 
-    VerticalLayout {
-        width: 100%;
-        height: 100%;
+
+    VerticalBox {
         padding: 16px;
-        spacing: 12px;
 
-        MainView { }
-    }
-
-    // The error dialog
-    SResult {
-        x: parent.width / 2.25;
-        y: parent.height / 3;
-        btn-text: "Cerrar";
-        result-type: ResultType.Error;
-        text: GLOBAL_DATA.error_message;
-        visible: GLOBAL_DATA.error_occurred;
-
-        clicked => {
-            GLOBAL_DATA.error_occurred = false;
+        DiskListView {
+            width: 100%;
         }
     }
 }

@@ -1,44 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { ScrollView, VerticalBox } from "std-widgets.slint";
-import { SText, SIcon, SCard } from "../modules/surrealism-ui/index.slint";
-import { GLOBAL_DATA, ROOT_GLOBAL } from "../global.slint";
-import { SButton } from "../modules/surrealism-ui/src/button/index.slint";
-import { SelectionListView } from "../components/selection_list_view.slint";
-import { DiskListAdapter } from "../components/index.slint";
-import { Icons } from "../components/styling.slint";
-import { Themes } from "../modules/surrealism-ui/use/index.slint";
+import { DiskList, DiskListAdapter } from "../components/disk_list.slint";
+import { Button } from "std-widgets.slint";
 
 export component DiskListView {
-    VerticalBox {
-        padding-top: 0;
-        padding-left: 0;
-        padding-right: 0;
-
-        SelectionListView {
-            width: 100%;
-            model: DiskListAdapter.disks;
-            accessible-label: @tr("List of Disks");
-
+    VerticalLayout {
+        DiskList {
+            disks: DiskListAdapter.disks;
+    
             toggle(index) => {
                 DiskListAdapter.toggle-disk-checked(index);
             }
-
-            remove(index) => {
-                DiskListAdapter.remove-disk(index);
-            }
         }
-
+    
         HorizontalLayout {
             alignment: center;
-
-            SButton {
-                theme: Themes.Primary;
+    
+            Button {
+                primary: true;
                 text: @tr("Analizar discos");
-                icon: Icons.add;
-
-                clicked => {
-                    DiskListAdapter.show-create-disk();
-                }
             }
         }
     }

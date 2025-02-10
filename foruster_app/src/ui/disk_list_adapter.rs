@@ -33,27 +33,11 @@ pub fn connect(view_handle: &ui::App, controller: DiskListController) {
             })
         }
     });
-
-    connect_with_controller(view_handle, &controller, {
-        move |adapter, controller| {
-            adapter.on_remove_disk(move |index| {
-                controller.remove_disk(index as usize);
-            })
-        }
-    });
-
-    connect_with_controller(view_handle, &controller, {
-        move |adapter: ui::DiskListAdapter, controller| {
-            adapter.on_show_create_disk(move || {
-                //controller.show_create_disk();
-            })
-        }
-    });
 }
 
 // maps a DiskModel (data) to a SelectionItem (ui)
-fn map_disk_to_item(disk: DiskModel) -> ui::SelectionListViewItem {
-    ui::SelectionListViewItem {
+fn map_disk_to_item(disk: DiskModel) -> ui::DiskListItem {
+    ui::DiskListItem {
         name: disk.disk_data().name().to_string().into(),
         size: disk.disk_data().total_size_str().to_string().into(),
         serial_number: disk.disk_data().identification_data().serial_number().clone().unwrap_or_default().into(),
