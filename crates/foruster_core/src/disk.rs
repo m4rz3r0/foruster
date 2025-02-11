@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use std::fmt;
 
-use crate::{identification_data::IdentificationData, partition::Partition};
+use crate::{format_size, identification_data::IdentificationData, partition::Partition};
 
 #[derive(Debug, Clone)]
 pub struct Disk {
@@ -59,17 +59,7 @@ impl Disk {
     }
 
     pub fn total_size_str(&self) -> String {
-        let size = self.total_size as f64;
-        let units = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-        let mut index = 0;
-        let mut size = size;
-
-        while size >= 1024.0 {
-            size /= 1024.0;
-            index += 1;
-        }
-
-        format!("{:.2} {}", size, units[index])
+        format_size(self.total_size as usize)
     }
 }
 

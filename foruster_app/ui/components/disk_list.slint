@@ -54,7 +54,7 @@ export component DiskItem inherits Rectangle {
     border-width: is_checked ? 2px : 1px;
     border-color: is_checked ? Styling.primary : Styling.border;
     border-radius: 16px;
-    background: is_checked ? Styling.background-deepest : Styling.background-weakest;
+    background: is_checked ? Styling.background-deepest : ta.has-hover ? Styling.background-weakest : Styling.background-deeper;
     drop-shadow-blur: is_checked ? 16px : 0px;
     drop-shadow-color: Styling.primary;
     drop-shadow-offset-x: 0px;
@@ -87,7 +87,7 @@ export component DiskItem inherits Rectangle {
 
     property <bool> is_usb: type == "USB" ? true : false;
 
-    TouchArea {
+    ta := TouchArea {
         width: 100%;
         height: 100%;
 
