@@ -6,6 +6,8 @@ export struct DiskListItem {
     name: string,
     size: string,
     serial_number: string,
+    num_partitions: int,
+    num_mounted_partitions: int,
     type: string,
 
     checked: bool,
@@ -80,6 +82,10 @@ export component DiskItem inherits Rectangle {
     in property <string> size: "No definido";
     in property <string> serial_number: "No definido";
     in property <string> type: "No definido";
+    in property <int> num_partitions: 0;
+    in property <int> num_mounted_partitions: 0;
+
+    property <bool> is_usb: type == "USB" ? true : false;
 
     TouchArea {
         width: 100%;
@@ -95,19 +101,29 @@ export component DiskItem inherits Rectangle {
         padding: 20px;
         spacing: 16px;
         icon := Image {
-            width: 18rem;
-            height: 18rem;
-            source: @image-url("../assets/hard-drive.svg");
+            padding: 4px;
+            width: 13rem;
+            height: 13rem;
+            source: is_usb ? @image-url("../assets/pendrive-usb.svg") : @image-url("../assets/hard-drive.svg");
         }
 
         VerticalLayout {
             spacing: 6px;
             alignment: start;
-            Text {
-                text: name;
-                font-size: 20px;
-                font-weight: 800;
-                padding-bottom: 4px;
+            HorizontalLayout {
+                alignment: space-between;
+
+                Text {
+                    text: name;
+                    font-size: 20px;
+                    font-weight: 800;
+                    padding-bottom: 4px;
+                }
+
+                check-box := CheckBox {
+                    width: 2.5rem;
+                    height: 2.5rem;
+                }
             }
 
             Text {
@@ -124,11 +140,11 @@ export component DiskItem inherits Rectangle {
                 text: "Número de serie: " + serial_number;
                 font-size: 16px;
             }
-        }
 
-        check-box := CheckBox {
-            width: 2.5rem;
-            height: 2.5rem;
+            Text {
+                text: "Particiones: " + num_partitions + " (" + num_mounted_partitions + (num_mounted_partitions == 1 ? " analizable)" : " analizables)");
+                font-size: 16px;
+            }
         }
     }
 }
@@ -144,6 +160,8 @@ export component DiskList inherits ScrollView {
             name: disk.name;
             size: disk.size;
             serial_number: disk.serial_number;
+            num_partitions: disk.num_partitions;
+            num_mounted_partitions: disk.num_mounted_partitions;
             type: disk.type;
 
             toggle => {

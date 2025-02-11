@@ -16,7 +16,10 @@ pub fn connect_with_controller(
     controller: &DiskListController,
     connect_adapter_controller: impl FnOnce(ui::DiskListAdapter, DiskListController) + 'static,
 ) {
-    connect_adapter_controller(view_handle.global::<ui::DiskListAdapter>(), controller.clone());
+    connect_adapter_controller(
+        view_handle.global::<ui::DiskListAdapter>(),
+        controller.clone(),
+    );
 }
 
 // one place to implement connection between adapter (view) and controller
@@ -40,8 +43,33 @@ fn map_disk_to_item(disk: DiskModel) -> ui::DiskListItem {
     ui::DiskListItem {
         name: disk.disk_data().name().to_string().into(),
         size: disk.disk_data().total_size_str().to_string().into(),
-        serial_number: disk.disk_data().identification_data().serial_number().clone().unwrap_or_default().into(),
-        r#type: disk.disk_data().identification_data().bus_type().to_string().into(),
+        serial_number: disk
+            .disk_data()
+            .identification_data()
+            .serial_number()
+            .clone()
+            .unwrap_or_default()
+            .into(),
+        num_partitions: disk.disk_data().partitions().len() as i32,
+        num_mounted_partitions: disk
+            .disk_data()
+            .partitions()
+            .iter()
+            .filter(|p| {
+                if let Some(volume) = p.volume() {
+                    volume.is_mounted()
+                } else {
+                    false
+                }
+            })
+            .count() as i32,
+        r#type: disk
+            .disk_data()
+            .identification_data()
+            .bus_type()
+            .to_string()
+            .into(),
+
         checked: disk.checked(),
     }
 }
