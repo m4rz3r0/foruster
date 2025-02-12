@@ -4,7 +4,6 @@
 
 use std::rc::Rc;
 
-use foruster_core::Disk;
 use slint::Model;
 use slint::ModelNotify;
 use slint::ModelRc;
@@ -36,19 +35,19 @@ impl DiskListController {
         self.disk_model.toggle_checked(index)
     }
 
-    pub fn remove_disk(&self, index: usize) {
-        self.disk_model.remove_disk(index)
-    }
-
-    pub fn create_disk(&self, disk_data: Disk) {
-        self.disk_model.push_disk(mvc::models::DiskModel::new(disk_data))
+    pub fn update_disks(&self) {
+        self.disk_model.update_disks()
     }
 
     pub fn analyze_disks(&self) {
         self.analyze_disks_callback.invoke(&());
     }
 
-    pub fn on_show_create_disk(&self, mut callback: impl FnMut() + 'static) {
+    pub fn num_selected_disks(&self) -> usize {
+        self.disk_model.num_selected_disks()
+    }
+
+    pub fn on_show_analyze_disks(&self, mut callback: impl FnMut() + 'static) {
         self.analyze_disks_callback.on(move |()| {
             callback();
         });
@@ -74,20 +73,13 @@ impl DiskModel {
         self.notify.row_changed(index)
     }
 
-    fn remove_disk(&self, index: usize) {
-        if !self.repo.remove_disk(index) {
-            return;
-        }
-
-        self.notify.row_removed(index, 1)
+    fn num_selected_disks(&self) -> usize {
+        self.repo.checked_disk_count()
     }
 
-    fn push_disk(&self, disk: mvc::models::DiskModel) {
-        if !self.repo.push_disk(disk) {
-            return;
-        }
-
-        self.notify.row_added(self.row_count() - 1, 1);
+    fn update_disks(&self) {
+        self.repo.update_disks();
+        self.notify.reset();
     }
 }
 

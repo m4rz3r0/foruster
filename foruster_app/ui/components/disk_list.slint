@@ -29,7 +29,12 @@ export global DiskListAdapter {
             type: "HDD",
         },
     ];
+    in-out property <int> num_selected_disks: count_selected_disks();
+
     callback toggle_disk_checked(/* index */ int);
+    callback update_disks();
+    pure callback count_selected_disks() -> int;
+    callback update_num_selected_disks();
 
     // this is only a dummy implementation for the preview
     toggle_disk_checked(index) => {
@@ -38,6 +43,9 @@ export global DiskListAdapter {
             size: root.disks[index].size,
             serial_number: root.disks[index].serial_number,
             type: root.disks[index].type,
+            num_partitions: root.disks[index].num_partitions,
+            num_mounted_partitions: root.disks[index].num_mounted_partitions,
+            checked: !root.disks[index].checked,
         };
     }
 
@@ -48,10 +56,14 @@ export global DiskListAdapter {
     pure public function is_checked(index: int) -> bool {
         root.disks[index].checked
     }
+
+    update_num_selected_disks() => {
+        root.num_selected_disks = count_selected_disks();
+    }
 }
 
 export component DiskItem inherits Rectangle {
-    property <bool> is_checked <=> check-box.checked;
+    in-out property <bool> is_checked <=> check-box.checked;
 
     width: 100%;
     height: icon.height + 40px;
@@ -97,7 +109,6 @@ export component DiskItem inherits Rectangle {
 
         clicked => {
             root.toggle();
-            is_checked = !is_checked;
         }
     }
 
@@ -127,6 +138,7 @@ export component DiskItem inherits Rectangle {
                 check-box := CheckBox {
                     width: 2.5rem;
                     height: 2.5rem;
+                    enabled: false;
                 }
             }
 
@@ -167,6 +179,7 @@ export component DiskList inherits ScrollView {
             num_partitions: disk.num_partitions;
             num_mounted_partitions: disk.num_mounted_partitions;
             type: disk.type;
+            is_checked: disk.checked;
 
             toggle => {
                 root.toggle(index);

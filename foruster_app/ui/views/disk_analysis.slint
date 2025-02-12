@@ -1,10 +1,33 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Loading screen for disk analysis
+import { ProgressIndicator } from "std-widgets.slint";
 export component DiskAnalysisView {
+    in property <percent> progress: 0%;
     callback on_disk_analyzed();
     
     VerticalLayout {
         alignment: start;
+        Text {
+            text: @tr("Análisis de discos");
+            font-weight: 800;
+            font-size: 24px;
+        }
+    }
 
+    VerticalLayout {
+        alignment: center;
+        padding: 20px;
         
+        Text {
+            horizontal-alignment: center;
+            text: @tr("Analizando discos...");
+            font-size: 14px;
+        }
+
+        ProgressIndicator {
+            width: 100%;
+            height: 2rem;
+            progress: progress;
+        }
     }
 }

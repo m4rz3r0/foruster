@@ -1,7 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright © SixtyFPS GmbH <info@slint.dev>
-// SPDX-License-Identifier: MIT
-
 use slint::*;
 use std::rc::Rc;
 
@@ -29,10 +26,30 @@ pub fn connect(view_handle: &ui::App, controller: DiskListController) {
         .global::<ui::DiskListAdapter>()
         .set_disks(Rc::new(MapModel::new(controller.disk_model(), map_disk_to_item)).into());
 
+    view_handle
+        .global::<ui::DiskListAdapter>()
+        .set_num_selected_disks(controller.num_selected_disks() as i32);
+
     connect_with_controller(view_handle, &controller, {
         move |adapter, controller| {
             adapter.on_toggle_disk_checked(move |index| {
                 controller.toggle_checked(index as usize);
+            });
+        }
+    });
+
+    connect_with_controller(view_handle, &controller, {
+        move |adapter, controller| {
+            adapter.on_count_selected_disks(move || {
+                controller.num_selected_disks() as i32
+            });
+        }
+    });
+
+    connect_with_controller(view_handle, &controller, {
+        move |adapter, controller| {
+            adapter.on_update_disks(move || {
+                controller.update_disks();
             })
         }
     });
