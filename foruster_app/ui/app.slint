@@ -2,8 +2,15 @@
 import { DiskListView } from "index.slint";
 import { WindowSettings } from "global.slint";
 import { VerticalBox } from "std-widgets.slint";
+import { DiskAnalysisView } from "views/disk_analysis.slint";
 
 export { DiskListAdapter } from "components/index.slint";
+
+enum Pages {
+    DiskList,
+    DiskAnalysis,
+    ProfileSelection,
+}
 
 export component App inherits Window {
     min-width: WindowSettings.min-window-width;
@@ -11,12 +18,23 @@ export component App inherits Window {
     title: WindowSettings.title;
     icon: WindowSettings.icon;
 
+    property <Pages> current_page: DiskList;
+    
+    disk_list_view := DiskListView {
+        width: 100%;
+        height: 100%;
+        visible: current_page == Pages.DiskList;
+        on_analyze_disk => {
+            current_page = Pages.DiskAnalysis;
+        }
+    }
 
-    VerticalBox {
-        padding: 16px;
-
-        DiskListView {
-            width: 100%;
+    disk_analysis_view := DiskAnalysisView {
+        width: 100%;
+        height: 100%;
+        visible: current_page == Pages.DiskAnalysis;
+        on_disk_analyzed => {
+            current_page = Pages.ProfileSelection;
         }
     }
 }

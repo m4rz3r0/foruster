@@ -12,19 +12,19 @@ use slint::ModelTracker;
 
 use crate::mvc;
 use crate::mvc::repositories::traits;
-//use crate::Callback;
+use crate::Callback;
 
 #[derive(Clone)]
 pub struct DiskListController {
     disk_model: DiskModel,
-    //show_create_disk_callback: Rc<Callback<(), ()>>,
+    analyze_disks_callback: Rc<Callback<(), ()>>,
 }
 
 impl DiskListController {
     pub fn new(repo: impl traits::DiskRepository + 'static) -> Self {
         Self {
             disk_model: DiskModel::new(repo),
-            //show_create_disk_callback: Rc::new(Callback::default()),
+            analyze_disks_callback: Rc::new(Callback::default()),
         }
     }
 
@@ -44,15 +44,15 @@ impl DiskListController {
         self.disk_model.push_disk(mvc::models::DiskModel::new(disk_data))
     }
 
-    /*pub fn show_create_disk(&self) {
-        self.show_create_disk_callback.invoke(&());
+    pub fn analyze_disks(&self) {
+        self.analyze_disks_callback.invoke(&());
     }
 
     pub fn on_show_create_disk(&self, mut callback: impl FnMut() + 'static) {
-        self.show_create_disk_callback.on(move |()| {
+        self.analyze_disks_callback.on(move |()| {
             callback();
         });
-    }*/
+    }
 }
 
 #[derive(Clone)]

@@ -41,8 +41,12 @@ export global DiskListAdapter {
         };
     }
 
-    function item(index: int) -> DiskListItem {
+    pure function item(index: int) -> DiskListItem {
         root.disks[index]
+    }
+
+    pure public function is_checked(index: int) -> bool {
+        root.disks[index].checked
     }
 }
 
