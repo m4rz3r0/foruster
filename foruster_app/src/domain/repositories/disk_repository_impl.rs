@@ -4,14 +4,14 @@ use std::{cell::RefCell, rc::Rc};
 use foruster_storage::storage_extractor;
 
 use super::traits;
-use crate::mvc;
+use crate::domain;
 
 #[derive(Clone)]
-pub struct MockDiskRepository {
-    disks: Rc<RefCell<Vec<mvc::models::DiskModel>>>,
+pub struct DiskRepositoryImpl {
+    disks: Rc<RefCell<Vec<domain::models::DiskItem>>>,
 }
 
-impl MockDiskRepository {
+impl DiskRepositoryImpl {
     pub fn new() -> Self {
         Self {
             disks: Rc::new(RefCell::new(vec![])),
@@ -19,18 +19,18 @@ impl MockDiskRepository {
     }
 }
 
-impl traits::DiskRepository for MockDiskRepository {
+impl traits::DiskRepository for DiskRepositoryImpl {
     fn disk_count(&self) -> usize {
         self.disks.borrow().len()
     }
 
-    fn get_disk(&self, index: usize) -> Option<mvc::models::DiskModel> {
+    fn get_disk(&self, index: usize) -> Option<domain::models::DiskItem> {
         self.disks.borrow().get(index).cloned()
     }
 
-    fn toggle_checked(&self, index: usize) -> bool {
+    fn toggle_selected(&self, index: usize) -> bool {
         if let Some(disk) = self.disks.borrow_mut().get_mut(index) {
-            disk.toggle_checked();
+            disk.toggle_selected();
             return true;
         }
 
@@ -46,7 +46,7 @@ impl traits::DiskRepository for MockDiskRepository {
         false
     }
 
-    fn push_disk(&self, disk: mvc::DiskModel) -> bool {
+    fn push_disk(&self, disk: domain::DiskItem) -> bool {
         self.disks.borrow_mut().push(disk);
         true
     }
@@ -73,12 +73,12 @@ impl traits::DiskRepository for MockDiskRepository {
                 .iter()
                 .any(|old_disk| old_disk.disk_data().name() == disk.name())
             {
-                old_disks.push(mvc::DiskModel::new(disk.clone()));
+                old_disks.push(domain::DiskItem::new(disk.clone()));
             }
         }
     }
     
     fn checked_disk_count(&self) -> usize {
-        self.disks.borrow().iter().filter(|disk| disk.checked()).count()
+        self.disks.borrow().iter().filter(|disk| disk.selected()).count()
     }
 }

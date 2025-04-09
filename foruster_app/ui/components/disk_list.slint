@@ -8,7 +8,7 @@ export struct DiskListItem {
     serial_number: string,
     num_partitions: int,
     num_mounted_partitions: int,
-    type: string,
+    drive_type: string,
 
     checked: bool,
 }
@@ -20,13 +20,13 @@ export global DiskListAdapter {
             name: "Disk 1",
             size: "1TB",
             serial_number: "123456",
-            type: "SSD",
+            drive_type: "SSD",
         },
         {
             name: "Disk 2",
             size: "2TB",
             serial_number: "654321",
-            type: "HDD",
+            drive_type: "HDD",
         },
     ];
     in-out property <int> num_selected_disks: count_selected_disks();
@@ -42,7 +42,7 @@ export global DiskListAdapter {
             name: root.disks[index].name,
             size: root.disks[index].size,
             serial_number: root.disks[index].serial_number,
-            type: root.disks[index].type,
+            drive_type: root.disks[index].drive_type,
             num_partitions: root.disks[index].num_partitions,
             num_mounted_partitions: root.disks[index].num_mounted_partitions,
             checked: !root.disks[index].checked,
@@ -63,27 +63,16 @@ export global DiskListAdapter {
 }
 
 export component DiskItem inherits Rectangle {
-    in-out property <bool> is_checked <=> check-box.checked;
-
-    width: 100%;
     height: icon.height + 40px;
     border-width: is_checked ? 2px : 1px;
     border-color: is_checked ? Styling.primary : Styling.border;
     border-radius: 16px;
     background: is_checked ? Styling.background-deepest : ta.has-hover ? Styling.background-weakest : Styling.background-deeper;
-    drop-shadow-blur: is_checked ? 16px : 0px;
+    drop-shadow-blur: is_checked ? 8px : 0px;
     drop-shadow-color: Styling.primary;
     drop-shadow-offset-x: 0px;
 
-    animate border-color {
-        duration: 200ms;
-    }
-
-    animate background {
-        duration: 200ms;
-    }
-
-    animate drop-shadow-blur {
+    animate border-color, background, drop-shadow-blur {
         duration: 200ms;
     }
 
@@ -97,11 +86,13 @@ export component DiskItem inherits Rectangle {
     in property <string> name: "No definido";
     in property <string> size: "No definido";
     in property <string> serial_number: "No definido";
-    in property <string> type: "No definido";
+    in property <string> drive_type: "No definido";
     in property <int> num_partitions: 0;
     in property <int> num_mounted_partitions: 0;
 
-    property <bool> is_usb: type == "USB" ? true : false;
+    in-out property <bool> is_checked: false;
+
+    property <bool> is_usb: drive_type == "USB" ? true : false;
 
     ta := TouchArea {
         width: 100%;
@@ -134,16 +125,10 @@ export component DiskItem inherits Rectangle {
                     font-weight: 800;
                     padding-bottom: 4px;
                 }
-
-                check-box := CheckBox {
-                    width: 2.5rem;
-                    height: 2.5rem;
-                    enabled: false;
-                }
             }
 
             Text {
-                text: "Tipo: " + type;
+                text: "Tipo: " + drive_type;
                 font-size: 16px;
             }
 
@@ -172,13 +157,14 @@ export component DiskList inherits ScrollView {
 
     VerticalLayout {
         spacing: 16px;
+
         for disk[index] in root.disks: DiskItem {
             name: disk.name;
             size: disk.size;
             serial_number: disk.serial_number;
             num_partitions: disk.num_partitions;
             num_mounted_partitions: disk.num_mounted_partitions;
-            type: disk.type;
+            drive_type: disk.drive_type;
             is_checked: disk.checked;
 
             toggle => {

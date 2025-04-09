@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-mod mock_disk_repository;
-pub use mock_disk_repository::*;
+mod disk_repository_impl;
+pub use disk_repository_impl::*;
 use traits::DiskRepository;
 
 pub mod traits;
 
 pub fn disk_repo() -> impl traits::DiskRepository + Clone {
-    let mock_disk_repository = MockDiskRepository::new();
+    let mock_disk_repository = DiskRepositoryImpl::new();
 
     mock_disk_repository.update_disks();
 

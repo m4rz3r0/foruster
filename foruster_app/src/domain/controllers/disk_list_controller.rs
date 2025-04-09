@@ -1,7 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright © SixtyFPS GmbH <info@slint.dev>
-// SPDX-License-Identifier: MIT
-
 use std::rc::Rc;
 
 use slint::Model;
@@ -9,25 +6,22 @@ use slint::ModelNotify;
 use slint::ModelRc;
 use slint::ModelTracker;
 
-use crate::mvc;
-use crate::mvc::repositories::traits;
-use crate::Callback;
+use crate::domain::repositories::traits;
+use crate::domain::DiskItem;
 
 #[derive(Clone)]
 pub struct DiskListController {
-    disk_model: DiskModel,
-    analyze_disks_callback: Rc<Callback<(), ()>>,
+    disk_model: DiskModel
 }
 
 impl DiskListController {
     pub fn new(repo: impl traits::DiskRepository + 'static) -> Self {
         Self {
             disk_model: DiskModel::new(repo),
-            analyze_disks_callback: Rc::new(Callback::default()),
         }
     }
 
-    pub fn disk_model(&self) -> ModelRc<mvc::models::DiskModel> {
+    pub fn disk_model(&self) -> ModelRc<DiskItem> {
         ModelRc::new(self.disk_model.clone())
     }
 
@@ -39,18 +33,8 @@ impl DiskListController {
         self.disk_model.update_disks()
     }
 
-    pub fn analyze_disks(&self) {
-        self.analyze_disks_callback.invoke(&());
-    }
-
     pub fn num_selected_disks(&self) -> usize {
         self.disk_model.num_selected_disks()
-    }
-
-    pub fn on_show_analyze_disks(&self, mut callback: impl FnMut() + 'static) {
-        self.analyze_disks_callback.on(move |()| {
-            callback();
-        });
     }
 }
 
@@ -66,7 +50,7 @@ impl DiskModel {
     }
 
     fn toggle_checked(&self, index: usize) {
-        if !self.repo.toggle_checked(index) {
+        if !self.repo.toggle_selected(index) {
             return;
         }
 
@@ -84,7 +68,7 @@ impl DiskModel {
 }
 
 impl Model for DiskModel {
-    type Data = mvc::models::DiskModel;
+    type Data = DiskItem;
 
     fn row_count(&self) -> usize {
         self.repo.disk_count()

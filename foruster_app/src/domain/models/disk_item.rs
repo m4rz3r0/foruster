@@ -2,17 +2,17 @@
 use foruster_core::Disk;
 
 #[derive(Debug, Clone)]
-pub struct DiskModel {
+pub struct DiskItem {
     disk_data: Disk,
 
-    checked: bool,
+    selected: bool,
 }
 
-impl DiskModel {
+impl DiskItem {
     pub fn new(disk_data: Disk) -> Self {
         Self {
             disk_data,
-            checked: false,
+            selected: false,
         }
     }
 
@@ -20,11 +20,11 @@ impl DiskModel {
         &self.disk_data
     }
 
-    pub fn checked(&self) -> bool {
-        self.checked
+    pub fn selected(&self) -> bool {
+        self.selected
     }
 
-    pub fn toggle_checked(&mut self) {
-        self.checked = !self.checked;
+    pub fn toggle_selected(&mut self) {
+        self.selected = !self.selected;
     }
 }

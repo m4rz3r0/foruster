@@ -3,15 +3,14 @@ use slint::*;
 use std::rc::Rc;
 
 use crate::{
-    mvc::{DiskListController, DiskModel},
+    domain::{DiskListController, DiskItem},
     ui,
 };
 
-// a helper function to make adapter and controller connection a little bit easier
 pub fn connect_with_controller(
     view_handle: &ui::App,
     controller: &DiskListController,
-    connect_adapter_controller: impl FnOnce(ui::DiskListAdapter, DiskListController) + 'static,
+    connect_adapter_controller: impl FnOnce(ui::DiskListAdapter, DiskListController),
 ) {
     connect_adapter_controller(
         view_handle.global::<ui::DiskListAdapter>(),
@@ -19,9 +18,7 @@ pub fn connect_with_controller(
     );
 }
 
-// one place to implement connection between adapter (view) and controller
 pub fn connect(view_handle: &ui::App, controller: DiskListController) {
-    // sets a mapped list of the disk items to the ui
     view_handle
         .global::<ui::DiskListAdapter>()
         .set_disks(Rc::new(MapModel::new(controller.disk_model(), map_disk_to_item)).into());
@@ -55,8 +52,7 @@ pub fn connect(view_handle: &ui::App, controller: DiskListController) {
     });
 }
 
-// maps a DiskModel (data) to a SelectionItem (ui)
-fn map_disk_to_item(disk: DiskModel) -> ui::DiskListItem {
+fn map_disk_to_item(disk: DiskItem) -> ui::DiskListItem {
     ui::DiskListItem {
         name: disk.disk_data().name().to_string().into(),
         size: disk.disk_data().total_size_str().to_string().into(),
@@ -87,6 +83,6 @@ fn map_disk_to_item(disk: DiskModel) -> ui::DiskListItem {
             .to_string()
             .into(),
 
-        checked: disk.checked(),
+        checked: disk.selected(),
     }
 }

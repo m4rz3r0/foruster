@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-mod callback;
-pub use callback::*;
-
 pub mod ui;
-pub mod mvc;
+pub mod domain;
 
 use slint::ComponentHandle;
 
@@ -12,7 +9,7 @@ slint::include_modules!();
 fn init() -> ui::App {
     let view_handle = ui::App::new().unwrap();
 
-    let disk_list_controller = mvc::DiskListController::new(mvc::disk_repo());
+    let disk_list_controller = domain::DiskListController::new(domain::disk_repo());
     ui::disk_list_adapter::connect(&view_handle, disk_list_controller.clone());
 
     view_handle

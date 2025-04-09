@@ -4,7 +4,7 @@ import { Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
 
 export component DiskListView {
     visible: true;
-    callback on_analyze_disk();
+    callback analyze-disks();
     callback update_disks <=> DiskListAdapter.update_disks;
     callback update_num_selected_disks <=> DiskListAdapter.update_num_selected_disks;
     update_disk_timer := Timer {
@@ -46,7 +46,7 @@ export component DiskListView {
                 text: @tr("Analizar discos");
                 enabled: DiskListAdapter.num_selected_disks > 0;
                 clicked => {
-                    on_analyze_disk();
+                    analyze-disks();
                 }
             }
         }
