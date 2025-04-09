@@ -68,17 +68,21 @@ impl traits::DiskRepository for DiskRepositoryImpl {
         });
 
         // Add or update connected disks
-        for disk in new_disks.iter() {
+        for disk in new_disks.into_iter() {
             if !old_disks
                 .iter()
                 .any(|old_disk| old_disk.disk_data().name() == disk.name())
             {
-                old_disks.push(domain::DiskItem::new(disk.clone()));
+                old_disks.push(domain::DiskItem::new(disk));
             }
         }
     }
-    
+
     fn selected_disk_count(&self) -> usize {
-        self.disks.borrow().iter().filter(|disk| disk.selected()).count()
+        self.disks
+            .borrow()
+            .iter()
+            .filter(|disk| disk.selected())
+            .count()
     }
 }

@@ -3,7 +3,7 @@ use slint::*;
 use std::rc::Rc;
 
 use crate::{
-    domain::{DiskListController, DiskItem},
+    domain::{DiskItem, DiskListController},
     ui,
 };
 
@@ -33,9 +33,7 @@ pub fn connect(view_handle: &ui::App, controller: DiskListController) {
 
     connect_with_controller(view_handle, &controller, {
         move |adapter, controller| {
-            adapter.on_count_selected_disks(move || {
-                controller.num_selected_disks() as i32
-            });
+            adapter.on_count_selected_disks(move || controller.num_selected_disks() as i32);
         }
     });
 
@@ -79,6 +77,6 @@ fn map_disk_to_item(disk: DiskItem) -> ui::DiskListItem {
             .to_string()
             .into(),
 
-        checked: disk.selected(),
+        selected: disk.selected(),
     }
 }

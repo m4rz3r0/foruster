@@ -11,7 +11,7 @@ use crate::domain::DiskItem;
 
 #[derive(Clone)]
 pub struct DiskListController {
-    disk_model: DiskModel
+    disk_model: DiskModel,
 }
 
 impl DiskListController {
@@ -46,7 +46,10 @@ struct DiskModel {
 
 impl DiskModel {
     fn new(repo: impl traits::DiskRepository + 'static) -> Self {
-        Self { repo: Rc::new(repo), notify: Rc::new(Default::default()) }
+        Self {
+            repo: Rc::new(repo),
+            notify: Rc::new(Default::default()),
+        }
     }
 
     fn toggle_selected(&self, index: usize) {

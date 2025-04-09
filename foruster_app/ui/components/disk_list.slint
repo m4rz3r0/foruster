@@ -10,7 +10,7 @@ export struct DiskListItem {
     num_mounted_partitions: int,
     drive_type: string,
 
-    checked: bool,
+    selected: bool,
 }
 
 export global DiskListAdapter {
@@ -43,18 +43,18 @@ export global DiskListAdapter {
             drive_type: root.disks[index].drive_type,
             num_partitions: root.disks[index].num_partitions,
             num_mounted_partitions: root.disks[index].num_mounted_partitions,
-            checked: !root.disks[index].checked,
+            selected: !root.disks[index].selected,
         };
     }
 }
 
 export component DiskItem inherits Rectangle {
     height: icon.height + 40px;
-    border-width: is_checked ? 2px : 1px;
-    border-color: is_checked ? Styling.primary : Styling.border;
+    border-width: is_selected ? 2px : 1px;
+    border-color: is_selected ? Styling.primary : Styling.border;
     border-radius: 16px;
-    background: is_checked ? Styling.background-deepest : ta.has-hover ? Styling.background-weakest : Styling.background-deeper;
-    drop-shadow-blur: is_checked ? 8px : 0px;
+    background: is_selected ? Styling.background-deepest : ta.has-hover ? Styling.background-weakest : Styling.background-deeper;
+    drop-shadow-blur: is_selected ? 8px : 0px;
     drop-shadow-color: Styling.primary;
     drop-shadow-offset-x: 0px;
 
@@ -66,7 +66,7 @@ export component DiskItem inherits Rectangle {
 
     // Dummy implementation for the preview
     toggle() => {
-        root.is_checked = !root.is_checked;
+        root.is_selected = !root.is_selected;
     }
 
     in property <string> name: "No definido";
@@ -76,7 +76,7 @@ export component DiskItem inherits Rectangle {
     in property <int> num_partitions: 0;
     in property <int> num_mounted_partitions: 0;
 
-    in-out property <bool> is_checked: false;
+    in-out property <bool> is_selected: false;
 
     property <bool> is_usb: drive_type == "USB" ? true : false;
 
@@ -151,7 +151,7 @@ export component DiskList inherits ScrollView {
             num_partitions: disk.num_partitions;
             num_mounted_partitions: disk.num_mounted_partitions;
             drive_type: disk.drive_type;
-            is_checked: disk.checked;
+            is_selected: disk.selected;
 
             toggle => {
                 root.toggle(index);

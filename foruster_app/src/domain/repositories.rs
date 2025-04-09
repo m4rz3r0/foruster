@@ -6,9 +6,9 @@ use traits::DiskRepository;
 pub mod traits;
 
 pub fn disk_repo() -> impl traits::DiskRepository + Clone {
-    let mock_disk_repository = DiskRepositoryImpl::new();
+    let disk_repository_impl = DiskRepositoryImpl::new();
 
-    mock_disk_repository.update_disks();
+    disk_repository_impl.update_disks();
 
-    mock_disk_repository
+    disk_repository_impl
 }

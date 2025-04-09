@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-pub mod ui;
 pub mod domain;
+pub mod ui;
 
 use slint::ComponentHandle;
 
