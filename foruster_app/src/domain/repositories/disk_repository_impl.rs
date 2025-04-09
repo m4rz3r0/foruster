@@ -19,6 +19,12 @@ impl DiskRepositoryImpl {
     }
 }
 
+impl Default for DiskRepositoryImpl {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl traits::DiskRepository for DiskRepositoryImpl {
     fn disk_count(&self) -> usize {
         self.disks.borrow().len()

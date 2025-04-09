@@ -73,7 +73,7 @@ impl Volume {
 
     pub fn guid_identifier(&self) -> String {
         let start = self.guid.find('{').unwrap_or(0) + 1;
-        let end = self.guid.rfind('}').unwrap_or_else(|| self.guid.len());
+        let end = self.guid.rfind('}').unwrap_or(self.guid.len());
 
         self.guid[start..end].to_string()
     }

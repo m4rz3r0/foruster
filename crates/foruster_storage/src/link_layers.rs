@@ -73,10 +73,10 @@ fn get_volume_extents(volume_guid: &str) -> Result<VOLUME_DISK_EXTENTS, windows:
     let extents = unsafe { &*(buffer.as_ptr() as *const VOLUME_DISK_EXTENTS) };
     // Ahora extents.Extents contiene todos los disk extents
 
-    Ok(extents.clone())
+    Ok(*extents)
 }
 
-pub fn link_volume_to_partition(volumes: &[Volume], disks: &mut Vec<Disk>) -> Result<(), Error> {
+pub fn link_volume_to_partition(volumes: &[Volume], disks: &mut [Disk]) -> Result<(), Error> {
     let mut disk_map: HashMap<u32, &mut Disk> = disks.iter_mut().map(|d| (d.number(), d)).collect();
 
     for volume in volumes {
