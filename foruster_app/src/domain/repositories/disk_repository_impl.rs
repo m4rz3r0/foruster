@@ -78,7 +78,7 @@ impl traits::DiskRepository for DiskRepositoryImpl {
         }
     }
     
-    fn checked_disk_count(&self) -> usize {
+    fn selected_disk_count(&self) -> usize {
         self.disks.borrow().iter().filter(|disk| disk.selected()).count()
     }
 }

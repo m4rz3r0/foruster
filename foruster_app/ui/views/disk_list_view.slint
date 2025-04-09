@@ -5,14 +5,19 @@ import { Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
 export component DiskListView {
     visible: true;
     callback analyze-disks();
-    callback update_disks <=> DiskListAdapter.update_disks;
-    callback update_num_selected_disks <=> DiskListAdapter.update_num_selected_disks;
+    callback update-disks <=> DiskListAdapter.update-disks;
+
     update_disk_timer := Timer {
         interval: 3s;
         running: parent.visible;
         triggered => {
-            update_disks();
+            update-disks();
+            update-button-enabled-status();
         }
+    }
+
+    function update-button-enabled-status() {
+        analyzeButton.enabled = DiskListAdapter.count-selected-disks() > 0;
     }
 
     VerticalBox {
@@ -34,17 +39,17 @@ export component DiskListView {
         DiskList {
             disks: DiskListAdapter.disks;
             toggle(index) => {
-                DiskListAdapter.toggle_disk_checked(index);
-                update_num_selected_disks();
+                DiskListAdapter.toggle-disk-checked(index);
+                update-button-enabled-status();
             }
         }
 
         HorizontalLayout {
             alignment: center;
-            Button {
+            analyzeButton := Button {
                 primary: true;
                 text: @tr("Analizar discos");
-                enabled: DiskListAdapter.num_selected_disks > 0;
+                enabled: false;
                 clicked => {
                     analyze-disks();
                 }

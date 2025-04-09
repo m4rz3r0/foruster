@@ -4,7 +4,7 @@ use crate::domain;
 pub trait DiskRepository {
     fn update_disks(&self);
     fn disk_count(&self) -> usize;
-    fn checked_disk_count(&self) -> usize;
+    fn selected_disk_count(&self) -> usize;
     fn get_disk(&self, index: usize) -> Option<domain::models::DiskItem>;
     fn toggle_selected(&self, index: usize) -> bool;
     fn remove_disk(&self, index: usize) -> bool;

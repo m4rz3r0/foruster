@@ -14,8 +14,8 @@ export struct DiskListItem {
 }
 
 export global DiskListAdapter {
+    // this is only dummy data for the preview
     in-out property <[DiskListItem]> disks: [
-        // this is only dummy data for the preview
         {
             name: "Disk 1",
             size: "1TB",
@@ -29,15 +29,13 @@ export global DiskListAdapter {
             drive_type: "HDD",
         },
     ];
-    in-out property <int> num_selected_disks: count_selected_disks();
 
-    callback toggle_disk_checked(/* index */ int);
-    callback update_disks();
-    pure callback count_selected_disks() -> int;
-    callback update_num_selected_disks();
+    callback toggle-disk-checked(/* index */ int);
+    callback update-disks();
+    pure callback count-selected-disks() -> int;
 
     // this is only a dummy implementation for the preview
-    toggle_disk_checked(index) => {
+    toggle-disk-checked(index) => {
         root.disks[index] = {
             name: root.disks[index].name,
             size: root.disks[index].size,
@@ -47,18 +45,6 @@ export global DiskListAdapter {
             num_mounted_partitions: root.disks[index].num_mounted_partitions,
             checked: !root.disks[index].checked,
         };
-    }
-
-    pure function item(index: int) -> DiskListItem {
-        root.disks[index]
-    }
-
-    pure public function is_checked(index: int) -> bool {
-        root.disks[index].checked
-    }
-
-    update_num_selected_disks() => {
-        root.num_selected_disks = count_selected_disks();
     }
 }
 

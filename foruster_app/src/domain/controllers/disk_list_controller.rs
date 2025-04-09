@@ -25,8 +25,8 @@ impl DiskListController {
         ModelRc::new(self.disk_model.clone())
     }
 
-    pub fn toggle_checked(&self, index: usize) {
-        self.disk_model.toggle_checked(index)
+    pub fn toggle_selected(&self, index: usize) {
+        self.disk_model.toggle_selected(index)
     }
 
     pub fn update_disks(&self) {
@@ -49,7 +49,7 @@ impl DiskModel {
         Self { repo: Rc::new(repo), notify: Rc::new(Default::default()) }
     }
 
-    fn toggle_checked(&self, index: usize) {
+    fn toggle_selected(&self, index: usize) {
         if !self.repo.toggle_selected(index) {
             return;
         }
@@ -58,7 +58,7 @@ impl DiskModel {
     }
 
     fn num_selected_disks(&self) -> usize {
-        self.repo.checked_disk_count()
+        self.repo.selected_disk_count()
     }
 
     fn update_disks(&self) {

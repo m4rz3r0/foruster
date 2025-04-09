@@ -23,14 +23,10 @@ pub fn connect(view_handle: &ui::App, controller: DiskListController) {
         .global::<ui::DiskListAdapter>()
         .set_disks(Rc::new(MapModel::new(controller.disk_model(), map_disk_to_item)).into());
 
-    view_handle
-        .global::<ui::DiskListAdapter>()
-        .set_num_selected_disks(controller.num_selected_disks() as i32);
-
     connect_with_controller(view_handle, &controller, {
         move |adapter, controller| {
             adapter.on_toggle_disk_checked(move |index| {
-                controller.toggle_checked(index as usize);
+                controller.toggle_selected(index as usize);
             });
         }
     });
@@ -76,7 +72,7 @@ fn map_disk_to_item(disk: DiskItem) -> ui::DiskListItem {
                 }
             })
             .count() as i32,
-        r#type: disk
+        drive_type: disk
             .disk_data()
             .identification_data()
             .bus_type()
