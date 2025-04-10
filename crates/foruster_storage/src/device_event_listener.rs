@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+use std::collections::HashMap;
 use std::ffi::c_void;
 use std::sync::mpsc::{self, Receiver, Sender};
+use std::time::{Duration, Instant};
 use windows::Win32::Devices::DeviceAndDriverInstallation::{
     CM_Register_Notification, CM_NOTIFY_ACTION, CM_NOTIFY_ACTION_DEVICEINTERFACEARRIVAL,
     CM_NOTIFY_ACTION_DEVICEINTERFACEREMOVAL, CM_NOTIFY_EVENT_DATA, CM_NOTIFY_FILTER,
     CM_NOTIFY_FILTER_FLAG_ALL_INTERFACE_CLASSES, HCMNOTIFICATION,
 };
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum DeviceEvent {
     Added,
     Removed,
@@ -22,6 +24,10 @@ pub struct DeviceEventListener {
     event_receiver: Receiver<DeviceEvent>,
     _handle: HCMNOTIFICATION,
     _context: *mut CallbackContext,
+    // HashMap to track recently processed events with timestamps
+    recent_events: HashMap<DeviceEvent, Instant>,
+    // Debounce duration to filter duplicate events
+    debounce_duration: Duration,
 }
 
 unsafe extern "system" fn notification_callback(
@@ -79,11 +85,23 @@ impl DeviceEventListener {
             event_receiver: receiver,
             _handle: handle,
             _context: context as *mut CallbackContext,
+            recent_events: HashMap::new(),
+            debounce_duration: Duration::from_secs(1),
         }
     }
 
-    pub fn poll_event(&self) -> Option<DeviceEvent> {
-        self.event_receiver.try_recv().ok()
+    pub fn poll_event(&mut self) -> Option<DeviceEvent> {
+        while let Ok(event) = self.event_receiver.try_recv() {
+            let now = Instant::now();
+            if let Some(&last_time) = self.recent_events.get(&event) {
+                if now.duration_since(last_time) < self.debounce_duration {
+                    continue;
+                }
+            }
+            self.recent_events.insert(event.clone(), now);
+            return Some(event);
+        }
+        None
     }
 }
 

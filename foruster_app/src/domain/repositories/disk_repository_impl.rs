@@ -8,14 +8,14 @@ use super::traits::DiskRepository;
 #[derive(Clone)]
 pub struct DiskRepositoryImpl {
     disks: Rc<RefCell<Vec<domain::models::DiskItem>>>,
-    event_listener: Rc<DeviceEventListener>,
+    event_listener: Rc<RefCell<DeviceEventListener>>,
 }
 
 impl DiskRepositoryImpl {
     pub fn new() -> Self {
         Self {
             disks: Rc::new(RefCell::new(vec![])),
-            event_listener: Rc::new(DeviceEventListener::new()),
+            event_listener: Rc::new(RefCell::new(DeviceEventListener::new())),
         }
     }
 }
@@ -94,7 +94,7 @@ impl DiskRepository for DiskRepositoryImpl {
     }
 
     fn check_for_device_changes(&self) -> bool {
-        let has_changes = match self.event_listener.poll_event() {
+        let has_changes = match self.event_listener.borrow_mut().poll_event() {
             Some(_) => true,
             None => false,
         };
