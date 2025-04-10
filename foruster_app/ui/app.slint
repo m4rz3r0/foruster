@@ -6,7 +6,7 @@ import { DiskAnalysisView } from "views/disk_analysis_view.slint";
 
 export { DiskListAdapter } from "components/index.slint";
 
-enum Pages {
+enum Page {
     DiskList,
     DiskAnalysis,
     ProfileSelection,
@@ -18,21 +18,21 @@ export component App inherits Window {
     title: WindowSettings.title;
     icon: WindowSettings.icon;
 
-    property <Pages> current-page: DiskList;
+    property <Page> current-page: DiskList;
     
     VerticalLayout {
         padding: 20px;
         spacing: 16px;
 
-        if current-page == Pages.DiskList : DiskListView {
+        if current-page == Page.DiskList : DiskListView {
             analyze-disks => {
-                current_page = Pages.DiskAnalysis;
+                current_page = Page.DiskAnalysis;
             }
         }
     
-        if current-page == Pages.DiskAnalysis : DiskAnalysisView {
-            on_disk_analyzed => {
-                current-page = Pages.ProfileSelection;
+        if current-page == Page.DiskAnalysis : DiskAnalysisView {
+            disk_analyzed => {
+                current-page = Page.ProfileSelection;
             }
         }
     }
