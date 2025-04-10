@@ -3,14 +3,12 @@ import { DiskList, DiskListAdapter } from "../components/disk_list.slint";
 import { Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
 
 export component DiskListView {
-    visible: true;
     callback analyze-disks();
     callback update-disks <=> DiskListAdapter.update-disks;
     callback check-for-changes <=> DiskListAdapter.check-for-changes;
 
     update_disk_timer := Timer {
-        interval: 500ms; // Reducimos el intervalo pero solo para verificar eventos
-        running: parent.visible;
+        interval: 500ms;
         triggered => {
             if (check-for-changes()) {
                 update-disks();

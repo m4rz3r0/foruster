@@ -18,23 +18,21 @@ export component App inherits Window {
     title: WindowSettings.title;
     icon: WindowSettings.icon;
 
-    property <Pages> current_page: DiskList;
+    property <Pages> current-page: DiskList;
     
     VerticalLayout {
         padding: 20px;
         spacing: 16px;
 
-        disk_list_view := DiskListView {
-            visible: current_page == Pages.DiskList;
+        if current-page == Pages.DiskList : DiskListView {
             analyze-disks => {
                 current_page = Pages.DiskAnalysis;
             }
         }
     
-        disk_analysis_view := DiskAnalysisView {
-            visible: current_page == Pages.DiskAnalysis;
+        if current-page == Pages.DiskAnalysis : DiskAnalysisView {
             on_disk_analyzed => {
-                current_page = Pages.ProfileSelection;
+                current-page = Pages.ProfileSelection;
             }
         }
     }
