@@ -44,6 +44,12 @@ pub fn connect(view_handle: &ui::App, controller: DiskListController) {
             })
         }
     });
+
+    connect_with_controller(view_handle, &controller, {
+        move |adapter, controller| {
+            adapter.on_check_for_changes(move || controller.check_for_changes());
+        }
+    });
 }
 
 fn map_disk_to_item(disk: DiskItem) -> ui::DiskListItem {

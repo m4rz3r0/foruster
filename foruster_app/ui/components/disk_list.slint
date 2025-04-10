@@ -32,6 +32,7 @@ export global DiskListAdapter {
 
     callback toggle-disk-checked(/* index */ int);
     callback update-disks();
+    callback check-for-changes() -> bool;
     pure callback count-selected-disks() -> int;
 
     // this is only a dummy implementation for the preview

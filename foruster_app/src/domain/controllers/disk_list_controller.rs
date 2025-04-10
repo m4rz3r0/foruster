@@ -36,6 +36,10 @@ impl DiskListController {
     pub fn num_selected_disks(&self) -> usize {
         self.disk_model.num_selected_disks()
     }
+
+    pub fn check_for_changes(&self) -> bool {
+        self.disk_model.check_for_device_changes()
+    }
 }
 
 #[derive(Clone)]
@@ -67,6 +71,10 @@ impl DiskModel {
     fn update_disks(&self) {
         self.repo.update_disks();
         self.notify.reset();
+    }
+
+    fn check_for_device_changes(&self) -> bool {
+        self.repo.check_for_device_changes()
     }
 }
 

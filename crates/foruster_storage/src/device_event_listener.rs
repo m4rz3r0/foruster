@@ -1,0 +1,104 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+use std::ffi::c_void;
+use std::sync::mpsc::{self, Receiver, Sender};
+use windows::Win32::Devices::DeviceAndDriverInstallation::{
+    CM_Register_Notification, CM_NOTIFY_ACTION, CM_NOTIFY_ACTION_DEVICEINTERFACEARRIVAL,
+    CM_NOTIFY_ACTION_DEVICEINTERFACEREMOVAL, CM_NOTIFY_EVENT_DATA, CM_NOTIFY_FILTER,
+    CM_NOTIFY_FILTER_FLAG_ALL_INTERFACE_CLASSES, HCMNOTIFICATION,
+};
+
+#[derive(Debug)]
+pub enum DeviceEvent {
+    Added,
+    Removed,
+    Changed,
+}
+
+pub struct CallbackContext {
+    pub sender: Sender<DeviceEvent>,
+}
+
+pub struct DeviceEventListener {
+    event_receiver: Receiver<DeviceEvent>,
+    _handle: HCMNOTIFICATION,
+    _context: *mut CallbackContext,
+}
+
+unsafe extern "system" fn notification_callback(
+    _notification_handle: HCMNOTIFICATION,
+    context: *const c_void,
+    action: CM_NOTIFY_ACTION,
+    _event_data: *const CM_NOTIFY_EVENT_DATA,
+    _flags: u32,
+) -> u32 {
+    let ctx = &*(context as *const CallbackContext);
+    let event = match action {
+        CM_NOTIFY_ACTION_DEVICEINTERFACEARRIVAL => Some(DeviceEvent::Added),
+        CM_NOTIFY_ACTION_DEVICEINTERFACEREMOVAL => Some(DeviceEvent::Removed),
+        _ => None,
+    };
+
+    if let Some(evt) = event {
+        if let Err(_) = ctx.sender.send(evt) {
+            return 1;
+        } else {
+            return 0;
+        }
+    } else {
+        return 1;
+    }
+}
+
+impl DeviceEventListener {
+    pub fn new() -> Self {
+        let (sender, receiver) = mpsc::channel::<DeviceEvent>();
+
+        let ctx = Box::new(CallbackContext { sender });
+        let context = Box::into_raw(ctx) as *const c_void;
+
+        let filter = CM_NOTIFY_FILTER {
+            cbSize: std::mem::size_of::<CM_NOTIFY_FILTER>() as u32,
+            Flags: CM_NOTIFY_FILTER_FLAG_ALL_INTERFACE_CLASSES,
+            ..Default::default()
+        };
+
+        let mut handle = HCMNOTIFICATION::default();
+        unsafe {
+            let result = CM_Register_Notification(
+                &filter,
+                Some(context),
+                Some(notification_callback),
+                &mut handle,
+            );
+            if result.0 != 0 {
+                panic!("Fallo al registrar notificaciones: {:?}", result);
+            }
+        }
+
+        Self {
+            event_receiver: receiver,
+            _handle: handle,
+            _context: context as *mut CallbackContext,
+        }
+    }
+
+    pub fn poll_event(&self) -> Option<DeviceEvent> {
+        self.event_receiver.try_recv().ok()
+    }
+}
+
+impl Drop for DeviceEventListener {
+    fn drop(&mut self) {
+        unsafe {
+            let _ = Box::from_raw(self._context);
+            if !self._handle.is_invalid() {
+                let _ = CM_Register_Notification(
+                    &CM_NOTIFY_FILTER::default(),
+                    None,
+                    None,
+                    &mut self._handle,
+                );
+            }
+        }
+    }
+}

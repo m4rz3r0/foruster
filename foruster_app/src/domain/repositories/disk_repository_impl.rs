@@ -1,20 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+use crate::domain;
+use foruster_storage::{device_event_listener::DeviceEventListener, storage_extractor};
 use std::{cell::RefCell, rc::Rc};
 
-use foruster_storage::storage_extractor;
-
-use super::traits;
-use crate::domain;
+use super::traits::DiskRepository;
 
 #[derive(Clone)]
 pub struct DiskRepositoryImpl {
     disks: Rc<RefCell<Vec<domain::models::DiskItem>>>,
+    event_listener: Rc<DeviceEventListener>,
 }
 
 impl DiskRepositoryImpl {
     pub fn new() -> Self {
         Self {
             disks: Rc::new(RefCell::new(vec![])),
+            event_listener: Rc::new(DeviceEventListener::new()),
         }
     }
 }
@@ -25,7 +26,7 @@ impl Default for DiskRepositoryImpl {
     }
 }
 
-impl traits::DiskRepository for DiskRepositoryImpl {
+impl DiskRepository for DiskRepositoryImpl {
     fn disk_count(&self) -> usize {
         self.disks.borrow().len()
     }
@@ -90,5 +91,18 @@ impl traits::DiskRepository for DiskRepositoryImpl {
             .iter()
             .filter(|disk| disk.selected())
             .count()
+    }
+
+    fn check_for_device_changes(&self) -> bool {
+        let has_changes = match self.event_listener.poll_event() {
+            Some(_) => true,
+            None => false,
+        };
+
+        if has_changes {
+            self.update_disks();
+        }
+
+        has_changes
     }
 }

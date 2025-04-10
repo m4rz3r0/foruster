@@ -3,6 +3,7 @@ use crate::domain;
 
 pub trait DiskRepository {
     fn update_disks(&self);
+    fn check_for_device_changes(&self) -> bool;
     fn disk_count(&self) -> usize;
     fn selected_disk_count(&self) -> usize;
     fn get_disk(&self, index: usize) -> Option<domain::models::DiskItem>;

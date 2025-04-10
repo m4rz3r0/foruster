@@ -2,9 +2,10 @@
 mod link_layers;
 mod logical_layer_extractor;
 mod physical_layer_extractor;
-mod storage_extractor;
-
 mod utils;
+
+pub mod device_event_listener;
+pub mod storage_extractor;
 
 pub use storage_extractor::storage_extractor;
 

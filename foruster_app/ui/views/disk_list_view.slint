@@ -6,13 +6,16 @@ export component DiskListView {
     visible: true;
     callback analyze-disks();
     callback update-disks <=> DiskListAdapter.update-disks;
+    callback check-for-changes <=> DiskListAdapter.check-for-changes;
 
     update_disk_timer := Timer {
-        interval: 3s;
+        interval: 500ms; // Reducimos el intervalo pero solo para verificar eventos
         running: parent.visible;
         triggered => {
-            update-disks();
-            update-button-enabled-status();
+            if (check-for-changes()) {
+                update-disks();
+                update-button-enabled-status();
+            }
         }
     }
 
