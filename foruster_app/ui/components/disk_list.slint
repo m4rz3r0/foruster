@@ -14,7 +14,7 @@ export struct DiskListItem {
 }
 
 export global DiskListAdapter {
-    // this is only dummy data for the preview
+    // Dummy data for the preview
     in-out property <[DiskListItem]> disks: [
         {
             name: "Disk 1",
@@ -35,7 +35,7 @@ export global DiskListAdapter {
     callback check-for-changes() -> bool;
     pure callback count-selected-disks() -> int;
 
-    // this is only a dummy implementation for the preview
+    // Dummy implementation for the preview
     toggle-disk-checked(index) => {
         root.disks[index] = {
             name: root.disks[index].name,
