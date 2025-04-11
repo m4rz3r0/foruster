@@ -43,11 +43,13 @@ component PathItem {
                 
                 if (!is-editing) : Button {
                     text: @tr("Editar");
+                    width: 80px;
                     clicked => { is-editing = true; }
                 }
                 
                 if (is-editing) : Button {
                     text: @tr("Guardar");
+                    width: 80px;
                     clicked => { 
                         edit-confirmed(path);
                         is-editing = false;
@@ -56,6 +58,7 @@ component PathItem {
                 
                 Button {
                     text: @tr("Eliminar");
+                    width: 80px;
                     clicked => { remove(); }
                 }
             }
