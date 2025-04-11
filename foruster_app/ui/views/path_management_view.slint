@@ -1,0 +1,230 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+import { VerticalBox, HorizontalBox, LineEdit, Button, ScrollView } from "std-widgets.slint";
+import { Styling } from "../global.slint";
+
+component PathItem {
+    height: 100px;
+
+    in-out property <string> path;
+    in-out property <bool> is-editing: false;
+    in-out property <bool> has-redundancy: false;
+    in-out property <string> redundancy-message: "";
+    
+    callback remove();
+    callback edit-confirmed(string);
+    
+    VerticalBox {
+        spacing: 2px;
+        height: has-redundancy ? 100px : 70px;
+        
+        HorizontalBox {
+            padding: 5px;
+            spacing: 10px;
+            
+            Rectangle {
+                width: 4px;
+                background: has-redundancy ? Styling.warning : transparent;
+            }
+            
+            if (!is-editing) : Text {
+                text: path;
+                vertical-alignment: center;
+                color: has-redundancy ? Styling.warning-dark : Styling.text;
+            }
+            
+            if (is-editing) : LineEdit {
+                text <=> path;
+            }
+            
+            HorizontalBox {
+                padding-left: 10px;
+                spacing: 5px;
+                alignment: end;
+                
+                if (!is-editing) : Button {
+                    text: @tr("Editar");
+                    clicked => { is-editing = true; }
+                }
+                
+                if (is-editing) : Button {
+                    text: @tr("Guardar");
+                    clicked => { 
+                        edit-confirmed(path);
+                        is-editing = false;
+                    }
+                }
+                
+                Button {
+                    text: @tr("Eliminar");
+                    clicked => { remove(); }
+                }
+            }
+        }
+        
+        if (has-redundancy) : Rectangle {
+            background: Styling.warning-bg;
+            border-width: 1px;
+            border-color: Styling.warning-border;
+            border-radius: 4px;
+            height: 30px;
+            
+            HorizontalBox {
+                padding: 5px;
+                Text {
+                    text: redundancy-message;
+                    color: Styling.warning-dark;
+                    font-size: 12px;
+                }
+            }
+        }
+    }
+}
+
+struct PathItem {
+    path: string,
+    has-redundancy: bool, 
+    redundancy-message: string
+}
+
+export component PathManagementView {
+    in-out property <[PathItem]> paths: [
+        {
+            path: "C:/Users/Usuario/Documentos",
+            has-redundancy: false,
+            redundancy-message: ""
+        },
+        {
+            path: "C:/Users/Usuario/Documentos/Proyectos",
+            has-redundancy: true,
+            redundancy-message: "Esta ruta es redundante con otra ruta añadida."
+        },
+        {
+            path: "C:/Users/Usuario/Escritorio",
+            has-redundancy: false,
+            redundancy-message: ""
+        }
+    ];
+    
+    callback add-path(string);
+    callback update-path(int, string);
+    callback remove-path(int);
+    callback browse-for-path();
+    callback start-analysis();
+    callback check-redundancies();
+    
+    property <string> new-path: "";
+    property <int> redundant-count: 1;
+    
+    VerticalBox {
+        padding: 10px;
+        spacing: 10px;
+        
+        Text {
+            text: @tr("Rutas a Analizar");
+            font-weight: 800;
+            font-size: 18px;
+            color: Styling.text;
+        }
+        
+        Text {
+            text: @tr("Seleccione los directorios que serán analizados");
+            font-size: 14px;
+            color: Styling.text-secondary;
+        }
+        
+        HorizontalBox {
+            spacing: 10px;
+            
+            LineEdit {
+                placeholder-text: @tr("Ruta a analizar...");
+                text <=> new-path;
+                width: parent.width - 200px;
+            }
+            
+            Button {
+                text: @tr("Explorar...");
+                clicked => { browse-for-path(); }
+                width: 90px;
+            }
+            
+            Button {
+                text: @tr("Añadir");
+                clicked => {
+                    if (new-path != "") {
+                        add-path(new-path);
+                        new-path = "";
+                        check-redundancies();
+                    }
+                }
+                width: 80px;
+            }
+        }
+        
+        Rectangle {
+            height: 1px;
+            background: Styling.border;
+        }
+        
+        Text {
+            text: @tr("Rutas Actuales");
+            font-weight: 600;
+            font-size: 16px;
+            color: Styling.text;
+        }
+        
+        if (paths.length == 0) : Text {
+            text: @tr("Aún no hay rutas añadidas. Seleccione directorios para comenzar el análisis.");
+            color: Styling.text-muted;
+        }
+        
+        ScrollView {
+            min-height: 150px;
+            VerticalBox {
+                spacing: 5px;
+                
+                for path-data[index] in paths : PathItem {
+                    path: path-data.path;
+                    has-redundancy: path-data.has-redundancy;
+                    redundancy-message: path-data.redundancy-message;
+                    
+                    edit-confirmed(new-path-value) => {
+                        update-path(index, new-path-value);
+                        check-redundancies();
+                    }
+                    remove => {
+                        remove-path(index);
+                        check-redundancies();
+                    }
+                }
+            }
+        }
+        
+        if (redundant-count > 0) : Rectangle {
+            background: Styling.warning-bg;
+            border-radius: 4px;
+            padding: 10px;
+            
+            HorizontalBox {
+                Text {
+                    text: @tr("Se han detectado ") + redundant-count + @tr(" rutas redundantes. Revise las rutas añadidas.");
+                    color: Styling.warning-dark;
+                }
+            }
+        }
+        
+        Rectangle {
+            height: 1px;
+            background: Styling.border;
+        }
+
+        HorizontalBox {
+            alignment: end;
+            Button {
+                text: @tr("Analizar");
+                primary: true;
+                enabled: paths.length > 0 && redundant-count == 0;
+                clicked => { start-analysis(); }
+            }
+        }
+    }
+}

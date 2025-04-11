@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { DiskListView } from "index.slint";
+import { DiskListView, DiskAnalysisView, PathManagementView } from "index.slint";
 import { WindowSettings } from "global.slint";
 import { VerticalBox } from "std-widgets.slint";
-import { DiskAnalysisView } from "views/disk_analysis_view.slint";
 
 export { DiskListAdapter } from "components/index.slint";
 
 enum Page {
     DiskList,
+    PathManagement,
     DiskAnalysis,
     ProfileSelection,
 }
@@ -18,7 +18,7 @@ export component App inherits Window {
     title: WindowSettings.title;
     icon: WindowSettings.icon;
 
-    property <Page> current-page: DiskList;
+    property <Page> current-page: PathManagement;
     
     VerticalLayout {
         padding: 20px;
@@ -26,7 +26,7 @@ export component App inherits Window {
 
         if current-page == Page.DiskList : DiskListView {
             analyze-disks => {
-                current_page = Page.DiskAnalysis;
+                current_page = Page.PathManagement;
             }
         }
     
@@ -35,5 +35,7 @@ export component App inherits Window {
                 current-page = Page.ProfileSelection;
             }
         }
+
+        if current-page == Page.PathManagement : PathManagementView {}
     }
 }
