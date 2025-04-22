@@ -4,7 +4,7 @@ import { Styling } from "../global.slint";
 
 export struct PathListItem {
     path: string,
-    has-redundancy: bool, 
+    redundant: bool,
     redundancy-message: string
 }
 
@@ -13,17 +13,17 @@ export global PathListAdapter {
     in-out property <[PathListItem]> paths: [
         {
             path: "C:/Users/Usuario/Documentos",
-            has-redundancy: false,
+            redundant: false,
             redundancy-message: ""
         },
         {
             path: "C:/Users/Usuario/Documentos/Proyectos",
-            has-redundancy: true,
+            redundant: true,
             redundancy-message: "Esta ruta es redundante con otra ruta añadida."
         },
         {
             path: "C:/Users/Usuario/Escritorio",
-            has-redundancy: false,
+            redundant: false,
             redundancy-message: ""
         }
     ];
@@ -32,9 +32,9 @@ export global PathListAdapter {
     callback update-path(int, string);
     callback remove-path(int);
 
-    pure callback redundancies-count() -> int;
+    pure callback redundant-count() -> int;
 
-    pure public function paths-count() -> int {
+    pure public function path-count() -> int {
         return paths.length;
     }
 }
@@ -42,7 +42,7 @@ export global PathListAdapter {
 export component PathItem {
     in-out property <string> path;
     in-out property <bool> is-editing: false;
-    in-out property <bool> has-redundancy: false;
+    in-out property <bool> redundant: false;
     in-out property <string> redundancy-message: "";
     
     callback remove();
@@ -58,14 +58,14 @@ export component PathItem {
             
             Rectangle {
                 width: 4px;
-                background: has-redundancy ? Styling.warning : transparent;
+                background: redundant ? Styling.warning : transparent;
             }
             
             if (!is-editing) : Text {
                 text: path;
                 font-size: 14px;
                 vertical-alignment: center;
-                color: has-redundancy ? Styling.warning-dark : Styling.text;
+                color: redundant ? Styling.warning-dark : Styling.text;
             }
             
             if (is-editing) : LineEdit {
@@ -101,7 +101,7 @@ export component PathItem {
             }
         }
         
-        if (has-redundancy) : Rectangle {
+        if (redundant) : Rectangle {
             background: Styling.warning-bg;
             border-width: 1px;
             border-color: Styling.warning-border;
@@ -131,7 +131,7 @@ export component PathList inherits ScrollView {
 
         for path_data[index] in paths : PathItem {
             path: path_data.path;
-            has_redundancy: path_data.has_redundancy;
+            redundant: path_data.redundant;
             redundancy_message: path_data.redundancy_message;
             
             edit_confirmed(new_path_value) => {

@@ -15,7 +15,7 @@ pub struct DiskListController {
 }
 
 impl DiskListController {
-    pub fn new(repo: impl traits::DiskRepository + 'static) -> Self {
+    pub fn new(repo: Rc<dyn traits::DiskRepository>) -> Self {
         Self {
             disk_model: DiskModel::new(repo),
         }
@@ -49,9 +49,9 @@ struct DiskModel {
 }
 
 impl DiskModel {
-    fn new(repo: impl traits::DiskRepository + 'static) -> Self {
+    fn new(repo: Rc<dyn traits::DiskRepository>) -> Self {
         Self {
-            repo: Rc::new(repo),
+            repo,
             notify: Rc::new(Default::default()),
         }
     }

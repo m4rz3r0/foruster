@@ -6,12 +6,12 @@ import { Styling } from "../global.slint";
 export component PathManagementView {
     callback browse-for-path();
     callback start-analysis();
-    pure callback redundancies-count <=> PathListAdapter.redundancies-count;
+    pure callback redundant-count <=> PathListAdapter.redundant-count;
     
     property <string> new-path: "";
 
     pure function check-redundancies() -> bool {
-        redundancies-count() > 0
+        redundant-count() > 0
     }
     
     VerticalBox {
@@ -75,7 +75,7 @@ export component PathManagementView {
             remove-path(index) => { PathListAdapter.remove-path(index); }
         }
         
-        if (PathListAdapter.paths-count() == 0) : Text {
+        if (PathListAdapter.path-count() == 0) : Text {
             text: @tr("Aún no hay rutas añadidas. Seleccione directorios para comenzar el análisis.");
             color: Styling.text-muted;
         }
@@ -89,7 +89,7 @@ export component PathManagementView {
             
             HorizontalBox {
                 Text {
-                    text: @tr("Se han detectado ") + redundancies-count() + @tr(" rutas redundantes. Revise las rutas añadidas.");
+                    text: @tr("Se han detectado ") + redundant-count() + @tr(" rutas redundantes. Revise las rutas añadidas.");
                     color: Styling.warning-dark;
                 }
             }
@@ -105,7 +105,7 @@ export component PathManagementView {
             Button {
                 text: @tr("Analizar");
                 primary: true;
-                enabled: PathListAdapter.paths-count() > 0 && !check-redundancies();
+                enabled: PathListAdapter.path-count() > 0 && !check-redundancies();
                 clicked => { start-analysis(); }
             }
         }

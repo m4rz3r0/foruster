@@ -2,3 +2,4 @@
 slint::include_modules!();
 
 pub mod disk_list_adapter;
+pub mod path_list_adapter;

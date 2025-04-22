@@ -3,7 +3,7 @@ import { DiskListView, DiskAnalysisView, PathManagementView } from "index.slint"
 import { WindowSettings } from "global.slint";
 import { VerticalBox } from "std-widgets.slint";
 
-export { DiskListAdapter } from "components/index.slint";
+export { DiskListAdapter, PathListAdapter } from "components/index.slint";
 
 enum Page {
     DiskList,
@@ -18,7 +18,9 @@ export component App inherits Window {
     title: WindowSettings.title;
     icon: WindowSettings.icon;
 
-    property <Page> current-page: PathManagement;
+    property <Page> current-page: DiskList;
+
+    callback load-paths;
     
     VerticalLayout {
         padding: 20px;
@@ -27,6 +29,7 @@ export component App inherits Window {
         if current-page == Page.DiskList : DiskListView {
             analyze-disks => {
                 current_page = Page.PathManagement;
+                load-paths();
             }
         }
     
