@@ -49,8 +49,8 @@ export component PathItem {
     callback edit-confirmed(string);
     
     VerticalBox {
+        alignment: start;
         spacing: 2px;
-        height: has-redundancy ? 100px : 70px;
         
         HorizontalBox {
             padding: 5px;
@@ -63,12 +63,14 @@ export component PathItem {
             
             if (!is-editing) : Text {
                 text: path;
+                font-size: 14px;
                 vertical-alignment: center;
                 color: has-redundancy ? Styling.warning-dark : Styling.text;
             }
             
             if (is-editing) : LineEdit {
                 text <=> path;
+                font-size: 14px;
             }
             
             HorizontalBox {
@@ -117,28 +119,27 @@ export component PathItem {
     }
 }
 
-export component PathList {
-    callback update-path(int, string);
-    callback remove-path(int);
+export component PathList inherits ScrollView {
+    in-out property <[PathListItem]> paths: [];
 
-    in-out property <[PathListItem]> paths;
+    callback update_path(int, string);
+    callback remove_path(int);
 
-    ScrollView {
-        min-height: 150px;
-        VerticalBox {
-            spacing: 5px;
+    VerticalLayout {
+        alignment: start;
+        spacing: 10px;
+
+        for path_data[index] in paths : PathItem {
+            path: path_data.path;
+            has_redundancy: path_data.has_redundancy;
+            redundancy_message: path_data.redundancy_message;
             
-            for path-data[index] in paths : PathItem {
-                path: path-data.path;
-                has-redundancy: path-data.has-redundancy;
-                redundancy-message: path-data.redundancy-message;
-                
-                edit-confirmed(new-path-value) => {
-                    update-path(index, new-path-value);
-                }
-                remove => {
-                    remove-path(index);
-                }
+            edit_confirmed(new_path_value) => {
+                update_path(index, new_path_value);
+            }
+
+            remove => {
+                remove_path(index);
             }
         }
     }

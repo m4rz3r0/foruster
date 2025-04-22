@@ -51,7 +51,6 @@ export component PathManagementView {
                     if (new-path != "") {
                         PathListAdapter.add-path(new-path);
                         new-path = "";
-                        check-redundancies();
                     }
                 }
                 width: 80px;
@@ -72,8 +71,8 @@ export component PathManagementView {
 
         PathList {
             paths: PathListAdapter.paths;
-            update-path(index, path) => { PathListAdapter.update-path(index, path); check-redundancies(); }
-            remove-path(index) => { PathListAdapter.remove-path(index); check-redundancies(); }
+            update-path(index, path) => { PathListAdapter.update-path(index, path); }
+            remove-path(index) => { PathListAdapter.remove-path(index); }
         }
         
         if (PathListAdapter.paths-count() == 0) : Text {
@@ -106,7 +105,7 @@ export component PathManagementView {
             Button {
                 text: @tr("Analizar");
                 primary: true;
-                enabled: PathListAdapter.paths-count() > 0 && redundancies-count() == 0;
+                enabled: PathListAdapter.paths-count() > 0 && !check-redundancies();
                 clicked => { start-analysis(); }
             }
         }
