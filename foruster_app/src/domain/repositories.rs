@@ -20,7 +20,7 @@ pub fn disk_repo() -> impl DiskRepository + Clone {
 }
 
 pub fn path_repo(disk_repo: Rc<dyn DiskRepository>) -> impl PathRepository + Clone {
-    let path_repository_impl = PathRepositoryImpl::new(disk_repo);
+    
 
-    path_repository_impl
+    PathRepositoryImpl::new(disk_repo)
 }

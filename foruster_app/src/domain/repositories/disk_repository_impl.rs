@@ -94,10 +94,7 @@ impl DiskRepository for DiskRepositoryImpl {
     }
 
     fn check_for_device_changes(&self) -> bool {
-        let has_changes = match self.event_listener.borrow_mut().poll_event() {
-            Some(_) => true,
-            None => false,
-        };
+        let has_changes = self.event_listener.borrow_mut().poll_event().is_some();
 
         if has_changes {
             self.update_disks();

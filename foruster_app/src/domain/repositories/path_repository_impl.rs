@@ -81,16 +81,15 @@ impl PathRepository for PathRepositoryImpl {
                     .partitions()
                     .iter()
                     .flat_map(|partition| partition.volume())
-                    .map(|volume| {
+                    .flat_map(|volume| {
                         let mut vec = volume
                             .drive_letters()
-                            .into_iter()
+                            .iter()
                             .map(|drive_letter| format!("{}:\\", drive_letter).into())
                             .collect::<Vec<PathBuf>>();
                         vec.extend_from_slice(volume.mount_points());
                         vec
                     })
-                    .flatten()
                     .map(|mount_point| PathItem::new(mount_point, disk.disk_data().name()))
                     .collect::<Vec<_>>();
 

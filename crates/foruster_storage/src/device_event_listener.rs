@@ -45,13 +45,19 @@ unsafe extern "system" fn notification_callback(
     };
 
     if let Some(evt) = event {
-        if let Err(_) = ctx.sender.send(evt) {
-            return 1;
+        if ctx.sender.send(evt).is_err() {
+            1
         } else {
-            return 0;
+            0
         }
     } else {
-        return 1;
+        1
+    }
+}
+
+impl Default for DeviceEventListener {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -98,7 +104,7 @@ impl DeviceEventListener {
                     continue;
                 }
             }
-            self.recent_events.insert(event.clone(), now);
+            self.recent_events.insert(event, now);
             return Some(event);
         }
         None
