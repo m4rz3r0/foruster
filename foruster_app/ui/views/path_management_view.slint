@@ -4,7 +4,6 @@ import { VerticalBox, HorizontalBox, LineEdit, Button, ScrollView } from "std-wi
 import { Styling } from "../global.slint";
 
 export component PathManagementView {
-    callback browse-for-path();
     callback start-analysis();
     
     property <string> new-path: "";
@@ -33,16 +32,18 @@ export component PathManagementView {
         HorizontalBox {
             spacing: 10px;
             
-            LineEdit {
+            path-text := LineEdit {
                 placeholder-text: @tr("Ruta a analizar...");
                 text <=> new-path;
                 width: parent.width - 200px;
-                enabled: true;
+                enabled: false;
             }
             
             Button {
                 text: @tr("Explorar...");
-                clicked => { browse-for-path(); }
+                clicked => {
+                    path-text.text = PathListAdapter.browse-for-path();
+                }
                 width: 90px;
             }
             

@@ -7,6 +7,8 @@ use slint::ModelNotify;
 use slint::ModelRc;
 use slint::ModelTracker;
 
+use rfd::FileDialog;
+
 use crate::domain::repositories::traits;
 use crate::domain::PathItem;
 
@@ -40,6 +42,12 @@ impl PathListController {
 
     pub fn redundant_count(&self) -> usize {
         self.path_model.redundant_count()
+    }
+
+    pub fn browse_path(&self) -> PathBuf {
+        FileDialog::new()
+            .pick_folder()
+            .unwrap_or_else(|| PathBuf::new())
     }
 }
 

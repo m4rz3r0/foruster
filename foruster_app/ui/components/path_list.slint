@@ -32,6 +32,7 @@ export global PathListAdapter {
     callback update-path(int, string);
     callback remove-path(int);
 
+    pure callback browse-for-path() -> string;
     pure callback redundant-count() -> int;
 
     pure public function path-count() -> int {

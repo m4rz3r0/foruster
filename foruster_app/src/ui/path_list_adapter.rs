@@ -54,6 +54,14 @@ pub fn connect(view_handle: &ui::App, controller: PathListController) {
             });
         }
     });
+
+    connect_with_controller(view_handle, &controller, {
+        move |adapter, controller| {
+            adapter.on_browse_for_path(move || {
+                controller.browse_path().to_string_lossy().to_string().into()
+            });
+        }
+    });
 }
 
 fn map_path_to_item(path: PathItem) -> ui::PathListItem {
