@@ -40,6 +40,10 @@ impl PathItem {
         self.path = path;
     }
 
+    pub fn set_volume_id(&mut self, volume_id: String) {
+        self.volume_id = volume_id;
+    }
+
 
     pub fn set_redundant(&mut self, redundant: bool) {
         self.redundant = redundant;

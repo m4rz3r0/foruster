@@ -11,7 +11,7 @@ use traits::PathRepository;
 
 pub mod traits;
 
-pub fn disk_repo() -> impl traits::DiskRepository + Clone {
+pub fn disk_repo() -> impl DiskRepository + Clone {
     let disk_repository_impl = DiskRepositoryImpl::new();
 
     disk_repository_impl.update_disks();
@@ -19,7 +19,7 @@ pub fn disk_repo() -> impl traits::DiskRepository + Clone {
     disk_repository_impl
 }
 
-pub fn path_repo(disk_repo: Rc<dyn DiskRepository>) -> impl traits::PathRepository + Clone {
+pub fn path_repo(disk_repo: Rc<dyn DiskRepository>) -> impl PathRepository + Clone {
     let path_repository_impl = PathRepositoryImpl::new(disk_repo);
 
     path_repository_impl

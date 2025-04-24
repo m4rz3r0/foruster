@@ -46,6 +46,14 @@ pub fn connect(view_handle: &ui::App, controller: PathListController) {
             });
         }
     });
+
+    connect_with_controller(view_handle, &controller, {
+        move |adapter, controller| {
+            adapter.on_redundant_count(move || {
+                controller.redundant_count() as i32
+            });
+        }
+    });
 }
 
 fn map_path_to_item(path: PathItem) -> ui::PathListItem {

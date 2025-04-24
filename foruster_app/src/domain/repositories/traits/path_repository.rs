@@ -10,5 +10,7 @@ pub trait PathRepository {
     fn update_path(&self, index: usize, path: PathBuf);
 
     fn load_paths(&self);
+    fn check_redundant_paths(&self) -> Vec<usize>;
     fn path_count(&self) -> usize;
+    fn redundant_count(&self) -> usize;
 }

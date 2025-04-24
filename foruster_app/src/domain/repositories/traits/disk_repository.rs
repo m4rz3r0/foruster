@@ -10,4 +10,5 @@ pub trait DiskRepository {
     fn toggle_selected(&self, index: usize) -> bool;
     fn remove_disk(&self, index: usize) -> bool;
     fn push_disk(&self, disk: domain::models::DiskItem) -> bool;
+    fn volume_id_by_path(&self, path: &std::path::Path) -> Option<String>;
 }

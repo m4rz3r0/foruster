@@ -37,6 +37,10 @@ impl PathListController {
     pub fn update_path(&self, index: usize, path: PathBuf) {
         self.path_model.update_path(index, path)
     }
+
+    pub fn redundant_count(&self) -> usize {
+        self.path_model.redundant_count()
+    }
 }
 
 #[derive(Clone)]
@@ -56,16 +60,36 @@ impl PathModel {
     fn add_path(&self, path: PathBuf) {
         self.repo.add_path(path);
         self.notify.row_added(self.repo.path_count() - 1, 1);
+
+        self.check_redundant_paths();
     }
 
     fn remove_path(&self, index: usize) {
         self.repo.remove_path(index);
-        self.notify.row_removed(self.repo.path_count() - 1, 1);
+        self.notify.row_removed(index, 1);
+
+        self.check_redundant_paths();
     }
 
     fn update_path(&self, index: usize, path: PathBuf) {
         self.repo.update_path(index, path);
         self.notify.row_changed(index);
+
+        self.check_redundant_paths();
+    }
+
+    fn redundant_count(&self) -> usize {
+        self.repo.redundant_count()
+    }
+
+    fn check_redundant_paths(&self) {
+        let redundant_paths = self.repo.check_redundant_paths();
+
+        println!("Redundant changes: {:?}", redundant_paths);
+
+        for index in redundant_paths {
+            self.notify.row_changed(index);
+        }
     }
 }
 

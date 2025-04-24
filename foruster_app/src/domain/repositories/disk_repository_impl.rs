@@ -105,4 +105,30 @@ impl DiskRepository for DiskRepositoryImpl {
 
         has_changes
     }
+    
+    fn volume_id_by_path(&self, path: &std::path::Path) -> Option<String> {
+        let volumes = self
+            .disks
+            .borrow()
+            .iter()
+            .flat_map(|disk| disk.disk_data().partitions())
+            .filter_map(|partition| partition.volume().clone())
+            .collect::<Vec<_>>();
+        
+        for volume in volumes {
+            for mount_point in volume.mount_points() {
+                if path.starts_with(mount_point) {
+                    return Some(volume.guid_identifier());
+                }
+            }
+
+            for drive_letter in volume.drive_letters() {
+                if path.starts_with(drive_letter.to_string()) {
+                    return Some(volume.guid_identifier());
+                }
+            }
+        }
+
+        None
+    }
 }

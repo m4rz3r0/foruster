@@ -16,7 +16,6 @@ fn init() -> ui::App {
 
     let path_repo_clone = path_repo.clone();
     view_handle.on_load_paths(move || {
-        println!("Loading paths...");
         path_repo_clone.load_paths();
     });
 

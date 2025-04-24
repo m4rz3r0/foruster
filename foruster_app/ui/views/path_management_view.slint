@@ -6,12 +6,11 @@ import { Styling } from "../global.slint";
 export component PathManagementView {
     callback browse-for-path();
     callback start-analysis();
-    pure callback redundant-count <=> PathListAdapter.redundant-count;
     
     property <string> new-path: "";
 
     pure function check-redundancies() -> bool {
-        redundant-count() > 0
+        PathListAdapter.redundant-count() > 0
     }
     
     VerticalBox {
@@ -37,6 +36,7 @@ export component PathManagementView {
                 placeholder-text: @tr("Ruta a analizar...");
                 text <=> new-path;
                 width: parent.width - 200px;
+                enabled: true;
             }
             
             Button {
@@ -80,8 +80,6 @@ export component PathManagementView {
             color: Styling.text-muted;
         }
         
-        
-        
         if (check-redundancies()) : Rectangle {
             background: Styling.warning-bg;
             border-radius: 4px;
@@ -89,7 +87,7 @@ export component PathManagementView {
             
             HorizontalBox {
                 Text {
-                    text: @tr("Se han detectado ") + redundant-count() + @tr(" rutas redundantes. Revise las rutas añadidas.");
+                    text: @tr("Se han detectado ") + PathListAdapter.redundant-count() + @tr(" rutas redundantes. Revise las rutas añadidas.");
                     color: Styling.warning-dark;
                 }
             }
