@@ -4,14 +4,12 @@ import { Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
 
 export component DiskListView {
     callback analyze-disks();
-    callback update-disks <=> DiskListAdapter.update-disks;
-    callback check-for-changes <=> DiskListAdapter.check-for-changes;
 
     update_disk_timer := Timer {
         interval: 500ms;
         triggered => {
-            if (check-for-changes()) {
-                update-disks();
+            if (DiskListAdapter.check-for-changes()) {
+                DiskListAdapter.update-disks();
                 update-button-enabled-status();
             }
         }

@@ -8,9 +8,10 @@ export component PathManagementView {
     callback start-analysis();
     
     property <string> new-path: "";
+    property <int> redundant-paths: 0;
 
     pure function check-redundancies() -> bool {
-        PathListAdapter.redundant-count() > 0
+        redundant-paths > 0
     }
     
     VerticalBox {
@@ -51,6 +52,7 @@ export component PathManagementView {
                     if (new-path != "") {
                         PathListAdapter.add-path(new-path);
                         new-path = "";
+                        redundant-paths = PathListAdapter.redundant-count();
                     }
                 }
                 width: 80px;
@@ -71,8 +73,14 @@ export component PathManagementView {
 
         PathList {
             paths: PathListAdapter.paths;
-            update-path(index, path) => { PathListAdapter.update-path(index, path); }
-            remove-path(index) => { PathListAdapter.remove-path(index); }
+            update-path(index, path) => {
+                PathListAdapter.update-path(index, path);
+                redundant-paths = PathListAdapter.redundant-count();
+            }
+            remove-path(index) => {
+                PathListAdapter.remove-path(index);
+                redundant-paths = PathListAdapter.redundant-count();
+            }
         }
         
         if (PathListAdapter.path-count() == 0) : Text {
