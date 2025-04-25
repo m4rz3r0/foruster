@@ -66,6 +66,9 @@ impl PathModel {
     }
 
     fn add_path(&self, path: PathBuf) {
+        if !path.exists() {
+            return;
+        }
         self.repo.add_path(path);
         self.notify.row_added(self.repo.path_count() - 1, 1);
 

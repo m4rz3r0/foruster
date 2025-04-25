@@ -25,6 +25,10 @@ impl PathRepository for PathRepositoryImpl {
     }
 
     fn add_path(&self, path: std::path::PathBuf) {
+        if path.as_os_str().is_empty() {
+            return;
+        }
+        
         let mut paths = self.paths.borrow_mut();
         let volume_id = self
             .disk_repo
@@ -42,6 +46,10 @@ impl PathRepository for PathRepositoryImpl {
     }
 
     fn update_path(&self, index: usize, path: std::path::PathBuf) {
+        if path.as_os_str().is_empty() {
+            return;
+        }
+
         let mut paths = self.paths.borrow_mut();
         let volume_id = self
             .disk_repo

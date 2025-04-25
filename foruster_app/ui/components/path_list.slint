@@ -46,6 +46,8 @@ export component PathItem {
     in-out property <bool> redundant: false;
     in-out property <string> redundancy-message: "";
     
+    property <string> prev-path: path;
+
     callback remove();
     callback edit-confirmed(string);
     
@@ -72,6 +74,7 @@ export component PathItem {
             if (is-editing) : LineEdit {
                 text <=> path;
                 font-size: 14px;
+                enabled: false;
             }
             
             HorizontalBox {
@@ -82,15 +85,24 @@ export component PathItem {
                 if (!is-editing) : Button {
                     text: @tr("Editar");
                     width: 80px;
-                    clicked => { is-editing = true; }
+                    clicked => {
+                        is-editing = true;
+                        prev-path = path;
+                        path = PathListAdapter.browse-for-path();
+                    }
                 }
                 
                 if (is-editing) : Button {
                     text: @tr("Guardar");
                     width: 80px;
-                    clicked => { 
-                        edit-confirmed(path);
-                        is-editing = false;
+                    clicked => {
+                        if (path != "") {
+                            edit-confirmed(path);
+                            is-editing = false;
+                        } else {
+                            is-editing = false;
+                            path = prev-path;
+                        }
                     }
                 }
                 
