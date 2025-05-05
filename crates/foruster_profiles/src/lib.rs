@@ -3,8 +3,6 @@ mod profile;
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     use crate::profile::FileCategory;
     use crate::profile::default_profiles;
 
