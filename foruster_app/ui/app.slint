@@ -39,6 +39,10 @@ export component App inherits Window {
             }
         }
 
-        if current-page == Page.PathManagement : PathManagementView {}
+        if current-page == Page.PathManagement : PathManagementView {
+            start-analysis => {
+                current-page = Page.DiskAnalysis;
+            }
+        }
     }
 }
