@@ -5,10 +5,7 @@ use std::path::Path;
 pub enum FileCategory {
     Application,
     Audio,
-    Font,
-    Haptics,
     Image,
-    Message,
     Model,
     Text,
     Video,
@@ -20,10 +17,7 @@ impl From<String> for FileCategory {
         match mime_type.as_str() {
             "application" => FileCategory::Application,
             "audio" => FileCategory::Audio,
-            "font" => FileCategory::Font,
-            "haptics" => FileCategory::Haptics,
             "image" => FileCategory::Image,
-            "message" => FileCategory::Message,
             "model" => FileCategory::Model,
             "text" => FileCategory::Text,
             "video" => FileCategory::Video,
@@ -111,26 +105,8 @@ pub fn default_profiles() -> Vec<Profile> {
             None
         ),
         Profile::new(
-            "Fuentes tipográficas".to_string(),
-            Some(vec![FileCategory::Font]),
-            None,
-            None
-        ),
-        Profile::new(
-            "Hápticos".to_string(),
-            Some(vec![FileCategory::Haptics]),
-            None,
-            None
-        ),
-        Profile::new(
             "Imágenes".to_string(),
             Some(vec![FileCategory::Image]),
-            None,
-            None
-        ),
-        Profile::new(
-            "Mensajes".to_string(),
-            Some(vec![FileCategory::Message]),
             None,
             None
         ),

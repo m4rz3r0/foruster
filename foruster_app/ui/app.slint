@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { DiskListView, DiskAnalysisView, PathManagementView } from "index.slint";
+import { DiskListView, DiskAnalysisView, PathManagementView, ProfileSelectionView } from "index.slint";
 import { WindowSettings } from "global.slint";
 import { VerticalBox } from "std-widgets.slint";
 
@@ -41,8 +41,12 @@ export component App inherits Window {
 
         if current-page == Page.PathManagement : PathManagementView {
             start-analysis => {
-                current-page = Page.DiskAnalysis;
+                current-page = Page.ProfileSelection;
             }
+        }
+
+        if current-page == Page.ProfileSelection : ProfileSelectionView {
+            
         }
     }
 }

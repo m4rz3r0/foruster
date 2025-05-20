@@ -1,0 +1,153 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+import { ProfileCardIcons } from "../global.slint";
+import { GridBox, VerticalBox, HorizontalBox } from "std-widgets.slint";
+
+import { Styling } from "../global.slint";
+
+struct ProfileListItem {
+    label: string,
+    bg_color: color,
+    icon_source: image,
+
+    selected: bool,
+}
+
+export global ProfileListAdapter {
+    // Dummy data for the preview
+    in-out property <[ProfileListItem]> profiles: [
+        { label: "Aplicaciones", bg_color: #644661, icon_source: ProfileCardIcons.app, selected: false },
+        { label: "Audio", bg_color: #86883D, icon_source: ProfileCardIcons.audio, selected: false },
+        { label: "Imágenes", bg_color: #5F7E81, icon_source: ProfileCardIcons.image, selected: false },
+        { label: "Modelos", bg_color: #CA672E, icon_source: ProfileCardIcons.model, selected: false },
+        { label: "Textos", bg_color: #9D6C79, icon_source: ProfileCardIcons.text, selected: false },
+        { label: "Vídeos", bg_color: #48705D, icon_source: ProfileCardIcons.video, selected: false },
+    ];
+
+    callback toggle-profile-checked(/* index */ int);
+    pure callback count-selected-profiles() -> int;
+
+    // Dummy implementation for the preview
+    toggle-profile-checked(index) => {
+        profiles[index].selected = !profiles[index].selected;
+    }
+}
+
+export component ProfileCard inherits Rectangle {
+    border-radius: 200px;
+    border-width: 4px;
+    border-color: bg_color;
+    background: selected ? bg_color : ta.has-hover ? bg_color : Colors.transparent;
+
+
+    in property <string> label: "Imágenes";
+    in property <color> bg_color: Colors.green;
+
+    in-out property <image> icon_source: ProfileCardIcons.image;
+    in-out property <bool> selected: false;
+
+    callback toggle();
+
+    // Dummy implementation for the preview
+    toggle() => {
+        root.selected = !root.selected;
+    }
+    
+    ta := TouchArea {
+        width: 100%;
+        height: 100%;
+
+        clicked => {
+            root.toggle();
+        }            
+    }
+
+    animate background {
+        duration: 150ms;             
+    }
+
+    VerticalLayout {
+        alignment: center;
+        spacing: 10px;
+
+        icon := Image {
+            width: 32px;
+            height: 32px;
+            colorize: Colors.white;
+            source: icon_source;
+            x: (parent.width - self.width) / 2;
+        }
+
+        Text {
+            text: label;
+            horizontal-alignment: center;
+            font-size: 24px;
+            font-weight: 500;
+        }
+    }
+}
+
+export component ProfileList {
+    in property <[ProfileListItem]> profiles: ProfileListAdapter.profiles;
+
+    // Responsive design
+    property <length> profile_width: self.width / (profiles.length / 2) - 6px;
+    property <length> profile_height: self.width / (profiles.length / 2) - 6px;
+
+    callback toggle(/* index */ int);
+
+    property <bool> animate_in: false;
+    Timer {
+        running: true;
+        interval: 500ms;
+        triggered => { root.animate_in = true;
+            debug("Animation started");}
+    }
+
+    HorizontalBox {
+        width: 100%;
+        height: 100%;
+        spacing: 6px;
+
+        for i in profiles.length / 2: VerticalBox {
+            spacing: 20px;
+
+            // Primer círculo
+            ProfileCard {
+                label: profiles[i].label;
+                bg_color: profiles[i].bg_color;
+                icon_source: profiles[i].icon_source;
+                selected: profiles[i].selected;
+
+                // Animación de posición
+                width: root.animate_in ? 225px : 0;
+                height: root.animate_in ? 225px : 0;
+                visible: root.animate_in;
+                animate width, height { duration: 500ms; easing: ease-out; }
+
+                // toggle
+                toggle => {
+                    self.selected = !self.selected;
+                    root.toggle(i);
+                }
+            }
+
+            // Segundo círculo
+            ProfileCard {
+                label: profiles[i + profiles.length / 2].label;
+                bg_color: profiles[i + profiles.length / 2].bg_color;
+                icon_source: profiles[i + profiles.length / 2].icon_source;
+                selected: profiles[i + profiles.length / 2].selected;
+
+                width: root.animate_in ? 225px : 0;
+                height: root.animate_in ? 225px : 0;
+                visible: root.animate_in;
+                animate width, height { duration: 500ms; easing: ease-out; }
+
+                toggle => {
+                    self.selected = !self.selected;
+                    root.toggle(i + profiles.length / 2);
+                }
+            }
+        }
+    }
+}

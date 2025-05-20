@@ -37,15 +37,7 @@ export global DiskListAdapter {
 
     // Dummy implementation for the preview
     toggle-disk-checked(index) => {
-        root.disks[index] = {
-            name: root.disks[index].name,
-            size: root.disks[index].size,
-            serial_number: root.disks[index].serial_number,
-            drive_type: root.disks[index].drive_type,
-            num_partitions: root.disks[index].num_partitions,
-            num_mounted_partitions: root.disks[index].num_mounted_partitions,
-            selected: !root.disks[index].selected,
-        };
+        root.disks[index].selected = !root.disks[index].selected;
     }
 }
 
