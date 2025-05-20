@@ -95,7 +95,7 @@ impl PathModel {
 
     fn check_redundant_paths(&self) {
         let redundant_paths = self.repo.check_redundant_paths();
-        
+
         for index in redundant_paths {
             self.notify.row_changed(index);
         }

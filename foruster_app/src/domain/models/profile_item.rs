@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use foruster_core::Disk;
+use foruster_profiles::Profile;
 
 #[derive(Debug, Clone)]
-pub struct DiskItem {
-    disk_data: Disk,
+pub struct ProfileItem {
+    profile_data: Profile,
     selected: bool,
 }
 
-impl DiskItem {
-    pub fn new(disk_data: Disk) -> Self {
+impl ProfileItem {
+    pub fn new(profile_data: Profile) -> Self {
         Self {
-            disk_data,
+            profile_data,
             selected: false,
         }
     }
 
-    pub fn disk_data(&self) -> &Disk {
-        &self.disk_data
+    pub fn profile_data(&self) -> &Profile {
+        &self.profile_data
     }
 
     pub fn selected(&self) -> bool {

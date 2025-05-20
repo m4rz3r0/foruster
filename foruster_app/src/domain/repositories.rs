@@ -9,6 +9,9 @@ mod path_repository_impl;
 pub use path_repository_impl::*;
 use traits::PathRepository;
 
+mod profile_repository_impl;
+pub use profile_repository_impl::*;
+
 pub mod traits;
 
 pub fn disk_repo() -> impl DiskRepository + Clone {
@@ -20,7 +23,5 @@ pub fn disk_repo() -> impl DiskRepository + Clone {
 }
 
 pub fn path_repo(disk_repo: Rc<dyn DiskRepository>) -> impl PathRepository + Clone {
-    
-
     PathRepositoryImpl::new(disk_repo)
 }

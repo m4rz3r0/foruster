@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use std::path::Path;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum FileCategory {
     Application,
     Audio,
@@ -9,7 +9,7 @@ pub enum FileCategory {
     Model,
     Text,
     Video,
-    Other
+    Other,
 }
 
 impl From<String> for FileCategory {
@@ -21,11 +21,12 @@ impl From<String> for FileCategory {
             "model" => FileCategory::Model,
             "text" => FileCategory::Text,
             "video" => FileCategory::Video,
-            _ => FileCategory::Other
+            _ => FileCategory::Other,
         }
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Profile {
     name: String,
     categories: Option<Vec<FileCategory>>,
@@ -34,7 +35,12 @@ pub struct Profile {
 }
 
 impl Profile {
-    pub fn new(name: String, categories: Option<Vec<FileCategory>>, mime_types: Option<Vec<String>>, extensions: Option<Vec<String>>) -> Self {
+    pub fn new(
+        name: String,
+        categories: Option<Vec<FileCategory>>,
+        mime_types: Option<Vec<String>>,
+        extensions: Option<Vec<String>>,
+    ) -> Self {
         Profile {
             name,
             categories,
@@ -96,43 +102,43 @@ pub fn default_profiles() -> Vec<Profile> {
             "Aplicaciones".to_string(),
             Some(vec![FileCategory::Application]),
             None,
-            None
+            None,
         ),
         Profile::new(
             "Audios".to_string(),
             Some(vec![FileCategory::Audio]),
             None,
-            None
+            None,
         ),
         Profile::new(
             "Imágenes".to_string(),
             Some(vec![FileCategory::Image]),
             None,
-            None
+            None,
         ),
         Profile::new(
             "Modelos".to_string(),
             Some(vec![FileCategory::Model]),
             None,
-            None
+            None,
         ),
         Profile::new(
             "Texto".to_string(),
             Some(vec![FileCategory::Text]),
             None,
-            None
+            None,
         ),
         Profile::new(
             "Vídeos".to_string(),
             Some(vec![FileCategory::Video]),
             None,
-            None
+            None,
         ),
         Profile::new(
             "Otros".to_string(),
             Some(vec![FileCategory::Other]),
             None,
-            None
+            None,
         ),
         Profile::new(
             "Archivos comprimidos".to_string(),
@@ -147,13 +153,13 @@ pub fn default_profiles() -> Vec<Profile> {
                 "application/x-gzip".to_string(),
                 "application/x-tar".to_string(),
                 "application/x-bzip2".to_string(),
-                "application/x-bzip".to_string()
+                "application/x-bzip".to_string(),
             ]),
             Some(vec![
                 ".zip".to_string(),
                 ".tar.gz".to_string(),
-                ".tar.bz2".to_string()
-            ])
+                ".tar.bz2".to_string(),
+            ]),
         ),
         Profile::new(
             "Documentos".to_string(),
@@ -161,11 +167,13 @@ pub fn default_profiles() -> Vec<Profile> {
             Some(vec![
                 "application/pdf".to_string(),
                 "application/msword".to_string(),
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document".to_string(),
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    .to_string(),
                 "application/vnd.ms-excel".to_string(),
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".to_string(),
                 "application/vnd.ms-powerpoint".to_string(),
-                "application/vnd.openxmlformats-officedocument.presentationml.presentation".to_string()
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                    .to_string(),
             ]),
             Some(vec![
                 ".pdf".to_string(),
@@ -174,8 +182,8 @@ pub fn default_profiles() -> Vec<Profile> {
                 ".xls".to_string(),
                 ".xlsx".to_string(),
                 ".ppt".to_string(),
-                ".pptx".to_string()
-            ])
-        )
+                ".pptx".to_string(),
+            ]),
+        ),
     ]
 }

@@ -6,13 +6,13 @@ pub enum HashFunction {
     Md5,
     Sha1,
     Sha256,
-    Blake3
+    Blake3,
 }
 
 pub struct FileEntry {
     path: PathBuf,
     size: usize,
-    hash: HashMap<HashFunction, Box<dyn Hasher>>
+    hash: HashMap<HashFunction, Box<dyn Hasher>>,
 }
 
 impl FileEntry {
@@ -20,7 +20,7 @@ impl FileEntry {
         Self {
             path,
             size,
-            hash: HashMap::new()
+            hash: HashMap::new(),
         }
     }
 

@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use crate::domain;
+use crate::domain::{self, DiskItem};
 use foruster_storage::{device_event_listener::DeviceEventListener, storage_extractor};
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, path::Path, rc::Rc};
 
 use super::traits::DiskRepository;
 
 #[derive(Clone)]
 pub struct DiskRepositoryImpl {
-    disks: Rc<RefCell<Vec<domain::models::DiskItem>>>,
+    disks: Rc<RefCell<Vec<DiskItem>>>,
     event_listener: Rc<RefCell<DeviceEventListener>>,
 }
 
@@ -31,7 +31,7 @@ impl DiskRepository for DiskRepositoryImpl {
         self.disks.borrow().len()
     }
 
-    fn get_disk(&self, index: usize) -> Option<domain::models::DiskItem> {
+    fn get_disk(&self, index: usize) -> Option<DiskItem> {
         self.disks.borrow().get(index).cloned()
     }
 
@@ -53,7 +53,7 @@ impl DiskRepository for DiskRepositoryImpl {
         false
     }
 
-    fn push_disk(&self, disk: domain::DiskItem) -> bool {
+    fn push_disk(&self, disk: DiskItem) -> bool {
         self.disks.borrow_mut().push(disk);
         true
     }
@@ -102,8 +102,8 @@ impl DiskRepository for DiskRepositoryImpl {
 
         has_changes
     }
-    
-    fn volume_id_by_path(&self, path: &std::path::Path) -> Option<String> {
+
+    fn volume_id_by_path(&self, path: &Path) -> Option<String> {
         let volumes = self
             .disks
             .borrow()
@@ -111,7 +111,7 @@ impl DiskRepository for DiskRepositoryImpl {
             .flat_map(|disk| disk.disk_data().partitions())
             .filter_map(|partition| partition.volume().clone())
             .collect::<Vec<_>>();
-        
+
         for volume in volumes {
             for mount_point in volume.mount_points() {
                 if path.starts_with(mount_point) {

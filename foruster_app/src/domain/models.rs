@@ -4,3 +4,6 @@ pub use disk_item::DiskItem;
 
 mod path_item;
 pub use path_item::PathItem;
+
+mod profile_item;
+pub use profile_item::ProfileItem;

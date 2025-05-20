@@ -4,3 +4,6 @@ pub use disk_repository::DiskRepository;
 
 mod path_repository;
 pub use path_repository::PathRepository;
+
+mod profile_repository;
+pub use profile_repository::ProfileRepository;

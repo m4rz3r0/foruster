@@ -28,7 +28,7 @@ impl PathRepository for PathRepositoryImpl {
         if path.as_os_str().is_empty() {
             return;
         }
-        
+
         let mut paths = self.paths.borrow_mut();
         let volume_id = self
             .disk_repo

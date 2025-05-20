@@ -44,7 +44,6 @@ impl PathItem {
         self.volume_id = volume_id;
     }
 
-
     pub fn set_redundant(&mut self, redundant: bool) {
         self.redundant = redundant;
     }
