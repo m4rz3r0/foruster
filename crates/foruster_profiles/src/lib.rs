@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 mod profile;
-pub use profile::Profile;
+pub use profile::{Profile, FileCategory, default_profiles};
 
 #[cfg(test)]
 mod tests {

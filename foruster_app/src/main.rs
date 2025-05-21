@@ -13,6 +13,7 @@ fn init() -> ui::App {
 
     let disk_repo = Rc::new(domain::disk_repo());
     let path_repo = Rc::new(domain::path_repo(disk_repo.clone()));
+    let profile_repo = Rc::new(domain::profile_repo());
 
     let path_repo_clone = path_repo.clone();
     view_handle.on_load_paths(move || {
@@ -24,6 +25,9 @@ fn init() -> ui::App {
 
     let path_list_controller = domain::PathListController::new(path_repo.clone());
     ui::path_list_adapter::connect(&view_handle, path_list_controller.clone());
+
+    let profiles_controller = domain::ProfilesController::new(profile_repo.clone());
+    ui::profiles_adapter::connect(&view_handle, profiles_controller.clone());
 
     view_handle
 }

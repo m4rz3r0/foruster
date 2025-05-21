@@ -3,7 +3,7 @@ mod disk_repository_impl;
 use std::rc::Rc;
 
 pub use disk_repository_impl::*;
-use traits::DiskRepository;
+use traits::{DiskRepository, ProfileRepository};
 
 mod path_repository_impl;
 pub use path_repository_impl::*;
@@ -24,4 +24,8 @@ pub fn disk_repo() -> impl DiskRepository + Clone {
 
 pub fn path_repo(disk_repo: Rc<dyn DiskRepository>) -> impl PathRepository + Clone {
     PathRepositoryImpl::new(disk_repo)
+}
+
+pub fn profile_repo() -> impl ProfileRepository + Clone {
+    ProfileRepositoryImpl::new()
 }

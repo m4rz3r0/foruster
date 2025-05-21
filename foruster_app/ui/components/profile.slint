@@ -7,7 +7,7 @@ import { Styling } from "../global.slint";
 struct ProfileListItem {
     label: string,
     bg_color: color,
-    icon_source: image,
+    icon_source: string,
 
     selected: bool,
 }
@@ -15,12 +15,12 @@ struct ProfileListItem {
 export global ProfileListAdapter {
     // Dummy data for the preview
     in-out property <[ProfileListItem]> profiles: [
-        { label: "Aplicaciones", bg_color: #644661, icon_source: ProfileCardIcons.app, selected: false },
-        { label: "Audio", bg_color: #86883D, icon_source: ProfileCardIcons.audio, selected: false },
-        { label: "Imágenes", bg_color: #5F7E81, icon_source: ProfileCardIcons.image, selected: false },
-        { label: "Modelos", bg_color: #CA672E, icon_source: ProfileCardIcons.model, selected: false },
-        { label: "Textos", bg_color: #9D6C79, icon_source: ProfileCardIcons.text, selected: false },
-        { label: "Vídeos", bg_color: #48705D, icon_source: ProfileCardIcons.video, selected: false },
+        { label: "Aplicaciones", bg_color: #644661, icon_source: "app", selected: false },
+        { label: "Audio", bg_color: #86883D, icon_source: "audio", selected: false },
+        { label: "Imágenes", bg_color: #5F7E81, icon_source: "image", selected: false },
+        { label: "Modelos", bg_color: #CA672E, icon_source: "model", selected: false },
+        { label: "Textos", bg_color: #9D6C79, icon_source: "text", selected: false },
+        { label: "Vídeos", bg_color: #48705D, icon_source: "video", selected: false },
     ];
 
     callback toggle-profile-checked(/* index */ int);
@@ -29,6 +29,24 @@ export global ProfileListAdapter {
     // Dummy implementation for the preview
     toggle-profile-checked(index) => {
         profiles[index].selected = !profiles[index].selected;
+    }
+
+    pure public function icon_source_to_icon(icon_source: string) -> image {
+        if icon_source == "app" {
+            return ProfileCardIcons.app;
+        } else if icon_source == "audio" {
+            return ProfileCardIcons.audio;
+        } else if icon_source == "image" {
+            return ProfileCardIcons.image;
+        } else if icon_source == "model" {
+            return ProfileCardIcons.model;
+        } else if icon_source == "text" {
+            return ProfileCardIcons.text;
+        } else if icon_source == "video" {
+            return ProfileCardIcons.video;
+        } else {
+            return ProfileCardIcons.app;
+        }
     }
 }
 
@@ -86,68 +104,120 @@ export component ProfileCard inherits Rectangle {
     }
 }
 
+component CircularMenuSection {
+    in property <string> title;
+    in property <image> icon;
+    in property <brush> background-color;
+    in property <float> start-angle;
+    in property <float> end-angle;
+    
+    property <length> inner-radius: 200px;
+    property <length> outer-radius: 400px;
+    property <length> center-x: 0;
+    property <length> center-y: 0;
+    
+    // Calculate midpoint angle for placing content
+    property <float> mid-angle: (start-angle + end-angle) / 2;
+    property <length> mid-radius: (inner-radius + outer-radius) / 2;
+    
+    // Content position (icon and text)
+    property <length> content-x: center-x + cos(mid-angle * 1deg) * mid-radius;
+    property <length> content-y: center-y + sin(mid-angle * 1deg) * mid-radius;
+    
+    in-out property <bool> selected: false;
+
+    callback toggle();
+
+    toggle() => {
+        root.selected = !root.selected;
+    }
+
+    ta := TouchArea {
+        x: content-x - self.width / 2;
+        y: content-y - self.height / 2;
+        width: 150px;
+        height: 150px;
+
+        visible: true;
+
+        clicked => {
+            root.toggle();
+            debug("Clicked on section: " + root.title);
+            debug("Color: " + root.background-color.red + ", " + root.background-color.green + ", " + root.background-color.blue);
+        }
+    }
+
+    p := Path {
+        fill: selected ? background-color : ta.has-hover ? background-color : Colors.transparent;
+        stroke: #2d2d30;
+        stroke-width: 5px;
+
+        MoveTo {
+            x: (center-x / 1px) + cos(start-angle * 1deg) * (inner-radius / 1px);
+            y: (center-y / 1px) + sin(start-angle * 1deg) * (inner-radius / 1px);
+        }
+        LineTo {
+            x: (center-x / 1px) + cos(start-angle * 1deg) * (outer-radius / 1px);
+            y: (center-y / 1px) + sin(start-angle * 1deg) * (outer-radius / 1px);
+        }
+        ArcTo {
+            radius-x: outer-radius / 1px;
+            radius-y: outer-radius / 1px;
+            x: (center-x / 1px) + cos(end-angle * 1deg) * (outer-radius / 1px);
+            y: (center-y / 1px) + sin(end-angle * 1deg) * (outer-radius / 1px);
+            large-arc: end-angle - start-angle > 180;
+            sweep: true;
+        }
+        LineTo {
+            x: (center-x / 1px) + cos(end-angle * 1deg) * (inner-radius / 1px);
+            y: (center-y / 1px) + sin(end-angle * 1deg) * (inner-radius / 1px);
+        }
+        ArcTo {
+            radius-x: inner-radius / 1px;
+            radius-y: inner-radius / 1px;
+            x: (center-x / 1px) + cos(start-angle * 1deg) * (inner-radius / 1px);
+            y: (center-y / 1px) + sin(start-angle * 1deg) * (inner-radius / 1px);
+            large-arc: end-angle - start-angle > 180;
+            sweep: false;
+        }
+
+        Close {}
+    }
+    
+    // Icon
+    Image {
+        source: icon;
+        width: 48px;
+        height: 48px;
+        x: content-x - self.width / 2;
+        y: content-y - self.height / 2 - 20px;
+        colorize: white;
+    }
+    
+    // Title
+    Text {
+        text: title;
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+        horizontal-alignment: center;
+        y: content-y + 20px;
+        x: content-x - self.width / 2;
+    }
+}
+
 export component ProfileList {
     in property <[ProfileListItem]> profiles: ProfileListAdapter.profiles;
 
-    // Responsive design
-    property <length> profile_width: self.width / (profiles.length / 2) - 6px;
-    property <length> profile_height: self.width / (profiles.length / 2) - 6px;
-
     callback toggle(/* index */ int);
 
-    property <bool> animate_in: false;
-    Timer {
-        running: true;
-        interval: 500ms;
-        triggered => { root.animate_in = true;
-            debug("Animation started");}
-    }
-
-    HorizontalBox {
-        width: 100%;
-        height: 100%;
-        spacing: 6px;
-
-        for i in profiles.length / 2: VerticalBox {
-            spacing: 20px;
-
-            // Primer círculo
-            ProfileCard {
-                label: profiles[i].label;
-                bg_color: profiles[i].bg_color;
-                icon_source: profiles[i].icon_source;
-                selected: profiles[i].selected;
-
-                // Animación de posición
-                width: root.animate_in ? 225px : 0;
-                height: root.animate_in ? 225px : 0;
-                visible: root.animate_in;
-                animate width, height { duration: 500ms; easing: ease-out; }
-
-                // toggle
-                toggle => {
-                    self.selected = !self.selected;
-                    root.toggle(i);
-                }
-            }
-
-            // Segundo círculo
-            ProfileCard {
-                label: profiles[i + profiles.length / 2].label;
-                bg_color: profiles[i + profiles.length / 2].bg_color;
-                icon_source: profiles[i + profiles.length / 2].icon_source;
-                selected: profiles[i + profiles.length / 2].selected;
-
-                width: root.animate_in ? 225px : 0;
-                height: root.animate_in ? 225px : 0;
-                visible: root.animate_in;
-                animate width, height { duration: 500ms; easing: ease-out; }
-
-                toggle => {
-                    self.selected = !self.selected;
-                    root.toggle(i + profiles.length / 2);
-                }
-            }
+    for section[i] in profiles : CircularMenuSection {
+            property <float> section-angle: 360 / profiles.length;
+            
+            title: section.label;
+            icon: ProfileListAdapter.icon_source_to_icon(section.icon-source);
+            background-color: section.bg-color;
+            start-angle: i * section-angle;
+            end-angle: (i + 1) * section-angle;
         }
-    }
 }

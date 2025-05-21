@@ -3,7 +3,7 @@ import { DiskListView, DiskAnalysisView, PathManagementView, ProfileSelectionVie
 import { WindowSettings } from "global.slint";
 import { VerticalBox } from "std-widgets.slint";
 
-export { DiskListAdapter, PathListAdapter } from "components/index.slint";
+export { DiskListAdapter, PathListAdapter, ProfileListAdapter } from "components/index.slint";
 
 enum Page {
     DiskList,
@@ -17,6 +17,7 @@ export component App inherits Window {
     min-height: WindowSettings.min-window-height;
     title: WindowSettings.title;
     icon: WindowSettings.icon;
+    
 
     property <Page> current-page: DiskList;
 
