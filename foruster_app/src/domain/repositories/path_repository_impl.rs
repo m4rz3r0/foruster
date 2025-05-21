@@ -84,24 +84,26 @@ impl PathRepository for PathRepositoryImpl {
 
         for disk_index in 0..self.disk_repo.disk_count() {
             if let Some(disk) = self.disk_repo.get_disk(disk_index) {
-                let disk_paths = disk
-                    .disk_data()
-                    .partitions()
-                    .iter()
-                    .flat_map(|partition| partition.volume())
-                    .flat_map(|volume| {
-                        let mut vec = volume
-                            .drive_letters()
-                            .iter()
-                            .map(|drive_letter| format!("{}:\\", drive_letter).into())
-                            .collect::<Vec<PathBuf>>();
-                        vec.extend_from_slice(volume.mount_points());
-                        vec
-                    })
-                    .map(|mount_point| PathItem::new(mount_point, disk.disk_data().name()))
-                    .collect::<Vec<_>>();
+                if disk.selected() {
+                    let disk_paths = disk
+                        .disk_data()
+                        .partitions()
+                        .iter()
+                        .flat_map(|partition| partition.volume())
+                        .flat_map(|volume| {
+                            let mut vec = volume
+                                .drive_letters()
+                                .iter()
+                                .map(|drive_letter| format!("{}:\\", drive_letter).into())
+                                .collect::<Vec<PathBuf>>();
+                            vec.extend_from_slice(volume.mount_points());
+                            vec
+                        })
+                        .map(|mount_point| PathItem::new(mount_point, disk.disk_data().name()))
+                        .collect::<Vec<_>>();
 
-                paths.extend(disk_paths);
+                    paths.extend(disk_paths);
+                }
             }
         }
     }
