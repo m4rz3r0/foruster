@@ -19,9 +19,13 @@ pub fn connect_with_controller(
 }
 
 pub fn connect(view_handle: &ui::App, controller: ProfilesController) {
-    view_handle
-        .global::<ui::ProfileListAdapter>()
-        .set_profiles(Rc::new(MapModel::new(controller.profiles_model(), map_profile_to_item)).into());
+    view_handle.global::<ui::ProfileListAdapter>().set_profiles(
+        Rc::new(MapModel::new(
+            controller.profiles_model(),
+            map_profile_to_item,
+        ))
+        .into(),
+    );
 
     connect_with_controller(view_handle, &controller, {
         move |adapter, controller| {

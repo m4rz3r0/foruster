@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use foruster_profiles::Profile;
-use slint::{Color};
+use slint::Color;
 
 #[derive(Debug, Clone)]
 pub struct ProfileItem {
@@ -54,7 +54,7 @@ impl ProfileItem {
     pub fn set_icon_path(&mut self, path: String) {
         self.icon_path = path;
     }
-    
+
     pub fn toggle_selected(&mut self) {
         self.selected = !self.selected;
     }

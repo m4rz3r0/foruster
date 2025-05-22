@@ -4,7 +4,7 @@ import { VerticalBox, HorizontalBox, LineEdit, Button, ScrollView } from "std-wi
 import { Styling } from "../global.slint";
 
 export component PathManagementView {
-    callback start-analysis();
+    callback start-disk-analysis();
     
     property <string> new-path: "";
     property <int> redundant-paths: 0;
@@ -113,7 +113,7 @@ export component PathManagementView {
                 text: @tr("Analizar");
                 primary: true;
                 enabled: PathListAdapter.path-count() > 0 && !check-redundancies();
-                clicked => { start-analysis(); }
+                clicked => { start-disk-analysis(); }
             }
         }
     }

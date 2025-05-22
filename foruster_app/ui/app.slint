@@ -41,13 +41,13 @@ export component App inherits Window {
         }
 
         if current-page == Page.PathManagement : PathManagementView {
-            start-analysis => {
+            start-disk-analysis => {
                 current-page = Page.ProfileSelection;
             }
         }
 
         if current-page == Page.ProfileSelection : ProfileSelectionView {
-            
+            start-profile-analysis => {}
         }
     }
 }

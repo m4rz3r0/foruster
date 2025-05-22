@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use std::{cell::RefCell, rc::Rc};
 use foruster_profiles::FileCategory;
+use std::{cell::RefCell, rc::Rc};
 
 use crate::domain::ProfileItem;
 
@@ -24,45 +24,40 @@ impl ProfileRepositoryImpl {
                     FileCategory::Application => {
                         profile.set_background_color(slint::Color::from_argb_encoded(0xFF644661));
                         profile.set_icon_path(String::from("app"));
-                    },
+                    }
                     FileCategory::Audio => {
                         profile.set_background_color(slint::Color::from_argb_encoded(0xFF86883D));
                         profile.set_icon_path(String::from("audio"));
-                    },
+                    }
                     FileCategory::Image => {
                         profile.set_background_color(slint::Color::from_argb_encoded(0xFF5F7E81));
                         profile.set_icon_path(String::from("image"));
-                    },
+                    }
                     FileCategory::Model => {
                         profile.set_background_color(slint::Color::from_argb_encoded(0xFFCA672E));
                         profile.set_icon_path(String::from("model"));
-                    },
+                    }
                     FileCategory::Text => {
                         profile.set_background_color(slint::Color::from_argb_encoded(0xFF9D6C79));
                         profile.set_icon_path(String::from("text"));
-                    },
+                    }
                     FileCategory::Video => {
                         profile.set_background_color(slint::Color::from_argb_encoded(0xFF48705D));
                         profile.set_icon_path(String::from("video"));
-                    },
+                    }
                     FileCategory::Other => {
                         profile.set_background_color(slint::Color::from_argb_encoded(0xFFbc573b));
                         profile.set_icon_path(String::from("other"));
-                    },
+                    }
                 }
 
                 profiles.push(profile);
             }
-
-
         }
 
         Self {
             profiles: Rc::new(RefCell::new(
-                profiles
-                    .into_iter()
-                    .map(|p| p.into())
-                    .collect(),
+                profiles.into_iter().map(|p| p.into()).collect(),
             )),
         }
     }

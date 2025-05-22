@@ -6,7 +6,7 @@ import { Styling } from "../global.slint";
 import { ProfileListAdapter } from "../components/profile.slint";
 
 export component ProfileSelectionView {
-    callback start-analysis();
+    callback start-profile-analysis();
 
     function update-button-enabled-status() {
         analyzeButton.enabled = ProfileListAdapter.count-selected-profiles() > 0;
@@ -47,7 +47,7 @@ export component ProfileSelectionView {
                 enabled: false;
 
                 clicked => {
-                    start-analysis();
+                    start-profile-analysis();
                 }
             }
         }
