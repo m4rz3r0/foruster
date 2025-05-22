@@ -50,7 +50,7 @@ export global ProfileListAdapter {
     }
 }
 
-component CircularMenuSection {
+component CircularMenuprofile {
     in property <string> title;
     in property <image> icon;
     in property <brush> background-color;
@@ -102,8 +102,6 @@ component CircularMenuSection {
 
         clicked => {
             root.toggle();
-            debug("Clicked on section: " + root.title);
-            debug("Color: " + root.background-color.red + ", " + root.background-color.green + ", " + root.background-color.blue);
         }
     }
 
@@ -177,17 +175,22 @@ export component ProfileList inherits Rectangle {
     
     callback toggle(/* index */ int);
 
-    for section[i] in profiles : CircularMenuSection {
-        property <float> section-angle: 360 / profiles.length;
+    for profile[i] in profiles : CircularMenuprofile {
+        property <float> profile-angle: 360 / profiles.length;
         
-        // Pass container dimensions to each section
+        // Pass container dimensions to each profile
         container-width: root.width;
         container-height: root.height;
         
-        title: section.label;
-        icon: ProfileListAdapter.icon_source_to_icon(section.icon-source);
-        background-color: section.bg-color;
-        start-angle: i * section-angle;
-        end-angle: (i + 1) * section-angle;
+        title: profile.label;
+        icon: ProfileListAdapter.icon_source_to_icon(profile.icon-source);
+        background-color: profile.bg-color;
+        selected: profile.selected;
+        start-angle: i * profile-angle;
+        end-angle: (i + 1) * profile-angle;
+
+        toggle => {
+            root.toggle(i);
+        }
     }
 }

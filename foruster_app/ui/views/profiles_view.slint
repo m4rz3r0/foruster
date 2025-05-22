@@ -1,0 +1,55 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+import { ProfileList } from "../components/index.slint";
+import { ProfileCardIcons } from "../global.slint";
+import { VerticalBox, StandardButton, Button } from "std-widgets.slint";
+import { Styling } from "../global.slint";
+import { ProfileListAdapter } from "../components/profile.slint";
+
+export component ProfileSelectionView {
+    callback start-analysis();
+
+    function update-button-enabled-status() {
+        analyzeButton.enabled = ProfileListAdapter.count-selected-profiles() > 0;
+    }
+
+    VerticalBox {
+        padding: 20px;
+        spacing: 10px;
+
+        Text {
+            text: @tr("Perfiles");
+            font-weight: 800;
+            font-size: 24px;
+            color: Styling.text;
+        }
+
+        Text {
+            text: @tr("Seleccione los perfiles que serán analizados");
+            font-size: 14px;
+            color: Styling.text-secondary;
+        }
+
+        ProfileList {
+            toggle(index) => {
+                ProfileListAdapter.toggle-profile-checked(index);
+                update-button-enabled-status();
+            }
+        }
+
+        HorizontalLayout {
+            alignment: center;
+
+            analyzeButton := Button {
+                primary: true;
+                text: @tr("Iniciar Análisis");
+                width: 150px;
+                height: 40px;
+                enabled: false;
+
+                clicked => {
+                    start-analysis();
+                }
+            }
+        }
+    }
+}
