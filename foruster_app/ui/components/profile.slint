@@ -50,60 +50,6 @@ export global ProfileListAdapter {
     }
 }
 
-export component ProfileCard inherits Rectangle {
-    border-radius: 200px;
-    border-width: 4px;
-    border-color: bg_color;
-    background: selected ? bg_color : ta.has-hover ? bg_color : Colors.transparent;
-
-
-    in property <string> label: "Imágenes";
-    in property <color> bg_color: Colors.green;
-
-    in-out property <image> icon_source: ProfileCardIcons.image;
-    in-out property <bool> selected: false;
-
-    callback toggle();
-
-    // Dummy implementation for the preview
-    toggle() => {
-        root.selected = !root.selected;
-    }
-    
-    ta := TouchArea {
-        width: 100%;
-        height: 100%;
-
-        clicked => {
-            root.toggle();
-        }            
-    }
-
-    animate background {
-        duration: 150ms;             
-    }
-
-    VerticalLayout {
-        alignment: center;
-        spacing: 10px;
-
-        icon := Image {
-            width: 32px;
-            height: 32px;
-            colorize: Colors.white;
-            source: icon_source;
-            x: (parent.width - self.width) / 2;
-        }
-
-        Text {
-            text: label;
-            horizontal-alignment: center;
-            font-size: 24px;
-            font-weight: 500;
-        }
-    }
-}
-
 component CircularMenuSection {
     in property <string> title;
     in property <image> icon;
@@ -111,8 +57,16 @@ component CircularMenuSection {
     in property <float> start-angle;
     in property <float> end-angle;
     
-    property <length> inner-radius: 200px;
-    property <length> outer-radius: 400px;
+    // External properties for container dimensions to avoid using parent directly
+    in property <length> container-width;
+    in property <length> container-height;
+    
+    // Make radii relative to container size
+    property <length> container-size: min(container-width, container-height);
+    property <length> inner-radius: container-size * 0.25;
+    property <length> outer-radius: container-size * 0.5;
+    
+    // Center coordinates based on container dimensions
     property <length> center-x: 0;
     property <length> center-y: 0;
     
@@ -123,6 +77,12 @@ component CircularMenuSection {
     // Content position (icon and text)
     property <length> content-x: center-x + cos(mid-angle * 1deg) * mid-radius;
     property <length> content-y: center-y + sin(mid-angle * 1deg) * mid-radius;
+    
+    // Scale factors for responsive elements
+    property <float> scale-factor: container-size / 800px;
+    property <length> icon-size: max(24px, 48px * scale-factor);
+    property <length> font-size: max(14px, 16px * scale-factor);
+    property <length> touch-area-size: max(60px, 150px * scale-factor);
     
     in-out property <bool> selected: false;
 
@@ -135,8 +95,8 @@ component CircularMenuSection {
     ta := TouchArea {
         x: content-x - self.width / 2;
         y: content-y - self.height / 2;
-        width: 150px;
-        height: 150px;
+        width: touch-area-size;
+        height: touch-area-size;
 
         visible: true;
 
@@ -150,7 +110,7 @@ component CircularMenuSection {
     p := Path {
         fill: selected ? background-color : ta.has-hover ? background-color : Colors.transparent;
         stroke: #2d2d30;
-        stroke-width: 5px;
+        stroke-width: max(1px, 5px * scale-factor);
 
         MoveTo {
             x: (center-x / 1px) + cos(start-angle * 1deg) * (inner-radius / 1px);
@@ -184,13 +144,16 @@ component CircularMenuSection {
         Close {}
     }
     
+    VerticalBox {
+        
+    }
     // Icon
     Image {
         source: icon;
-        width: 48px;
-        height: 48px;
+        width: icon-size;
+        height: icon-size;
         x: content-x - self.width / 2;
-        y: content-y - self.height / 2 - 20px;
+        y: content-y - self.height / 2 - (10px * scale-factor);
         colorize: white;
     }
     
@@ -198,26 +161,33 @@ component CircularMenuSection {
     Text {
         text: title;
         color: white;
-        font-size: 14px;
+        font-size: font-size;
         font-weight: 700;
         horizontal-alignment: center;
-        y: content-y + 20px;
+        y: content-y + (30px * scale-factor);
         x: content-x - self.width / 2;
     }
 }
 
-export component ProfileList {
+export component ProfileList inherits Rectangle {
     in property <[ProfileListItem]> profiles: ProfileListAdapter.profiles;
-
+    
+    min-width: 200px;
+    min-height: 200px;
+    
     callback toggle(/* index */ int);
 
     for section[i] in profiles : CircularMenuSection {
-            property <float> section-angle: 360 / profiles.length;
-            
-            title: section.label;
-            icon: ProfileListAdapter.icon_source_to_icon(section.icon-source);
-            background-color: section.bg-color;
-            start-angle: i * section-angle;
-            end-angle: (i + 1) * section-angle;
-        }
+        property <float> section-angle: 360 / profiles.length;
+        
+        // Pass container dimensions to each section
+        container-width: root.width;
+        container-height: root.height;
+        
+        title: section.label;
+        icon: ProfileListAdapter.icon_source_to_icon(section.icon-source);
+        background-color: section.bg-color;
+        start-angle: i * section-angle;
+        end-angle: (i + 1) * section-angle;
+    }
 }
