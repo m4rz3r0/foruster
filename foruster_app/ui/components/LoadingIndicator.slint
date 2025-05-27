@@ -1,0 +1,22 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+import { VerticalBox, ProgressIndicator } from "std-widgets.slint";
+
+export component LoadingIndicator inherits VerticalBox {
+    in-out property <bool> is_loading: false;
+    in-out property <string> message: "Cargando...";
+    in-out property <float> progress: 0.0; // 0.0 to 1.0
+    in-out property <bool> indeterminate: true;
+
+    visible: root.is_loading;
+    alignment: center;
+    spacing: 10px;
+
+    Text {
+        text: root.message;
+        horizontal-alignment: center;
+    }
+    ProgressIndicator {
+        progress: root.progress;
+        indeterminate: root.indeterminate;
+    }
+}

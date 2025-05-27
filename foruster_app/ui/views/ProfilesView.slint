@@ -1,0 +1,66 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+import { ProfileList } from "../components/index.slint";
+import { ProfileCardIcons } from "../global.slint";
+import { VerticalBox, StandardButton } from "std-widgets.slint";
+import { Styling } from "../global.slint";
+import { ProfileListAdapter } from "../components/Profile.slint";
+
+export component ProfileSelectionView {
+    callback start-profile-analysis();
+
+    function update-button-enabled-status() {
+        analyzeButton.background = ProfileListAdapter.count-selected-profiles() > 0 ? Colors.steelblue : Styling.hover;
+    }
+
+    VerticalBox {
+        padding: 20px;
+        spacing: 10px;
+
+        VerticalLayout {
+            height: 15%;
+            alignment: start;
+            Text {
+                text: @tr("Perfiles");
+                font-weight: 600;
+                font-size: 28pt;
+                color: Styling.text;
+            }
+
+            Text {
+                text: @tr("Seleccione los perfiles que serán analizados");
+                font-size: 18pt;
+                font-weight: 400;
+                color: Styling.text-secondary;
+            }
+        }
+        
+
+        ProfileList {
+            toggle(index) => {
+                ProfileListAdapter.toggle-profile-checked(index);
+                update-button-enabled-status();
+            }
+
+            analyzeButton := Rectangle {
+                visible: true;
+                width: 150px;
+                height: 150px;
+                background: Styling.hover;
+                border-radius: 250px;
+
+                animate background {
+                    duration: 0.3s;
+                }
+                
+                analyzeButtonText := Text {
+                    text: @tr("Analizar");
+                    font-size: 18pt;
+                    font-weight: 600;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                    visible: true;
+                }
+            }
+        }
+    }
+}

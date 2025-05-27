@@ -4,6 +4,7 @@ import { WindowSettings } from "global.slint";
 import { VerticalBox } from "std-widgets.slint";
 
 export { DiskListAdapter, PathListAdapter, ProfileListAdapter } from "components/index.slint";
+export { PathAnalysisState } from "global.slint";
 
 enum Page {
     DiskList,
@@ -41,7 +42,7 @@ export component App inherits Window {
         }
 
         if current-page == Page.PathManagement : PathManagementView {
-            start-disk-analysis => {
+            start-path-analysis => {
                 current-page = Page.ProfileSelection;
             }
         }

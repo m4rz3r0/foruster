@@ -63,3 +63,13 @@ export global Styling {
     // App colors
     out property <brush> app-primary: #bc573b;
 }
+
+// Nuevo global para el estado del análisis de rutas
+export global PathAnalysisState {
+    in-out property <bool> running: false;
+    in-out property <string> message: ""; // Inicialmente vacío o un mensaje neutral
+    in-out property <float> progress: 0.0;
+    in-out property <bool> indeterminate: true;
+    // Podrías añadir aquí una propiedad para el resultado si quieres mostrarlo globalmente
+    // in-out property <PathAnalysisResultModel> result; // Necesitarías definir PathAnalysisResultModel
+}

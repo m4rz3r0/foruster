@@ -5,12 +5,15 @@ pub mod ui;
 use domain::traits::PathRepository;
 use slint::ComponentHandle;
 use std::rc::Rc;
+// Los imports de mpsc, AnalysisUpdate, PathAnalysisResult y path_analyzer ya no son necesarios aquí directamente
+// Se movieron a path_analysis_connector.rs
 
 slint::include_modules!();
 
-fn init() -> ui::App {
+fn init() -> ui::App { // Cambiado ui::App a App
     let view_handle = ui::App::new().unwrap();
 
+    // --- Configuración de Repositorios y Controladores --- 
     let disk_repo = Rc::new(domain::disk_repo());
     let path_repo = Rc::new(domain::path_repo(disk_repo.clone()));
     let profile_repo = Rc::new(domain::profile_repo());
@@ -29,11 +32,16 @@ fn init() -> ui::App {
     let profiles_controller = domain::ProfilesController::new(profile_repo.clone());
     ui::profiles_adapter::connect(&view_handle, profiles_controller.clone());
 
+    // --- Conectar la lógica de análisis de rutas --- 
+    ui::path_analysis_connector::connect(&view_handle);
+
     view_handle
 }
 
 fn main() {
-    let main_window = init();
+    // Inicializar el logger si es necesario
+    // env_logger::init(); 
 
+    let main_window = init();
     main_window.run().unwrap();
 }
