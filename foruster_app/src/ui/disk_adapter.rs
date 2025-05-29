@@ -3,14 +3,14 @@ use slint::*;
 use std::rc::Rc;
 
 use crate::{
-    domain::{DiskItem, DiskListController},
+    domain::{DiskItem, DiskController},
     ui,
 };
 
 pub fn connect_with_controller(
     view_handle: &ui::App,
-    controller: &DiskListController,
-    connect_adapter_controller: impl FnOnce(ui::DiskListAdapter, DiskListController),
+    controller: &DiskController,
+    connect_adapter_controller: impl FnOnce(ui::DiskListAdapter, DiskController),
 ) {
     connect_adapter_controller(
         view_handle.global::<ui::DiskListAdapter>(),
@@ -18,7 +18,7 @@ pub fn connect_with_controller(
     );
 }
 
-pub fn connect(view_handle: &ui::App, controller: DiskListController) {
+pub fn connect(view_handle: &ui::App, controller: DiskController) {
     view_handle
         .global::<ui::DiskListAdapter>()
         .set_disks(Rc::new(MapModel::new(controller.disk_model(), map_disk_to_item)).into());

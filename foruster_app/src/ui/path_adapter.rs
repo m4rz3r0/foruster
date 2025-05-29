@@ -3,14 +3,14 @@ use slint::*;
 use std::{path::PathBuf, rc::Rc};
 
 use crate::{
-    domain::{PathItem, PathListController},
+    domain::{PathItem, PathController},
     ui,
 };
 
 pub fn connect_with_controller(
     view_handle: &ui::App,
-    controller: &PathListController,
-    connect_adapter_controller: impl FnOnce(ui::PathListAdapter, PathListController),
+    controller: &PathController,
+    connect_adapter_controller: impl FnOnce(ui::PathListAdapter, PathController),
 ) {
     connect_adapter_controller(
         view_handle.global::<ui::PathListAdapter>(),
@@ -18,7 +18,7 @@ pub fn connect_with_controller(
     );
 }
 
-pub fn connect(view_handle: &ui::App, controller: PathListController) {
+pub fn connect(view_handle: &ui::App, controller: PathController) {
     view_handle
         .global::<ui::PathListAdapter>()
         .set_paths(Rc::new(MapModel::new(controller.path_model(), map_path_to_item)).into());

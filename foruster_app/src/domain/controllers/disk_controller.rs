@@ -10,11 +10,11 @@ use crate::domain::repositories::traits;
 use crate::domain::DiskItem;
 
 #[derive(Clone)]
-pub struct DiskListController {
+pub struct DiskController {
     disk_model: DiskModel,
 }
 
-impl DiskListController {
+impl DiskController {
     pub fn new(repo: Rc<dyn traits::DiskRepository>) -> Self {
         Self {
             disk_model: DiskModel::new(repo),

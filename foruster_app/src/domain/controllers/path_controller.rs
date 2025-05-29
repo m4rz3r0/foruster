@@ -13,11 +13,11 @@ use crate::domain::repositories::traits;
 use crate::domain::PathItem;
 
 #[derive(Clone)]
-pub struct PathListController {
+pub struct PathController {
     path_model: PathModel,
 }
 
-impl PathListController {
+impl PathController {
     pub fn new(repo: Rc<dyn traits::PathRepository>) -> Self {
         Self {
             path_model: PathModel::new(repo),

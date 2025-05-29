@@ -21,13 +21,11 @@ fn init() -> ui::App { // Cambiado ui::App a App
     let path_repo_clone = path_repo.clone();
     view_handle.on_load_paths(move || {
         path_repo_clone.load_paths();
-    });
+    });    let disk_controller = domain::DiskController::new(disk_repo.clone());
+    ui::disk_adapter::connect(&view_handle, disk_controller.clone());
 
-    let disk_list_controller = domain::DiskListController::new(disk_repo.clone());
-    ui::disk_list_adapter::connect(&view_handle, disk_list_controller.clone());
-
-    let path_list_controller = domain::PathListController::new(path_repo.clone());
-    ui::path_list_adapter::connect(&view_handle, path_list_controller.clone());
+    let path_controller = domain::PathController::new(path_repo.clone());
+    ui::path_adapter::connect(&view_handle, path_controller.clone());
 
     let profiles_controller = domain::ProfilesController::new(profile_repo.clone());
     ui::profiles_adapter::connect(&view_handle, profiles_controller.clone());
