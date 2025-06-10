@@ -4,4 +4,3 @@ slint::include_modules!();
 pub mod disk_adapter;
 pub mod path_adapter;
 pub mod profiles_adapter;
-pub mod path_analysis_connector;

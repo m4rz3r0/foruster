@@ -5,12 +5,10 @@ pub mod ui;
 use domain::traits::PathRepository;
 use slint::ComponentHandle;
 use std::rc::Rc;
-// Los imports de mpsc, AnalysisUpdate, PathAnalysisResult y path_analyzer ya no son necesarios aquí directamente
-// Se movieron a path_analysis_connector.rs
 
 slint::include_modules!();
 
-fn init() -> ui::App { // Cambiado ui::App a App
+fn init() -> ui::App {
     let view_handle = ui::App::new().unwrap();
 
     // --- Configuración de Repositorios y Controladores --- 
@@ -29,9 +27,6 @@ fn init() -> ui::App { // Cambiado ui::App a App
 
     let profiles_controller = domain::ProfilesController::new(profile_repo.clone());
     ui::profiles_adapter::connect(&view_handle, profiles_controller.clone());
-
-    // --- Conectar la lógica de análisis de rutas --- 
-    ui::path_analysis_connector::connect(&view_handle);
 
     view_handle
 }

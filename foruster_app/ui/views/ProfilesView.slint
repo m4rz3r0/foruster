@@ -7,15 +7,12 @@ import { ProfileListAdapter } from "../components/Profile.slint";
 
 export component ProfileSelectionView {
     callback start-profile-analysis();
-
     function update-button-enabled-status() {
-        analyzeButton.background = ProfileListAdapter.count-selected-profiles() > 0 ? Colors.steelblue : Styling.hover;
+        analyzeButton.enabled = ProfileListAdapter.count-selected-profiles() > 0;
     }
-
     VerticalBox {
         padding: 20px;
         spacing: 10px;
-
         VerticalLayout {
             height: 15%;
             alignment: start;
@@ -33,32 +30,90 @@ export component ProfileSelectionView {
                 color: Styling.text-secondary;
             }
         }
-        
 
         ProfileList {
             toggle(index) => {
                 ProfileListAdapter.toggle-profile-checked(index);
                 update-button-enabled-status();
             }
-
             analyzeButton := Rectangle {
-                visible: true;
-                width: 150px;
-                height: 150px;
-                background: Styling.hover;
-                border-radius: 250px;
-
-                animate background {
-                    duration: 0.3s;
-                }
+                // Propiedades para ajuste responsivo igual que el pie chart
+                property <length> container-size: min(parent.width, parent.height);
+                property <length> button-diameter: container-size * 0.45;
+                property <float> scale-factor: container-size / 800px;
+                property <length> font-size: max(14px, 18px * scale-factor * 2);
                 
+                // Propiedades para estados
+                property <bool> enabled: false;
+                visible: true;
+                width: button-diameter;
+                height: button-diameter;
+                border-radius: button-diameter / 2;
+                border-width: 2px;
+                
+                // Centrar el botón en el pie chart
+                x: (parent.width - self.width) / 2;
+                y: (parent.height - self.height) / 2;
+
+                // Estados del botón
+                states [
+                    disabled when !enabled: {
+                        background: Styling.background-deeper;
+                        border-color: Styling.border;
+                        drop-shadow-blur: 0px;
+                        drop-shadow-offset-y: 0px;
+                    }
+                    enabled when enabled && !touch-area.has-hover && !touch-area.pressed: {
+                        background: Colors.steelblue;
+                        border-color: Colors.steelblue;
+                        drop-shadow-blur: 4px;
+                        drop-shadow-color: Colors.steelblue.transparentize(60%);
+                        drop-shadow-offset-y: 2px;
+                    }
+                    hovered when enabled && touch-area.has-hover && !touch-area.pressed: {
+                        background: Colors.steelblue.darker(15%);
+                        border-color: Colors.steelblue.darker(15%);
+                        drop-shadow-blur: 8px;
+                        drop-shadow-color: Colors.steelblue.transparentize(40%);
+                        drop-shadow-offset-y: 4px;
+                    }
+                    pressed when enabled && touch-area.pressed: {
+                        background: Colors.steelblue.darker(25%);
+                        border-color: Colors.steelblue.darker(35%);
+                        drop-shadow-blur: 2px;
+                        drop-shadow-color: Colors.steelblue.transparentize(70%);
+                        drop-shadow-offset-y: 1px;
+                    }
+                ]
+                animate background, border-color, drop-shadow-blur, drop-shadow-offset-y {
+                    duration: 200ms;
+                    easing: cubic-bezier(0.25, 0.1, 0.25, 1.0);
+                }
+                touch-area := TouchArea {
+                    width: 100%;
+                    height: 100%;
+                    clicked => {
+                        if (enabled) {
+                            start-profile-analysis();
+                        }
+                    }
+                }
+
                 analyzeButtonText := Text {
                     text: @tr("Analizar");
-                    font-size: 18pt;
+                    font-size: font-size;
                     font-weight: 600;
                     horizontal-alignment: center;
                     vertical-alignment: center;
                     visible: true;
+                    states [
+                        disabled when !enabled: {
+                            color: Styling.text-muted;
+                        }
+                        enabled when enabled: {
+                            color: #ffffff;
+                        }
+                    ]
                 }
             }
         }
