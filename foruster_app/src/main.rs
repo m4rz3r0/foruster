@@ -11,7 +11,7 @@ slint::include_modules!();
 fn init() -> ui::App {
     let view_handle = ui::App::new().unwrap();
 
-    // --- Configuración de Repositorios y Controladores --- 
+    // --- Configuración de Repositorios y Controladores ---
     let disk_repo = Rc::new(domain::disk_repo());
     let path_repo = Rc::new(domain::path_repo(disk_repo.clone()));
     let profile_repo = Rc::new(domain::profile_repo());
@@ -19,7 +19,8 @@ fn init() -> ui::App {
     let path_repo_clone = path_repo.clone();
     view_handle.on_load_paths(move || {
         path_repo_clone.load_paths();
-    });    let disk_controller = domain::DiskController::new(disk_repo.clone());
+    });
+    let disk_controller = domain::DiskController::new(disk_repo.clone());
     ui::disk_adapter::connect(&view_handle, disk_controller.clone());
 
     let path_controller = domain::PathController::new(path_repo.clone());
@@ -33,7 +34,7 @@ fn init() -> ui::App {
 
 fn main() {
     // Inicializar el logger si es necesario
-    // env_logger::init(); 
+    // env_logger::init();
 
     let main_window = init();
     main_window.run().unwrap();

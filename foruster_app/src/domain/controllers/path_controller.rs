@@ -45,9 +45,7 @@ impl PathController {
     }
 
     pub fn browse_path(&self) -> PathBuf {
-        FileDialog::new()
-            .pick_folder()
-            .unwrap_or_default()
+        FileDialog::new().pick_folder().unwrap_or_default()
     }
 }
 

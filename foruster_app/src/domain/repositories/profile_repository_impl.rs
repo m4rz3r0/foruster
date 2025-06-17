@@ -56,9 +56,7 @@ impl ProfileRepositoryImpl {
         }
 
         Self {
-            profiles: Rc::new(RefCell::new(
-                profiles.into_iter().collect(),
-            )),
+            profiles: Rc::new(RefCell::new(profiles.into_iter().collect())),
         }
     }
 }

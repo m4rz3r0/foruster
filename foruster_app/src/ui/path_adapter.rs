@@ -3,7 +3,7 @@ use slint::*;
 use std::{path::PathBuf, rc::Rc};
 
 use crate::{
-    domain::{PathItem, PathController},
+    domain::{PathController, PathItem},
     ui,
 };
 

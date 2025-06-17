@@ -3,7 +3,7 @@ use slint::*;
 use std::rc::Rc;
 
 use crate::{
-    domain::{DiskItem, DiskController},
+    domain::{DiskController, DiskItem},
     ui,
 };
 
