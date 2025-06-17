@@ -32,8 +32,8 @@ impl FileEntry {
         self.size
     }
 
-    pub fn hash(&self, hash_function: &HashFunction) -> Option<&Box<dyn Hasher>> {
-        self.hash.get(hash_function)
+    pub fn hash(&self, hash_function: &HashFunction) -> Option<&dyn Hasher> {
+        self.hash.get(hash_function).map(|b| b.as_ref())
     }
 
     pub fn add_hash(&mut self, hash_function: HashFunction, hasher: Box<dyn Hasher>) {
