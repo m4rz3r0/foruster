@@ -87,7 +87,13 @@ pub fn link_volume_to_partition(volumes: &[Volume], disks: &mut [Disk]) -> Resul
         }
 
         let guid_path = &volume_guid[..volume_guid.len() - 1];
-        let volume_extents = get_volume_extents(guid_path)?;
+        let volume_extents = match get_volume_extents(guid_path) {
+            Ok(extents) => extents,
+            Err(e) => {
+                eprintln!("Error getting volume extents for {}: {}", guid_path, e);
+                continue;
+            }
+        };
 
         for extent in volume_extents.Extents.iter() {
             let disk_number = extent.DiskNumber;
