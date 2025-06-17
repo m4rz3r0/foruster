@@ -11,7 +11,6 @@ slint::include_modules!();
 fn init() -> ui::App {
     let view_handle = ui::App::new().unwrap();
 
-    // --- Configuración de Repositorios y Controladores ---
     let disk_repo = Rc::new(domain::disk_repo());
     let path_repo = Rc::new(domain::path_repo(disk_repo.clone()));
     let profile_repo = Rc::new(domain::profile_repo());
@@ -33,7 +32,7 @@ fn init() -> ui::App {
 }
 
 fn main() {
-    // Inicializar el logger si es necesario
+    // Initialize the logger if needed
     // env_logger::init();
 
     let main_window = init();

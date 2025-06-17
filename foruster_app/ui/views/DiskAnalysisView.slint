@@ -5,15 +5,6 @@ import { ProgressIndicator } from "std-widgets.slint";
 export component DiskAnalysisView {
     in property <percent> progress: 0%;
     callback disk-analyzed();
-    
-    VerticalLayout {
-        alignment: start;
-        Text {
-            text: @tr("Análisis de discos");
-            font-weight: 800;
-            font-size: 24px;
-        }
-    }
 
     VerticalLayout {
         alignment: center;

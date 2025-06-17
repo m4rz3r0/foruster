@@ -1,0 +1,22 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+export component AnalysisResultView inherits Window {
+    title: "Analysis Results";
+    width: 600px;
+    height: 400px;
+
+    VerticalLayout {
+        spacing: 10px;
+        padding: 20px;
+
+        Text {
+            text: "Debug Information:";
+            font-size: 18px;
+            font-weight: 700; // Common numeric value for bold
+        }
+
+        Text {
+            text: "Detailed analysis information will be displayed here.\nFor now, this is a placeholder.";
+            wrap: word-wrap;
+        }
+    }
+}
