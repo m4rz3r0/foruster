@@ -1,2 +1,3 @@
 # Foruster
-Forensic Toolkit written in Rust
+
+TODO: Write a description of the project.
