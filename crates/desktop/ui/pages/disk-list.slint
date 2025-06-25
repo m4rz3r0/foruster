@@ -1,0 +1,174 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+import { Button, VerticalBox, HorizontalBox, ScrollView, ListView } from "std-widgets.slint";
+import { Styles } from "../styles.slint";
+import { DiskListBridge } from "../blocks/bridges.slint";
+
+export component DiskItem inherits Rectangle {
+    height: icon.height + 40px;
+    border-width: is_selected ? 2px : 1px;
+    border-color: is_selected
+        ? Styles.palette.primary-bg
+        : Styles.palette.element-border;
+    border-radius: 16px;
+    background: is_selected
+        ? Styles.palette.primary-bg
+        : ta.has-hover
+            ? Styles.palette.window-alter-bg
+            : Styles.palette.window-bg;
+    drop-shadow-blur: is_selected ? 8px : 0px;
+    drop-shadow-color: Styles.palette.primary-fg;
+    drop-shadow-offset-x: 0px;
+
+    animate border-color, background, drop-shadow-blur {
+        duration: 200ms;
+    }
+
+    callback toggle;
+
+    // Dummy implementation for the preview
+    toggle() => {
+        root.is_selected = !root.is_selected;
+    }
+
+    in property <string> model: "No definido";
+    in property <string> size: "No definido";
+    in property <string> serial: "No definido";
+    in property <string> interface: "No definido";
+    in property <int> partitions: 0;
+    in property <int> mounted-partitions: 0;
+
+    in-out property <bool> is_selected: false;
+
+    property <bool> is_usb: interface == "USB" ? true : false;
+
+    ta := TouchArea {
+        width: 100%;
+        height: 100%;
+
+        clicked => {
+            root.toggle();
+        }
+    }
+
+    HorizontalLayout {
+        padding: 20px;
+        spacing: 16px;
+        icon := Image {
+            padding: 4px;
+            width: 13rem;
+            height: 13rem;
+            source: is_usb ? @image-url("../assets/pendrive-usb.svg") : @image-url("../assets/hard-drive.svg");
+        }
+
+        VerticalLayout {
+            spacing: 6px;
+            alignment: start;
+            HorizontalLayout {
+                alignment: space-between;
+
+                Text {
+                    text: model;
+                    font-size: 20px;
+                    font-weight: 800;
+                    padding-bottom: 4px;
+                }
+            }
+
+            Text {
+                text: "Tipo: " + interface;
+                font-size: 16px;
+            }
+
+            Text {
+                text: "Tamaño: " + size;
+                font-size: 16px;
+            }
+
+            Text {
+                text: "Número de serie: " + serial;
+                font-size: 16px;
+            }
+
+            Text {
+                text: "Particiones: " + partitions + " (" + mounted-partitions + (mounted-partitions == 1 ? " analizable)" : " analizables)");
+                font-size: 16px;
+            }
+        }
+    }
+}
+
+export component DiskListPage {
+    callback analyze-disks();
+
+    update_disk_timer := Timer {
+        interval: 500ms;
+        triggered => {
+            if (DiskListBridge.check-for-changes()) {
+                DiskListBridge.refresh-disks();
+                update-button-enabled-status();
+            }
+        }
+    }
+
+    function update-button-enabled-status() {
+        analyzeButton.enabled = DiskListBridge.num-selected-disks() > 0;
+    }
+
+    VerticalBox {
+        spacing: Styles.sizes.s-lg;
+        padding: Styles.sizes.p-xl;
+        alignment: start;
+
+        VerticalLayout {
+            Text {
+                text: @tr("Análisis de discos");
+                font-weight: Styles.weights.bold;
+                font-size: Styles.sizes.font * 1.5;
+                color: Styles.palette.window-fg;
+            }
+
+            Text {
+                text: @tr("Seleccione los discos que desea analizar:");
+                font-size: Styles.sizes.font;
+                color: Styles.palette.window-alter-fg;
+            }
+        }
+
+
+        ListView {
+            height: 80%;
+
+            for disk[index] in DiskListBridge.disks:
+                VerticalLayout {
+                    padding: Styles.sizes.p-md;
+                    DiskItem {
+                        model: disk.name;
+                        size: disk.size;
+                        serial: disk.serial;
+                        partitions: disk.partitions;
+                        mounted-partitions: disk.mounted-partitions;
+                        interface: disk.interface;
+                        is_selected: disk.selected;
+
+                        toggle => {
+                            DiskListBridge.toggle-disk-checked(index);
+                            update-button-enabled-status();
+                    }
+                }
+            }
+        }
+
+        HorizontalLayout {
+            vertical-stretch: 1;
+            alignment: center;
+            analyzeButton := Button {
+                primary: true;
+                text: @tr("Analizar discos");
+                enabled: false;
+                clicked => {
+                    analyze-disks();
+                }
+            }
+        }
+    }
+}

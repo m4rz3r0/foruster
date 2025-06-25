@@ -1,0 +1,27 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+import { Stack } from "blocks/stack.slint";
+import { Styles } from "styles.slint";
+
+import { DiskListBridge } from "blocks/bridges.slint";
+
+export { DiskListBridge }
+
+export component MainWindow inherits Window {
+    title: "Foruster";
+    default-font-family: Styles.font-family;
+    default-font-size: Styles.sizes.font;
+    preferred-width: 1080px;
+    preferred-height: 600px;
+    min-width: 800px;
+    min-height: 540px;
+    icon: @image-url("assets/icon.png");
+
+    VerticalLayout {
+        spacing: Styles.sizes.s-md;
+        padding: Styles.sizes.p-md;
+
+        Stack {
+            vertical-stretch: 1;
+        }
+    }
+}

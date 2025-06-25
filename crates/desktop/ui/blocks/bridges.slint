@@ -1,0 +1,50 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+export struct Disk {
+    name: string,
+    size: string,
+    serial: string,
+    partitions: int,
+    mounted-partitions: int,
+    interface: string,
+    selected: bool
+}
+
+export global DiskListBridge {
+    in-out property <[Disk]> disks: [
+        {
+           name: "Disk 1",
+           size: 1024,
+           serial: "123456",
+           interface: "SSD",
+        },
+        {
+           name: "Disk 2",
+           size: 2048,
+           serial: "654321",
+           interface: "HDD",
+        },
+        {
+          name: "Disk 1",
+          size: 1024,
+          serial: "123456",
+          interface: "SSD",
+        },
+        {
+          name: "Disk 2",
+          size: 2048,
+          serial: "654321",
+          interface: "HDD",
+        },
+   ];
+    
+    pure callback num-selected-disks() -> int;
+    pure callback check-for-changes() -> bool;
+
+    callback toggle-disk-checked(/* index */ int);
+    callback refresh-disks;
+
+    // Dummy implementation for the preview
+    toggle-disk-checked(index) => {
+        root.disks[index].selected = !root.disks[index].selected;
+    }
+}

@@ -1,0 +1,13 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+export enum Page {
+    DiskList,
+    PathManagement,
+    DiskAnalysis,
+    ProfileSelection,
+    AnalysisResult
+}
+
+export global UIState {
+    in-out property <Page> current-page: Page.DiskList;
+}

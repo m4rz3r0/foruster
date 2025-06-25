@@ -1,0 +1,41 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+import { UIState, Page } from "../globals.slint";
+import { DiskListPage } from "../pages/disk-list.slint";
+
+export component Stack inherits Rectangle {
+    horizontal-stretch: 1;
+    vertical-stretch: 1;
+    background: transparent;
+
+    if UIState.current-page == Page.DiskList : DiskListPage {
+        width: 100%;
+        height: 100%;
+        /*analyze-disks => {
+            current_page = Page.PathManagement;
+            load-paths();
+        }*/
+    }
+
+    /*if current-page == Page.DiskAnalysis : DiskAnalysisPage {
+        disk-analyzed => {
+            current-page = Page.ProfileSelection;
+        }
+    }
+
+    if current-page == Page.PathManagement : PathManagementPage {
+        start-path-analysis => {
+            current-page = Page.ProfileSelection;
+        }
+    }
+
+    if current-page == Page.ProfileSelection : ProfileSelectionPage {
+        start-profile-analysis => {
+            current-page = Page.DiskAnalysis;
+            start-analysis();
+        }
+    }
+
+    if current-page == Page.DiskAnalysis : DiskAnalysisPage {}
+
+    if current-page == Page.AnalysisResult : AnalysisResultPage {}*/
+}
