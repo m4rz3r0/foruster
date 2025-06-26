@@ -8,6 +8,7 @@ version.workspace = true
 slint = { workspace = true }
 app_core = { path = "../core" }
 api = { path = "../api" }
+rfd = "0.15.3"
 
 [build-dependencies]
 slint-build = { workspace = true }

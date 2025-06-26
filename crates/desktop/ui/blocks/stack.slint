@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import { UIState, Page } from "../globals.slint";
 import { DiskListPage } from "../pages/disk-list.slint";
+import { PathManagementPage } from "../pages/path-management.slint";
+import { PathManagementBridge } from "bridges.slint";
 
 export component Stack inherits Rectangle {
     horizontal-stretch: 1;
@@ -10,25 +12,21 @@ export component Stack inherits Rectangle {
     if UIState.current-page == Page.DiskList : DiskListPage {
         width: 100%;
         height: 100%;
-        /*analyze-disks => {
-            current_page = Page.PathManagement;
-            load-paths();
-        }*/
-    }
-
-    /*if current-page == Page.DiskAnalysis : DiskAnalysisPage {
-        disk-analyzed => {
-            current-page = Page.ProfileSelection;
+        analyze-disks => {
+            UIState.current_page = Page.PathManagement;
+            PathManagementBridge.get-start-paths();
         }
     }
 
-    if current-page == Page.PathManagement : PathManagementPage {
+    if UIState.current-page == Page.PathManagement : PathManagementPage {
+        width: 100%;
+        height: 100%;
         start-path-analysis => {
-            current-page = Page.ProfileSelection;
+            UIState.current-page = Page.ProfileSelection;
         }
     }
 
-    if current-page == Page.ProfileSelection : ProfileSelectionPage {
+    /*if current-page == Page.ProfileSelection : ProfileSelectionPage {
         start-profile-analysis => {
             current-page = Page.DiskAnalysis;
             start-analysis();

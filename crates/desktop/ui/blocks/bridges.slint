@@ -48,3 +48,22 @@ export global DiskListBridge {
         root.disks[index].selected = !root.disks[index].selected;
     }
 }
+
+export struct Path {
+    path: string,
+    redundant: bool,
+    redundancy-message: string,
+    volume_id: string
+}
+
+export global PathManagementBridge {
+    in-out property <[Path]> paths;
+
+    pure callback redundant-count() -> int;
+    pure callback browse-path() -> string;
+
+    callback get-start-paths();
+    callback add-path(string);
+    callback remove-path(int);
+    callback update-path(int, string);
+}
