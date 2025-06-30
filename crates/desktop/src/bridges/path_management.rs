@@ -68,6 +68,51 @@ fn get_start_paths(
         .collect()
 }
 
+fn check_paths(paths_model: &Rc<VecModel<Path>>) {
+    for i in 0..paths_model.iter().len() {
+        let mut redundancy = false;
+        for j in 0..paths_model.iter().len() {
+            if i == j {
+                continue;
+            }
+
+            let path_i = paths_model.row_data(i).unwrap_or_default();
+            let path_j = paths_model.row_data(j).unwrap_or_default();
+            let path_i_str = path_i.clone().path;
+            let path_j_str = path_j.clone().path;
+
+            if path_i_str.starts_with(&path_j_str.to_string()) {
+                paths_model.set_row_data(
+                    i,
+                    Path {
+                        redundancy_message: format!(
+                            "La ruta {path_i_str} es un subdirectorio de {path_j_str}"
+                        )
+                        .into(),
+                        redundant: true,
+                        ..path_i
+                    },
+                );
+                redundancy = true;
+                break;
+            }
+        }
+
+        if !redundancy {
+            let path_i = paths_model.row_data(i).unwrap_or_default();
+
+            paths_model.set_row_data(
+                i,
+                Path {
+                    redundancy_message: SharedString::new(),
+                    redundant: false,
+                    ..path_i
+                },
+            );
+        }
+    }
+}
+
 pub fn setup(window: &MainWindow, storage_api: Rc<RefCell<StorageAPI>>) {
     let bridge = window.global::<PathManagementBridge>();
 
@@ -94,7 +139,7 @@ pub fn setup(window: &MainWindow, storage_api: Rc<RefCell<StorageAPI>>) {
                 .get_volume_id(path.to_string().into())
                 .unwrap_or_default()
                 .into(),
-        })
+        });
     });
 
     let paths_model_clone = paths_model.clone();
@@ -117,6 +162,17 @@ pub fn setup(window: &MainWindow, storage_api: Rc<RefCell<StorageAPI>>) {
         );
     });
 
+    let paths_model_clone = paths_model.clone();
+    bridge.on_check_paths(move || check_paths(&paths_model_clone));
+
+    let paths_model_clone = paths_model.clone();
+    bridge.on_redundant_count(move || {
+        paths_model_clone
+            .iter()
+            .filter(|path| path.redundant)
+            .count() as i32
+    });
+
     bridge.on_browse_path(|| {
         FileDialog::new()
             .pick_folder()
@@ -124,5 +180,5 @@ pub fn setup(window: &MainWindow, storage_api: Rc<RefCell<StorageAPI>>) {
             .to_string_lossy()
             .to_string()
             .into()
-    })
+    });
 }

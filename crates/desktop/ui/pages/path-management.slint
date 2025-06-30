@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { VerticalBox, HorizontalBox, LineEdit, Button, ScrollView } from "std-widgets.slint";
+import { VerticalBox, HorizontalBox, LineEdit, Button, ScrollView, ListView } from "std-widgets.slint";
 import { Styles } from "../styles.slint";
 import { PathManagementBridge } from "../blocks/bridges.slint";
 
@@ -62,7 +62,8 @@ component PathItem {
                 padding: 5px;
                 Text {
                     text: redundancy-message;
-                    color: Styles.palette.warn-bg;
+                    color: Styles.palette.window-alter-fg;
+                    font-size: Styles.sizes.font * 0.75;
                 }
             }
         }
@@ -80,56 +81,60 @@ export component PathManagementPage {
     }
 
     VerticalBox {
-        alignment: start;
         spacing: Styles.sizes.s-lg;
         padding: Styles.sizes.p-xl;
 
-        Text {
-            text: @tr("Rutas a Analizar");
-            font-weight: Styles.weights.bold;
-            font-size: Styles.sizes.font * 1.5;
-            color: Styles.palette.window-fg;
-        }
+        VerticalLayout {
+            vertical-stretch: 0;
 
-        Text {
-            text: @tr("Seleccione los directorios que serán analizados");
-            font-size: Styles.sizes.font;
-            color: Styles.palette.window-alter-fg;
-        }
-
-        HorizontalBox {
-            spacing: Styles.sizes.s-md;
-
-            path-text := LineEdit {
-                placeholder-text: @tr("Ruta a analizar...");
-                text <=> new-path;
-                enabled: false;
+            Text {
+                text: @tr("Rutas a Analizar");
+                font-weight: Styles.weights.bold;
+                font-size: Styles.sizes.font * 1.5;
+                color: Styles.palette.window-fg;
             }
 
-            Button {
-                text: @tr("Explorar...");
-                clicked => {
-                    path-text.text = PathManagementBridge.browse-path();
+            Text {
+                text: @tr("Seleccione los directorios que serán analizados");
+                font-size: Styles.sizes.font;
+                color: Styles.palette.window-alter-fg;
+            }
+
+            HorizontalBox {
+                spacing: Styles.sizes.s-md;
+
+                path-text := LineEdit {
+                    placeholder-text: @tr("Ruta a analizar...");
+                    text <=> new-path;
+                    enabled: false;
                 }
-                width: 100px;
-            }
 
-            Button {
-                text: @tr("Añadir");
-                clicked => {
-                    if (new-path != "") {
-                        PathManagementBridge.add-path(new-path);
-                        new-path = "";
-                        redundant-paths = PathManagementBridge.redundant-count();
+                Button {
+                    text: @tr("Explorar...");
+                    clicked => {
+                        path-text.text = PathManagementBridge.browse-path();
                     }
+                    width: 100px;
                 }
-                width: 100px;
-            }
-        }
 
-        Rectangle {
-            height: 1px;
-            background: Styles.palette.element-border;
+                Button {
+                    text: @tr("Añadir");
+                    clicked => {
+                        if (new-path != "") {
+                            PathManagementBridge.add-path(new-path);
+                            PathManagementBridge.check-paths();
+                            new-path = "";
+                            redundant-paths = PathManagementBridge.redundant-count();
+                        }
+                    }
+                    width: 100px;
+                }
+            }
+
+            Rectangle {
+                height: 1px;
+                background: Styles.palette.element-border;
+            }
         }
 
         Text {
@@ -140,57 +145,66 @@ export component PathManagementPage {
         }
 
         VerticalLayout {
-            alignment: start;
-            spacing: 10px;
+            vertical-stretch: 1;
+            ListView {
+                for path_data[index] in PathManagementBridge.paths : VerticalLayout {
+                    padding: Styles.sizes.p-md;
 
-            for path_data[index] in PathManagementBridge.paths : PathItem {
-                path: path_data.path;
-                redundant: path_data.redundant;
-                redundancy-message: path_data.redundancy-message;
+                    PathItem {
+                        path: path_data.path;
+                        redundant: path_data.redundant;
+                        redundancy-message: path_data.redundancy-message;
 
-                change-path(new_path_value) => {
-                    debug("Cambiando path");
-                    debug("Nuevo path: ", new_path_value);
-                    PathManagementBridge.update_path(index, new_path_value);
-                }
+                        change-path(new_path_value) => {
+                            PathManagementBridge.update_path(index, new_path_value);
+                            PathManagementBridge.check-paths();
+                            redundant-paths = PathManagementBridge.redundant-count();
+                        }
 
-                remove => {
-                    PathManagementBridge.remove_path(index);
+                        remove => {
+                            PathManagementBridge.remove_path(index);
+                            PathManagementBridge.check-paths();
+                            redundant-paths = PathManagementBridge.redundant-count();
+                        }
+                    }
                 }
             }
         }
 
-        if (PathManagementBridge.paths.length == 0) : Text {
-            text: @tr("Aún no hay rutas añadidas. Seleccione directorios para comenzar el análisis.");
-            color: Styles.palette.window-alter-fg;
-        }
+        VerticalLayout {
+            vertical-stretch: 0;
+            if (PathManagementBridge.paths.length == 0) : Text {
+                text: @tr("Aún no hay rutas añadidas. Seleccione directorios para comenzar el análisis.");
+                color: Styles.palette.window-alter-fg;
+            }
 
-        if (check-redundancies()) : Rectangle {
-            background: Styles.palette.warn-bg;
-            border-radius: 4px;
-            padding: 10px;
+            if (check-redundancies()) : Rectangle {
+                background: Styles.palette.warn-bg;
+                border-radius: 4px;
+                padding: 10px;
+
+                HorizontalBox {
+                    Text {
+                        text: @tr("Se han detectado ") + redundant-paths + @tr(" rutas redundantes. Revise las rutas añadidas.");
+                        color: Styles.palette.warn-fg;
+                    }
+                }
+            }
+
+            Rectangle {
+                height: 1px;
+                background: Styles.palette.element-border;
+            }
 
             HorizontalBox {
-                Text {
-                    text: @tr("Se han detectado ") + PathManagementBridge.redundant-count() + @tr(" rutas redundantes. Revise las rutas añadidas.");
-                    color: Styles.palette.warn-fg;
-                }
-            }
-        }
-
-        Rectangle {
-            height: 1px;
-            background: Styles.palette.element-border;
-        }
-
-        HorizontalBox {
-            alignment: end;
-            Button {
-                text: @tr("Analizar");
-                primary: true;
-                enabled: PathManagementBridge.paths.length > 0 && !check-redundancies();
-                clicked => {
-                    root.start-path-analysis();
+                alignment: end;
+                Button {
+                    text: @tr("Analizar");
+                    primary: true;
+                    enabled: PathManagementBridge.paths.length > 0 && !check-redundancies();
+                    clicked => {
+                        root.start-path-analysis();
+                    }
                 }
             }
         }
