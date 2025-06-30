@@ -117,7 +117,6 @@ export component DiskListPage {
     VerticalBox {
         spacing: Styles.sizes.s-lg;
         padding: Styles.sizes.p-xl;
-        alignment: start;
 
         VerticalLayout {
             Text {
@@ -135,31 +134,33 @@ export component DiskListPage {
         }
 
 
-        ListView {
-            height: 80%;
+        VerticalLayout {
+            vertical-stretch: 1;
 
-            for disk[index] in DiskListBridge.disks:
-                VerticalLayout {
-                    padding: Styles.sizes.p-md;
-                    DiskItem {
-                        model: disk.name;
-                        size: disk.size;
-                        serial: disk.serial;
-                        partitions: disk.partitions;
-                        mounted-partitions: disk.mounted-partitions;
-                        interface: disk.interface;
-                        is_selected: disk.selected;
+            ListView {
+                for disk[index] in DiskListBridge.disks:
+                    VerticalLayout {
+                        padding: Styles.sizes.p-md;
+                        DiskItem {
+                            model: disk.name;
+                            size: disk.size;
+                            serial: disk.serial;
+                            partitions: disk.partitions;
+                            mounted-partitions: disk.mounted-partitions;
+                            interface: disk.interface;
+                            is_selected: disk.selected;
 
-                        toggle => {
-                            DiskListBridge.toggle-disk-checked(index);
-                            update-button-enabled-status();
+                            toggle => {
+                                DiskListBridge.toggle-disk-checked(index);
+                                update-button-enabled-status();
+                        }
                     }
                 }
             }
         }
 
         HorizontalLayout {
-            vertical-stretch: 1;
+            vertical-stretch: 0;
             alignment: center;
             analyzeButton := Button {
                 primary: true;
