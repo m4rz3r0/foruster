@@ -1,0 +1,259 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+import { VerticalBox } from "std-widgets.slint";
+import { Styles } from "../styles.slint";
+import { ProfileMenuBridge } from "../blocks/bridges.slint";
+
+component CircularMenuprofile {
+    in property <string> title;
+    in property <image> icon;
+    in property <brush> background-color;
+    in property <float> start-angle;
+    in property <float> end-angle;
+
+    // External properties for container dimensions to avoid using parent directly
+    in property <length> container-width;
+    in property <length> container-height;
+
+    // Make radii relative to container size
+    property <length> container-size: min(container-width, container-height);
+    property <length> inner-radius: container-size * 0.20;
+    property <length> outer-radius: container-size * 0.40;
+
+    // Center coordinates based on container dimensions
+    property <length> center-x: 0;
+    property <length> center-y: 0;
+
+    // Calculate midpoint angle for placing content
+    property <float> mid-angle: (start-angle + end-angle) / 2;
+    property <length> mid-radius: (inner-radius + outer-radius) / 2;
+
+    // Content position (icon and text)
+    property <length> content-x: center-x + cos(mid-angle * 1deg) * mid-radius;
+    property <length> content-y: center-y + sin(mid-angle * 1deg) * mid-radius;
+
+    // Scale factors for responsive elements
+    property <float> scale-factor: container-size / 800px;
+    property <length> icon-size: max(24px, 48px * scale-factor);
+    property <length> font-size: max(14px, 16px * scale-factor);
+    property <length> touch-area-size: max(60px, 150px * scale-factor);
+
+    in-out property <bool> selected: false;
+
+    callback toggle();
+
+    toggle() => {
+        root.selected = !root.selected;
+    }
+
+    ta := TouchArea {
+        x: content-x - self.width / 2;
+        y: content-y - self.height / 2;
+        width: touch-area-size;
+        height: touch-area-size;
+
+        visible: true;
+
+        clicked => {
+            root.toggle();
+        }
+    }
+
+    p := Path {
+        fill: selected ? background-color : ta.has-hover ? background-color : Colors.transparent;
+        stroke: #2d2d30;
+        stroke-width: max(1px, 5px * scale-factor);
+
+        MoveTo {
+            x: (center-x / 1px) + cos(start-angle * 1deg) * (inner-radius / 1px);
+            y: (center-y / 1px) + sin(start-angle * 1deg) * (inner-radius / 1px);
+        }
+        LineTo {
+            x: (center-x / 1px) + cos(start-angle * 1deg) * (outer-radius / 1px);
+            y: (center-y / 1px) + sin(start-angle * 1deg) * (outer-radius / 1px);
+        }
+        ArcTo {
+            radius-x: outer-radius / 1px;
+            radius-y: outer-radius / 1px;
+            x: (center-x / 1px) + cos(end-angle * 1deg) * (outer-radius / 1px);
+            y: (center-y / 1px) + sin(end-angle * 1deg) * (outer-radius / 1px);
+            large-arc: end-angle - start-angle > 180;
+            sweep: true;
+        }
+        LineTo {
+            x: (center-x / 1px) + cos(end-angle * 1deg) * (inner-radius / 1px);
+            y: (center-y / 1px) + sin(end-angle * 1deg) * (inner-radius / 1px);
+        }
+        ArcTo {
+            radius-x: inner-radius / 1px;
+            radius-y: inner-radius / 1px;
+            x: (center-x / 1px) + cos(start-angle * 1deg) * (inner-radius / 1px);
+            y: (center-y / 1px) + sin(start-angle * 1deg) * (inner-radius / 1px);
+            large-arc: end-angle - start-angle > 180;
+            sweep: false;
+        }
+
+        Close {}
+
+        animate fill {
+            duration: 200ms;
+        }
+    }
+
+    VerticalBox {
+
+    }
+    // Icon
+    Image {
+        source: icon;
+        width: icon-size;
+        height: icon-size;
+        x: content-x - self.width / 2;
+        y: content-y - self.height / 2 - (10px * scale-factor);
+        colorize: white;
+    }
+
+    // Title
+    Text {
+        text: title;
+        color: white;
+        font-size: font-size;
+        font-weight: 700;
+        horizontal-alignment: center;
+        y: content-y + (30px * scale-factor);
+        x: content-x - self.width / 2;
+    }
+}
+
+export component ProfileSelectionView {
+    callback start-profile-analysis();
+    callback toggle(int);
+
+    function update-button-enabled-status() {
+        analyzeButton.enabled = ProfileMenuBridge.count-selected-profiles() > 0;
+    }
+
+    toggle(index) => {
+        ProfileMenuBridge.toggle-profile-checked(index);
+        update-button-enabled-status();
+    }
+
+    VerticalBox {
+        padding: 20px;
+        spacing: 10px;
+
+        VerticalLayout {
+            vertical-stretch: 0;
+
+            Text {
+                text: @tr("Perfiles");
+                font-weight: Styles.weights.bold;
+                font-size: Styles.sizes.font * 1.5;
+            }
+
+            Text {
+                text: @tr("Seleccione los perfiles que serán analizados");
+                color: Styles.palette.window-alter-fg;
+            }
+        }
+
+        Rectangle {
+            vertical-stretch: 1;
+
+            for profile[i] in ProfileMenuBridge.profiles : CircularMenuprofile {
+                property <float> profile-angle: 360 / ProfileMenuBridge.profiles.length;
+
+                // Pass container dimensions to each profile
+                container-width: root.width;
+                container-height: root.height;
+
+                title: profile.label;
+                icon: ProfileMenuBridge.icon_source_to_icon(profile.icon-source);
+                background-color: profile.bg-color;
+                selected: profile.selected;
+                start-angle: i * profile-angle;
+                end-angle: (i + 1) * profile-angle;
+
+                toggle => {
+                    root.toggle(i);
+                }
+            }
+
+            analyzeButton := Rectangle {
+                property <length> container-size: min(parent.width, parent.height);
+                property <length> button-diameter: container-size * 0.35;
+                property <float> scale-factor: container-size / 800px;
+                property <length> font-size: max(Styles.sizes.font, Styles.sizes.font * scale-factor * 2);
+
+                property <bool> enabled: false;
+                visible: true;
+                width: button-diameter;
+                height: button-diameter;
+                border-radius: button-diameter / 2;
+                border-width: 2px;
+
+                x: (parent.width - self.width) / 2 + 1px;
+                y: (parent.height - self.height) / 2 + 1px;
+
+                states [
+                    disabled when !enabled: {
+                        background: Styles.palette.window-alter-bg;
+                        border-color: Styles.palette.element-border;
+                        drop-shadow-blur: 0px;
+                        drop-shadow-offset-y: 0px;
+                    }
+                    enabled when enabled && !touch-area.has-hover && !touch-area.pressed: {
+                        background: Styles.palette.primary-bg;
+                        border-color: Styles.palette.primary-bg;
+                        drop-shadow-blur: 4px;
+                        drop-shadow-color: Styles.palette.primary-bg.transparentize(60%);
+                        drop-shadow-offset-y: 2px;
+                    }
+                    hovered when enabled && touch-area.has-hover && !touch-area.pressed: {
+                        background: Styles.palette.primary-bg.darker(15%);
+                        border-color: Styles.palette.primary-bg.darker(15%);
+                        drop-shadow-blur: 8px;
+                        drop-shadow-color: Styles.palette.primary-bg.transparentize(40%);
+                        drop-shadow-offset-y: 4px;
+                    }
+                    pressed when enabled && touch-area.pressed: {
+                        background: Styles.palette.primary-bg.darker(25%);
+                        border-color: Styles.palette.primary-bg.darker(35%);
+                        drop-shadow-blur: 2px;
+                        drop-shadow-color: Styles.palette.primary-bg.transparentize(70%);
+                        drop-shadow-offset-y: 1px;
+                    }
+                ]
+                animate background, border-color, drop-shadow-blur, drop-shadow-offset-y {
+                    duration: 200ms;
+                    easing: cubic-bezier(0.25, 0.1, 0.25, 1.0);
+                }
+                touch-area := TouchArea {
+                    width: 100%;
+                    height: 100%;
+                    clicked => {
+                        if (enabled) {
+                            start-profile-analysis();
+                        }
+                    }
+                }
+
+                analyzeButtonText := Text {
+                    text: @tr("Analizar");
+                    font-size: font-size;
+                    font-weight: 600;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                    visible: true;
+                    states [
+                        disabled when !enabled: {
+                            color: Styles.palette.window-alter-fg;
+                        }
+                        enabled when enabled: {
+                            color: #ffffff;
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

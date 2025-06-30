@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+import { ProfileCardIcons } from "../globals.slint";
+
 export struct Disk {
     name: string,
     size: string,
@@ -66,6 +68,45 @@ export global PathManagementBridge {
     callback add-path(string);
     callback remove-path(int);
     callback update-path(int, string);
-    
+
     callback check-paths();
+}
+
+export struct Profile {
+    label: string,
+    icon-source: string,
+    bg-color: color,
+    selected: bool
+}
+
+export global ProfileMenuBridge {
+    in-out property <[Profile]> profiles: [
+        { label: "Aplicaciones", bg_color: #644661, icon_source: "app", selected: false },
+        { label: "Audio", bg_color: #86883D, icon_source: "audio", selected: false },
+        { label: "Imágenes", bg_color: #5F7E81, icon_source: "image", selected: false },
+        { label: "Modelos", bg_color: #CA672E, icon_source: "model", selected: false },
+        { label: "Textos", bg_color: #9D6C79, icon_source: "text", selected: false },
+        { label: "Vídeos", bg_color: #48705D, icon_source: "video", selected: false },
+    ];
+
+    callback toggle-profile-checked(/* index */ int);
+    pure callback count-selected-profiles() -> int;
+
+    pure public function icon_source_to_icon(icon_source: string) -> image {
+        if icon_source == "app" {
+            return ProfileCardIcons.app;
+        } else if icon_source == "audio" {
+            return ProfileCardIcons.audio;
+        } else if icon_source == "image" {
+            return ProfileCardIcons.image;
+        } else if icon_source == "model" {
+            return ProfileCardIcons.model;
+        } else if icon_source == "text" {
+            return ProfileCardIcons.text;
+        } else if icon_source == "video" {
+            return ProfileCardIcons.video;
+        } else {
+            return ProfileCardIcons.app;
+        }
+    }
 }

@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 export enum Page {
     DiskList,
     PathManagement,
@@ -10,4 +9,13 @@ export enum Page {
 
 export global UIState {
     in-out property <Page> current-page: Page.DiskList;
+}
+
+export global ProfileCardIcons {
+    out property <image> app: @image-url("assets/profile_icons/app.svg");
+    out property <image> audio: @image-url("assets/profile_icons/audio.svg");
+    out property <image> image: @image-url("assets/profile_icons/image.svg");
+    out property <image> model: @image-url("assets/profile_icons/model.svg");
+    out property <image> text: @image-url("assets/profile_icons/text.svg");
+    out property <image> video: @image-url("assets/profile_icons/video.svg");
 }
