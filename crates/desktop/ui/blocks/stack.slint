@@ -2,6 +2,7 @@
 import { UIState, Page } from "../globals.slint";
 import { DiskListPage } from "../pages/disk-list.slint";
 import { PathManagementPage } from "../pages/path-management.slint";
+import { ProfileSelectionView } from "../pages/profile-menu.slint";
 import { PathManagementBridge } from "bridges.slint";
 
 export component Stack inherits Rectangle {
@@ -26,14 +27,14 @@ export component Stack inherits Rectangle {
         }
     }
 
-    /*if current-page == Page.ProfileSelection : ProfileSelectionPage {
+    if current-page == Page.ProfileSelection : ProfileSelectionView {
         start-profile-analysis => {
             current-page = Page.DiskAnalysis;
             start-analysis();
         }
     }
 
-    if current-page == Page.DiskAnalysis : DiskAnalysisPage {}
+    /*if current-page == Page.DiskAnalysis : DiskAnalysisPage {}
 
     if current-page == Page.AnalysisResult : AnalysisResultPage {}*/
 }
