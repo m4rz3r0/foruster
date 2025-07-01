@@ -85,21 +85,223 @@ export global ProfileMenuBridge {
 
     pure callback count-selected-profiles() -> int;
 
-    pure public function icon_source_to_icon(icon_source: string) -> image {
-        if icon_source == "app" {
-            return ProfileCardIcons.app;
-        } else if icon_source == "audio" {
-            return ProfileCardIcons.audio;
-        } else if icon_source == "image" {
-            return ProfileCardIcons.image;
-        } else if icon_source == "model" {
-            return ProfileCardIcons.model;
-        } else if icon_source == "text" {
-            return ProfileCardIcons.text;
-        } else if icon_source == "video" {
-            return ProfileCardIcons.video;
+    public pure function icon_source_to_icon(icon_source: string) -> image {
+        if (icon_source == "app") {
+            ProfileCardIcons.app
+        } else if (icon_source == "audio") {
+            ProfileCardIcons.audio
+        } else if (icon_source == "image") {
+            ProfileCardIcons.image
+        } else if (icon_source == "model") {
+            ProfileCardIcons.model
+        } else if (icon_source == "text") {
+            ProfileCardIcons.text
+        } else if (icon_source == "video") {
+            ProfileCardIcons.video
         } else {
-            return ProfileCardIcons.app;
+            ProfileCardIcons.app
         }
     }
+}
+
+export struct File {
+    name: string,
+    path: string,
+    type: string,
+    size: string,
+    match-score: string,
+    profile: string,
+}
+
+export global AnalysisResultBridge {
+    callback exportReport();
+    callback filterByProfile(string);
+    callback searchFiles(string);
+    callback saveAnalysis();
+    callback goBack();
+    callback loadNextPage();
+    callback loadPreviousPage();
+    callback goToPage(int);
+
+    in property <string> total-files: "1,254";
+    in property <string> analyzed-files: "1,203";
+    in property <string> matched-files: "874";
+    in property <string> analysis-time: "3.5 min";
+
+    in property <string> analysis-name: "Análisis Completo - Disco C";
+    in property <string> analysis-date: "2025-01-07 14:30";
+    in property <string> profile-used: "Múltiples perfiles";
+    in property <string> description: "Análisis completo del disco C usando múltiples perfiles para detectar diferentes tipos de archivos.";
+
+    // Pagination
+    in property <int> current-page: 1;
+    in property <int> total-pages: 18;
+    in property <int> items-per-page: 50;
+    in property <int> total-items: 874;
+
+    in property <string> active-profile-filter: "Todos";
+
+    // Test data
+    in property <[File]> file-results: [
+        {
+            name: "Adobe_Photoshop_2024.exe",
+            path: "C:\\Program Files\\Adobe\\Adobe Photoshop 2024\\",
+            type: "Aplicación",
+            size: "2.1 GB",
+            match-score: "95%",
+            profile: "Aplicaciones"
+        },
+        {
+            name: "summer_vacation_2023.mp4",
+            path: "C:\\Users\\Usuario\\Videos\\Vacaciones\\",
+            type: "Video",
+            size: "1.8 GB",
+            match-score: "92%",
+            profile: "Vídeos"
+        },
+        {
+            name: "family_photo_001.jpg",
+            path: "C:\\Users\\Usuario\\Pictures\\Familia\\",
+            type: "Imagen",
+            size: "4.2 MB",
+            match-score: "88%",
+            profile: "Imágenes"
+        },
+        {
+            name: "presentation_final.pptx",
+            path: "C:\\Users\\Usuario\\Documents\\Trabajo\\",
+            type: "Documento",
+            size: "15.6 MB",
+            match-score: "87%",
+            profile: "Textos"
+        },
+        {
+            name: "relaxing_music.mp3",
+            path: "C:\\Users\\Usuario\\Music\\Playlist\\",
+            type: "Audio",
+            size: "8.3 MB",
+            match-score: "91%",
+            profile: "Audio"
+        },
+        {
+            name: "house_blueprint.dwg",
+            path: "C:\\Users\\Usuario\\Documents\\CAD\\",
+            type: "Modelo 3D",
+            size: "23.4 MB",
+            match-score: "94%",
+            profile: "Modelos"
+        },
+        {
+            name: "Microsoft_Office_365.msi",
+            path: "C:\\Program Files\\Microsoft Office\\",
+            type: "Instalador",
+            size: "3.2 GB",
+            match-score: "89%",
+            profile: "Aplicaciones"
+        },
+        {
+            name: "wedding_ceremony.mov",
+            path: "D:\\Backup\\Videos\\Eventos\\",
+            type: "Video",
+            size: "4.7 GB",
+            match-score: "93%",
+            profile: "Vídeos"
+        },
+        {
+            name: "landscape_photo.raw",
+            path: "C:\\Users\\Usuario\\Pictures\\Fotografía\\RAW\\",
+            type: "Imagen RAW",
+            size: "42.1 MB",
+            match-score: "96%",
+            profile: "Imágenes"
+        },
+        {
+            name: "project_report.docx",
+            path: "C:\\Users\\Usuario\\Documents\\Proyectos\\",
+            type: "Documento",
+            size: "2.8 MB",
+            match-score: "85%",
+            profile: "Textos"
+        },
+        {
+            name: "jazz_collection.flac",
+            path: "D:\\Music\\Alta Calidad\\Jazz\\",
+            type: "Audio",
+            size: "156.7 MB",
+            match-score: "97%",
+            profile: "Audio"
+        },
+        {
+            name: "engine_part.step",
+            path: "C:\\CAD Projects\\Mechanical\\",
+            type: "Modelo CAD",
+            size: "18.9 MB",
+            match-score: "90%",
+            profile: "Modelos"
+        },
+        {
+            name: "Steam.exe",
+            path: "C:\\Program Files (x86)\\Steam\\",
+            type: "Aplicación",
+            size: "4.2 MB",
+            match-score: "88%",
+            profile: "Aplicaciones"
+        },
+        {
+            name: "kids_playing.avi",
+            path: "C:\\Users\\Usuario\\Videos\\Familia\\",
+            type: "Video",
+            size: "856.3 MB",
+            match-score: "86%",
+            profile: "Vídeos"
+        },
+        {
+            name: "logo_design.psd",
+            path: "C:\\Design\\Clients\\ABC Corp\\",
+            type: "Imagen",
+            size: "127.4 MB",
+            match-score: "94%",
+            profile: "Imágenes"
+        },
+        {
+            name: "meeting_notes.txt",
+            path: "C:\\Users\\Usuario\\Documents\\Notas\\",
+            type: "Texto",
+            size: "12.3 KB",
+            match-score: "78%",
+            profile: "Textos"
+        },
+        {
+            name: "podcast_episode_05.mp3",
+            path: "D:\\Podcasts\\Tech Talk\\",
+            type: "Audio",
+            size: "45.2 MB",
+            match-score: "83%",
+            profile: "Audio"
+        },
+        {
+            name: "furniture_design.blend",
+            path: "C:\\Blender\\Projects\\Interior\\",
+            type: "Modelo 3D",
+            size: "89.7 MB",
+            match-score: "92%",
+            profile: "Modelos"
+        },
+        {
+            name: "Chrome_Setup.exe",
+            path: "C:\\Users\\Usuario\\Downloads\\",
+            type: "Instalador",
+            size: "1.4 MB",
+            match-score: "81%",
+            profile: "Aplicaciones"
+        },
+        {
+            name: "tutorial_video.mp4",
+            path: "C:\\Learning\\Programming\\",
+            type: "Video",
+            size: "234.6 MB",
+            match-score: "89%",
+            profile: "Vídeos"
+        }
+    ];
 }

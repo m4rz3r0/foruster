@@ -1,0 +1,517 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+import { Button, VerticalBox, HorizontalBox, ScrollView, ListView, LineEdit, GridBox, ComboBox, TabWidget } from "std-widgets.slint";
+import { Styles } from "../styles.slint";
+import { AnalysisResultBridge, ProfileMenuBridge } from "../blocks/bridges.slint";
+
+component PaginationControls inherits Rectangle {
+    height: 40px;
+    background: transparent;
+
+    in property <int> current-page: 1;
+    in property <int> total-pages: 1;
+    in property <int> total-items: 0;
+    in property <int> items-per-page: 50;
+
+    HorizontalLayout {
+        spacing: Styles.sizes.s-md;
+        alignment: space-between;
+
+        // Información de elementos
+        Text {
+            text: "Mostrando " + ((root.current-page - 1) * root.items-per-page + 1) + 
+                  " - " + min(root.current-page * root.items-per-page, root.total-items) + 
+                  " de " + root.total-items + " elementos";
+            color: Styles.palette.window-fg;
+            font-size: Styles.sizes.font - 1px;
+            vertical-alignment: center;
+        }
+
+        // Controles de navegación
+        HorizontalLayout {
+            spacing: Styles.sizes.s-xs;
+
+            Rectangle {
+                width: 32px;
+                height: 32px;
+                border-radius: 6px;
+                background: root.current-page > 1 
+                    ? (prev-touch.has-hover ? Styles.palette.element-hover : Styles.palette.element-bg)
+                    : Styles.palette.element-disabled;
+                border-width: 1px;
+                border-color: Styles.palette.element-border;
+                animate background { duration: 150ms; }
+
+                prev-touch := TouchArea {
+                    enabled: root.current-page > 1;
+                    clicked => {
+                        AnalysisResultBridge.loadPreviousPage();
+                    }
+                }
+
+                Text {
+                    text: "‹";
+                    color: root.current-page > 1 ? Styles.palette.primary-fg : Styles.palette.disabled-fg;
+                    font-size: Styles.sizes.font + 2px;
+                    font-weight: 600;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+
+            Rectangle {
+                width: 60px;
+                height: 32px;
+                border-radius: 6px;
+                background: Styles.palette.primary-bg.with-alpha(0.1);
+                border-width: 1px;
+                border-color: Styles.palette.primary-bg;
+
+                Text {
+                    text: root.current-page + " / " + root.total-pages;
+                    color: Styles.palette.primary-fg;
+                    font-size: Styles.sizes.font - 1px;
+                    font-weight: 600;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+
+            Rectangle {
+                width: 32px;
+                height: 32px;
+                border-radius: 6px;
+                background: root.current-page < root.total-pages 
+                    ? (next-touch.has-hover ? Styles.palette.element-hover : Styles.palette.element-bg)
+                    : Styles.palette.element-disabled;
+                border-width: 1px;
+                border-color: Styles.palette.element-border;
+                animate background { duration: 150ms; }
+
+                next-touch := TouchArea {
+                    enabled: root.current-page < root.total-pages;
+                    clicked => {
+                        AnalysisResultBridge.loadNextPage();
+                    }
+                }
+
+                Text {
+                    text: "›";
+                    color: root.current-page < root.total-pages ? Styles.palette.primary-fg : Styles.palette.disabled-fg;
+                    font-size: Styles.sizes.font + 2px;
+                    font-weight: 600;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+    }
+}
+
+component AnalysisResultItem inherits Rectangle {
+    height: content-layout.preferred-height + 24px;
+    border-width: 1px;
+    border-color: Styles.palette.element-border;
+    border-radius: Styles.sizes.r-md;
+    background: ta.has-hover
+        ? Styles.palette.window-alter-bg
+        : Styles.palette.window-bg;
+    animate background { duration: 200ms; }
+
+    in property <string> file-name: "archivo.txt";
+    in property <string> file-path: "/ruta/hacia/el/archivo";
+    in property <string> file-type: "Texto";
+    in property <string> file-size: "15.2 KB";
+    in property <string> match-score: "87%";
+
+    ta := TouchArea {
+        width: 100%;
+        height: 100%;
+    }
+
+    content-layout := VerticalLayout {
+        padding: Styles.sizes.p-sm;
+        spacing: Styles.sizes.s-xs;
+
+        HorizontalLayout {
+            alignment: start;
+            spacing: Styles.sizes.s-md;
+
+            Text {
+                text: root.file-name;
+                font-weight: 700;
+                color: Styles.palette.primary-fg;
+                font-size: Styles.sizes.font + 2px;
+                vertical-alignment: center;
+            }
+
+            Rectangle {
+                width: 70px;
+                height: 26px;
+                border-radius: Styles.sizes.r-sm;
+                background: Styles.palette.primary-bg;
+
+                Text {
+                    text: root.match-score;
+                    font-size: Styles.sizes.font - 2px;
+                    color: Styles.palette.primary-fg;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        HorizontalLayout {
+            alignment: start;
+            spacing: Styles.sizes.s-md;
+
+            Text {
+                text: root.file-path;
+                color: Styles.palette.window-fg;
+                font-size: Styles.sizes.font - 2px;
+            }
+        }
+
+        HorizontalLayout {
+            alignment: start;
+            spacing: Styles.sizes.s-md;
+
+            Text {
+                text: "Tipo: " + root.file-type;
+                color: Styles.palette.window-fg;
+                font-size: Styles.sizes.font - 2px;
+            }
+
+            Text {
+                text: "Tamaño: " + root.file-size;
+                color: Styles.palette.window-fg;
+                font-size: Styles.sizes.font - 2px;
+            }
+        }
+    }
+}
+
+component AnalysisStats inherits Rectangle {
+    width: 100%;
+    height: stats-grid.preferred-height + 32px;
+    border-width: 1px;
+    border-color: Styles.palette.element-border;
+    border-radius: Styles.sizes.r-md;
+    background: Styles.palette.window-bg;
+
+    in property <string> total-files: "1,254";
+    in property <string> analyzed-files: "1,203";
+    in property <string> matched-files: "874";
+    in property <string> analysis-time: "3.5 min";
+
+    stats-grid := GridLayout {
+        padding: Styles.sizes.p-md;
+        spacing: Styles.sizes.s-md;
+        Row {
+            Rectangle {
+                border-radius: Styles.sizes.r-sm;
+                background: Styles.palette.layer-1;
+                padding: Styles.sizes.p-sm;
+
+                VerticalLayout {
+                    Text {
+                        text: "Archivos Totales";
+                        color: Styles.palette.window-fg;
+                        font-size: Styles.sizes.font - 2px;
+                        horizontal-alignment: center;
+                    }
+                    Text {
+                        text: root.total-files;
+                        color: Styles.palette.primary-fg;
+                        font-size: Styles.sizes.font + 4px;
+                        font-weight: 700;
+                        horizontal-alignment: center;
+                    }
+                }
+            }
+
+            Rectangle {
+                border-radius: Styles.sizes.r-sm;
+                background: Styles.palette.layer-1;
+                padding: Styles.sizes.p-sm;
+
+                VerticalLayout {
+                    Text {
+                        text: "Archivos Analizados";
+                        color: Styles.palette.window-fg;
+                        font-size: Styles.sizes.font - 2px;
+                        horizontal-alignment: center;
+                    }
+                    Text {
+                        text: root.analyzed-files;
+                        color: Styles.palette.info-fg;
+                        font-size: Styles.sizes.font + 4px;
+                        font-weight: 700;
+                        horizontal-alignment: center;
+                    }
+                }
+            }
+
+            Rectangle {
+                border-radius: Styles.sizes.r-sm;
+                background: Styles.palette.layer-1;
+                padding: Styles.sizes.p-sm;
+
+                VerticalLayout {
+                    Text {
+                        text: "Archivos Coincidentes";
+                        color: Styles.palette.window-fg;
+                        font-size: Styles.sizes.font - 2px;
+                        horizontal-alignment: center;
+                    }
+                    Text {
+                        text: root.matched-files;
+                        color: Styles.palette.success-fg;
+                        font-size: Styles.sizes.font + 4px;
+                        font-weight: 700;
+                        horizontal-alignment: center;
+                    }
+                }
+            }
+
+            Rectangle {
+                border-radius: Styles.sizes.r-sm;
+                background: Styles.palette.layer-1;
+                padding: Styles.sizes.p-sm;
+
+                VerticalLayout {
+                    Text {
+                        text: "Tiempo de Análisis";
+                        color: Styles.palette.window-fg;
+                        font-size: Styles.sizes.font - 2px;
+                        horizontal-alignment: center;
+                    }
+                    Text {
+                        text: root.analysis-time;
+                        color: Styles.palette.window-fg;
+                        font-size: Styles.sizes.font + 4px;
+                        font-weight: 700;
+                        horizontal-alignment: center;
+                    }
+                }
+            }
+        }
+    }
+}
+
+export component AnalysisResultPage {
+    VerticalLayout {
+        padding: Styles.sizes.p-md;
+        spacing: Styles.sizes.s-lg;
+
+        Text {
+            text: "Resultados del Análisis";
+            font-size: Styles.sizes.font + 8px;
+            font-weight: 700;
+            color: Styles.palette.primary-fg;
+        }
+
+        AnalysisStats {
+            total-files: AnalysisResultBridge.total-files;
+            analyzed-files: AnalysisResultBridge.analyzed-files;
+            matched-files: AnalysisResultBridge.matched-files;
+            analysis-time: AnalysisResultBridge.analysis-time;
+        }
+
+        HorizontalLayout {
+            spacing: Styles.sizes.s-md;
+
+            property <string> filter-type: AnalysisResultBridge.active-profile-filter;
+            property <string> search-text: "";
+
+            ComboBox {
+                width: 200px;
+                model: ["Todos", "Aplicaciones", "Audio", "Imágenes", "Modelos", "Textos", "Vídeos"];
+                current-value: filter-type;
+                selected => {
+                    filter-type = self.current-value;
+                    AnalysisResultBridge.filterByProfile(filter-type);
+                }
+            }
+
+            LineEdit {
+                placeholder-text: "Buscar archivos...";
+                width: 300px;
+                edited => {
+                    search-text = self.text;
+                    AnalysisResultBridge.searchFiles(search-text);
+                }
+            }
+
+            Rectangle {
+                horizontal-stretch: 1;
+            }
+
+            Button {
+                text: "Exportar Reporte";
+                primary: true;
+                icon: @image-url("../assets/icon.png");
+                clicked => {
+                    AnalysisResultBridge.exportReport();
+                }
+            }
+        }
+
+        TabWidget {
+            Tab {
+                title: "Coincidencias (" + AnalysisResultBridge.matched-files + ")";
+
+                VerticalLayout {
+                    spacing: Styles.sizes.s-md;
+
+                    // Controles de paginación (arriba)
+                    if (AnalysisResultBridge.total-pages > 1) : PaginationControls {
+                        current-page: AnalysisResultBridge.current-page;
+                        total-pages: AnalysisResultBridge.total-pages;
+                        total-items: AnalysisResultBridge.total-items;
+                        items-per-page: AnalysisResultBridge.items-per-page;
+                    }
+
+                    ScrollView {
+                        VerticalLayout {
+                            padding-bottom: Styles.sizes.p-md;
+                            spacing: Styles.sizes.s-sm;
+
+                            // Reemplazar el bucle estático con datos dinámicos del puente
+                            for file in AnalysisResultBridge.file-results : AnalysisResultItem {
+                                file-name: file.name;
+                                file-path: file.path;
+                                file-type: file.type;
+                                file-size: file.size;
+                                match-score: file.match-score;
+                            }
+
+                            // Mostrar un mensaje si no hay resultados
+                            if (AnalysisResultBridge.file-results.length <= 0) : Rectangle {
+                                height: 100px;
+
+                                Text {
+                                    text: AnalysisResultBridge.active-profile-filter == "Todos" 
+                                        ? "No hay archivos que mostrar" 
+                                        : "No hay archivos para el perfil: " + AnalysisResultBridge.active-profile-filter;
+                                    color: Styles.palette.window-fg;
+                                    font-size: Styles.sizes.font;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+                    }
+
+                    // Controles de paginación (abajo)
+                    if (AnalysisResultBridge.total-pages > 1) : PaginationControls {
+                        current-page: AnalysisResultBridge.current-page;
+                        total-pages: AnalysisResultBridge.total-pages;
+                        total-items: AnalysisResultBridge.total-items;
+                        items-per-page: AnalysisResultBridge.items-per-page;
+                    }
+                }
+            }
+
+            Tab {
+                title: "Gráficos";
+
+                VerticalLayout {
+                    alignment: center;
+
+                    Text {
+                        text: "Gráficos de análisis";
+                        font-size: Styles.sizes.font + 2px;
+                        horizontal-alignment: center;
+                    }
+
+                    Rectangle {
+                        height: 300px;
+                        width: parent.width;
+                        border-width: 1px;
+                        border-color: Styles.palette.element-border;
+                        border-radius: Styles.sizes.r-md;
+
+                        Text {
+                            text: "Área para visualización de gráficos";
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+
+            Tab {
+                title: "Detalles";
+
+                GridLayout {
+                    padding: Styles.sizes.p-md;
+                    spacing: Styles.sizes.s-md;
+
+                    Row {
+                        Text {
+                            text: "Nombre del análisis:";
+                            font-weight: 700;
+                        }
+
+                        Text {
+                            text: AnalysisResultBridge.analysis-name != "" ? AnalysisResultBridge.analysis-name : "Análisis completo - Disco C";
+                        }
+                    }
+
+                    Row {
+                        Text {
+                            text: "Fecha:";
+                            font-weight: 700;
+                        }
+
+                        Text {
+                            text: AnalysisResultBridge.analysis-date != "" ? AnalysisResultBridge.analysis-date : "2025-07-01 14:30";
+                        }
+                    }
+
+                    Row {
+                        Text {
+                            text: "Perfil utilizado:";
+                            font-weight: 700;
+                        }
+
+                        Text {
+                            text: AnalysisResultBridge.profile-used != "" ? AnalysisResultBridge.profile-used : "Perfil estándar";
+                        }
+                    }
+
+                    Row {
+                        Text {
+                            text: "Descripción:";
+                            font-weight: 700;
+                        }
+
+                        Text {
+                            text: AnalysisResultBridge.description != "" ? AnalysisResultBridge.description : "Análisis completo del disco C buscando archivos que coincidan con el perfil seleccionado.";
+                        }
+                    }
+                }
+            }
+        }
+
+        HorizontalLayout {
+            alignment: end;
+            spacing: Styles.sizes.s-md;
+
+            Button {
+                text: "Volver";
+                clicked => {
+                    AnalysisResultBridge.goBack();
+                }
+            }
+
+            Button {
+                text: "Guardar análisis";
+                primary: true;
+                clicked => {
+                    AnalysisResultBridge.saveAnalysis();
+                }
+            }
+        }
+    }
+}

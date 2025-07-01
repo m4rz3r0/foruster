@@ -4,6 +4,7 @@ import { DiskListPage } from "../pages/disk-list.slint";
 import { PathManagementPage } from "../pages/path-management.slint";
 import { ProfileListPage } from "../pages/profile-list.slint";
 import { PathManagementBridge } from "bridges.slint";
+import { AnalysisResultPage } from "../pages/analysis-result.slint";
 
 export component Stack inherits Rectangle {
     horizontal-stretch: 1;
@@ -35,7 +36,8 @@ export component Stack inherits Rectangle {
         }
     }
 
-    /*if current-page == Page.AnalysisResult : AnalysisResultPage {
-        
-    }*/
+    if UIState.current-page == Page.AnalysisResult : AnalysisResultPage {
+        width: 100%;
+        height: 100%;
+    }
 }
