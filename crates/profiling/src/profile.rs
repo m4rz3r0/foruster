@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use std::path::Path;
 use crate::profile_style::{IconSource, ProfileStyle};
+use std::path::Path;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum FileCategory {
@@ -33,7 +33,7 @@ pub struct Profile {
     categories: Option<Vec<FileCategory>>,
     mime_types: Option<Vec<String>>,
     extensions: Option<Vec<String>>,
-    profile_style: ProfileStyle
+    profile_style: ProfileStyle,
 }
 
 impl Profile {
@@ -43,14 +43,14 @@ impl Profile {
         mime_types: Option<Vec<String>>,
         extensions: Option<Vec<String>>,
         bg_color: u32,
-        icon_source: IconSource
+        icon_source: IconSource,
     ) -> Self {
         Profile {
             name,
             categories,
             mime_types,
             extensions,
-            profile_style: ProfileStyle::new(bg_color, icon_source)
+            profile_style: ProfileStyle::new(bg_color, icon_source),
         }
     }
 
@@ -69,11 +69,11 @@ impl Profile {
     pub fn extensions(&self) -> &Option<Vec<String>> {
         &self.extensions
     }
-    
+
     pub fn bg_color(&self) -> u32 {
         self.profile_style.bg_color()
     }
-    
+
     pub fn icon_source(&self) -> &IconSource {
         self.profile_style.icon_source()
     }
@@ -117,7 +117,7 @@ pub fn default_profiles() -> Vec<Profile> {
             None,
             None,
             0xFF4CAF50,
-            IconSource::App
+            IconSource::App,
         ),
         Profile::new(
             "Audios".to_string(),
@@ -125,7 +125,7 @@ pub fn default_profiles() -> Vec<Profile> {
             None,
             None,
             0xFF2196F3,
-            IconSource::Audio
+            IconSource::Audio,
         ),
         Profile::new(
             "Imágenes".to_string(),
@@ -133,7 +133,7 @@ pub fn default_profiles() -> Vec<Profile> {
             None,
             None,
             0xFFFF9800,
-            IconSource::Image
+            IconSource::Image,
         ),
         Profile::new(
             "Modelos".to_string(),
@@ -141,7 +141,7 @@ pub fn default_profiles() -> Vec<Profile> {
             None,
             None,
             0xFF9C27B0,
-            IconSource::Model
+            IconSource::Model,
         ),
         Profile::new(
             "Texto".to_string(),
@@ -149,7 +149,7 @@ pub fn default_profiles() -> Vec<Profile> {
             None,
             None,
             0xFF607D8B,
-            IconSource::Text
+            IconSource::Text,
         ),
         Profile::new(
             "Vídeos".to_string(),
@@ -157,7 +157,7 @@ pub fn default_profiles() -> Vec<Profile> {
             None,
             None,
             0xFFF44336,
-            IconSource::Video
+            IconSource::Video,
         ),
         Profile::new(
             "Otros".to_string(),
@@ -165,7 +165,7 @@ pub fn default_profiles() -> Vec<Profile> {
             None,
             None,
             0xFF9E9E9E,
-            IconSource::App
+            IconSource::App,
         ),
         Profile::new(
             "Comprimidos".to_string(),
@@ -188,7 +188,7 @@ pub fn default_profiles() -> Vec<Profile> {
                 ".tar.bz2".to_string(),
             ]),
             0xFF795548,
-            IconSource::App
+            IconSource::App,
         ),
         Profile::new(
             "Documentos".to_string(),
@@ -214,7 +214,7 @@ pub fn default_profiles() -> Vec<Profile> {
                 ".pptx".to_string(),
             ]),
             0xFF3F51B5,
-            IconSource::Text
+            IconSource::Text,
         ),
     ]
 }

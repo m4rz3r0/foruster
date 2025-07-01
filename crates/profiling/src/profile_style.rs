@@ -48,13 +48,16 @@ pub struct ProfileStyle {
 
 impl ProfileStyle {
     pub fn new(bg_color: u32, icon_source: IconSource) -> Self {
-        Self { bg_color, icon_source }
+        Self {
+            bg_color,
+            icon_source,
+        }
     }
-    
+
     pub fn bg_color(&self) -> u32 {
         self.bg_color
     }
-    
+
     pub fn icon_source(&self) -> &IconSource {
         &self.icon_source
     }
