@@ -42,13 +42,7 @@ export global DiskListBridge {
     pure callback num-selected-disks() -> int;
     pure callback check-for-changes() -> bool;
 
-    callback toggle-disk-checked(/* index */ int);
     callback refresh-disks;
-
-    // Dummy implementation for the preview
-    toggle-disk-checked(index) => {
-        root.disks[index].selected = !root.disks[index].selected;
-    }
 }
 
 export struct Path {
@@ -89,7 +83,6 @@ export global ProfileMenuBridge {
         { label: "Vídeos", bg_color: #48705D, icon_source: "video", selected: false },
     ];
 
-    callback toggle-profile-checked(/* index */ int);
     pure callback count-selected-profiles() -> int;
 
     pure public function icon_source_to_icon(icon_source: string) -> image {

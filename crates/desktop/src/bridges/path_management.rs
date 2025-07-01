@@ -31,7 +31,7 @@ fn get_start_paths(
 
     storage_api
         .borrow()
-        .get_all()
+        .get_disks()
         .into_iter()
         .filter(|disk| {
             selected_disks

@@ -7,6 +7,7 @@ version.workspace = true
 [dependencies]
 slint = { workspace = true }
 app_core = { path = "../core" }
+profiling = { path = "../profiling" }
 api = { path = "../api" }
 rfd = "0.15.3"
 

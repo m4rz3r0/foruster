@@ -149,7 +149,7 @@ export component DiskListPage {
                             is_selected: disk.selected;
 
                             toggle => {
-                                DiskListBridge.toggle-disk-checked(index);
+                                disk.selected = !disk.selected;
                                 update-button-enabled-status();
                         }
                     }

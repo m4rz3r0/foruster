@@ -28,7 +28,7 @@ fn map_disk_to_ui(disk: &app_core::Disk) -> Disk {
 }
 
 fn refresh_disks(disks_model: Rc<VecModel<Disk>>, storage_api: Ref<StorageAPI>) {
-    let new_disks = storage_api.get_all();
+    let new_disks = storage_api.get_disks();
 
     // Remove disconnected disks
     let mut indices_to_remove = Vec::new();
@@ -64,7 +64,7 @@ pub fn setup(window: &MainWindow, storage_api: Rc<RefCell<StorageAPI>>) {
     let disk_list_model = Rc::new(VecModel::from(
         storage_api
             .borrow()
-            .get_all()
+            .get_disks()
             .iter()
             .map(map_disk_to_ui)
             .collect::<Vec<_>>(),

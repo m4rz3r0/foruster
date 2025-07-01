@@ -59,7 +59,7 @@ component CircularMenuprofile {
     }
 
     p := Path {
-        fill: selected ? background-color : ta.has-hover ? background-color : Colors.transparent;
+        fill: selected ? background-color : ta.has-hover ? background-color.transparentize(33%) : Colors.transparent;
         stroke: #2d2d30;
         stroke-width: max(1px, 5px * scale-factor);
 
@@ -124,17 +124,11 @@ component CircularMenuprofile {
     }
 }
 
-export component ProfileSelectionView {
+export component ProfileListPage {
     callback start-profile-analysis();
-    callback toggle(int);
 
     function update-button-enabled-status() {
         analyzeButton.enabled = ProfileMenuBridge.count-selected-profiles() > 0;
-    }
-
-    toggle(index) => {
-        ProfileMenuBridge.toggle-profile-checked(index);
-        update-button-enabled-status();
     }
 
     VerticalBox {
@@ -174,7 +168,8 @@ export component ProfileSelectionView {
                 end-angle: (i + 1) * profile-angle;
 
                 toggle => {
-                    root.toggle(i);
+                    profile.selected = !profile.selected;
+                    update-button-enabled-status();
                 }
             }
 

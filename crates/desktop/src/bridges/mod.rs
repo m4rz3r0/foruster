@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 mod disk_list;
 mod path_management;
+mod profile_list;
 
 use crate::ui::MainWindow;
 use api::StorageAPI;
@@ -13,4 +14,5 @@ pub fn setup(window: &MainWindow) {
 
     disk_list::setup(window, storage_api.clone());
     path_management::setup(window, storage_api.clone());
+    profile_list::setup(window);
 }

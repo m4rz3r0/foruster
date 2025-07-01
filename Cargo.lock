@@ -204,6 +204,7 @@ name = "api"
 version = "0.1.0"
 dependencies = [
  "app_core",
+ "profiling 0.1.0",
  "storage",
 ]
 
@@ -1220,6 +1221,7 @@ version = "0.1.0"
 dependencies = [
  "api",
  "app_core",
+ "profiling 0.1.0",
  "rfd",
  "slint",
  "slint-build",
@@ -1635,13 +1637,6 @@ version = "0.1.0"
 dependencies = [
  "app_core",
  "file-format",
-]
-
-[[package]]
-name = "foruster_profiles"
-version = "0.1.0"
-dependencies = [
- "tree_magic_mini",
 ]
 
 [[package]]
@@ -3802,6 +3797,13 @@ dependencies = [
 
 [[package]]
 name = "profiling"
+version = "0.1.0"
+dependencies = [
+ "tree_magic_mini",
+]
+
+[[package]]
+name = "profiling"
 version = "1.0.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3eb8486b569e12e2c32ad3e204dbaba5e4b5b216e9367044f25f1dba42341773"
@@ -3963,7 +3965,7 @@ dependencies = [
  "num-traits",
  "once_cell",
  "paste",
- "profiling",
+ "profiling 1.0.17",
  "rand 0.8.5",
  "rand_chacha 0.3.1",
  "simd_helpers",

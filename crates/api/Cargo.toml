@@ -9,3 +9,4 @@ rust-version.workspace = true
 [dependencies]
 app_core = { path = "../core" }
 storage = { path = "../storage" }
+profiling = { path = "../profiling" }
