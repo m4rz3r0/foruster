@@ -44,7 +44,7 @@ component PaginationControls inherits Rectangle {
                 prev-touch := TouchArea {
                     enabled: root.current-page > 1;
                     clicked => {
-                        AnalysisResultBridge.loadPreviousPage();
+                        AnalysisResultBridge.load-previous-page();
                     }
                 }
 
@@ -90,7 +90,7 @@ component PaginationControls inherits Rectangle {
                 next-touch := TouchArea {
                     enabled: root.current-page < root.total-pages;
                     clicked => {
-                        AnalysisResultBridge.loadNextPage();
+                        AnalysisResultBridge.load-next-page();
                     }
                 }
 
@@ -299,6 +299,8 @@ component AnalysisStats inherits Rectangle {
 }
 
 export component AnalysisResultPage {
+    in property <[string]> selected_profiles;
+
     VerticalLayout {
         padding: Styles.sizes.p-md;
         spacing: Styles.sizes.s-lg;
@@ -325,11 +327,11 @@ export component AnalysisResultPage {
 
             ComboBox {
                 width: 200px;
-                model: ["Todos", "Aplicaciones", "Audio", "Imágenes", "Modelos", "Textos", "Vídeos"];
+                model: AnalysisResultBridge.used-profiles;
                 current-value: filter-type;
                 selected => {
                     filter-type = self.current-value;
-                    AnalysisResultBridge.filterByProfile(filter-type);
+                    AnalysisResultBridge.filter-by-profile(filter-type);
                 }
             }
 
@@ -338,7 +340,7 @@ export component AnalysisResultPage {
                 width: 300px;
                 edited => {
                     search-text = self.text;
-                    AnalysisResultBridge.searchFiles(search-text);
+                    AnalysisResultBridge.search-files(search-text);
                 }
             }
 
@@ -351,7 +353,7 @@ export component AnalysisResultPage {
                 primary: true;
                 icon: @image-url("../assets/icon.png");
                 clicked => {
-                    AnalysisResultBridge.exportReport();
+                    AnalysisResultBridge.export-report();
                 }
             }
         }
@@ -476,7 +478,7 @@ export component AnalysisResultPage {
                         }
 
                         Text {
-                            text: AnalysisResultBridge.profile-used != "" ? AnalysisResultBridge.profile-used : "Perfil estándar";
+                            text: AnalysisResultBridge.used-profiles-str;
                         }
                     }
 
@@ -501,7 +503,7 @@ export component AnalysisResultPage {
             Button {
                 text: "Volver";
                 clicked => {
-                    AnalysisResultBridge.goBack();
+                    AnalysisResultBridge.go-back();
                 }
             }
 
@@ -509,7 +511,7 @@ export component AnalysisResultPage {
                 text: "Guardar análisis";
                 primary: true;
                 clicked => {
-                    AnalysisResultBridge.saveAnalysis();
+                    AnalysisResultBridge.save-analysis();
                 }
             }
         }

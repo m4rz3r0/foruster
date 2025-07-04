@@ -114,14 +114,15 @@ export struct File {
 }
 
 export global AnalysisResultBridge {
-    callback exportReport();
-    callback filterByProfile(string);
-    callback searchFiles(string);
-    callback saveAnalysis();
-    callback goBack();
-    callback loadNextPage();
-    callback loadPreviousPage();
-    callback goToPage(int);
+    callback export-report();
+    callback filter-by-profile(string);
+    callback search-files(string);
+    callback save-analysis();
+    callback go-back();
+    callback load-next-page();
+    callback load-previous-page();
+    callback go-to-page(int);
+    callback initialize();
 
     in property <string> total-files: "1,254";
     in property <string> analyzed-files: "1,203";
@@ -130,7 +131,8 @@ export global AnalysisResultBridge {
 
     in property <string> analysis-name: "Análisis Completo - Disco C";
     in property <string> analysis-date: "2025-01-07 14:30";
-    in property <string> profile-used: "Múltiples perfiles";
+    in property <[string]> used-profiles: ["Música", "Documentos"];
+    in property <string> used-profiles-str: "Música y documentos";
     in property <string> description: "Análisis completo del disco C usando múltiples perfiles para detectar diferentes tipos de archivos.";
 
     // Pagination
@@ -139,6 +141,7 @@ export global AnalysisResultBridge {
     in property <int> items-per-page: 50;
     in property <int> total-items: 874;
 
+    in property <[string]> analyzed-profiles: ["Música", "Imágenes", "Comprimidos"];
     in property <string> active-profile-filter: "Todos";
 
     // Test data

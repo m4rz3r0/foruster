@@ -3,7 +3,7 @@ import { UIState, Page } from "../globals.slint";
 import { DiskListPage } from "../pages/disk-list.slint";
 import { PathManagementPage } from "../pages/path-management.slint";
 import { ProfileListPage } from "../pages/profile-list.slint";
-import { PathManagementBridge } from "bridges.slint";
+import { PathManagementBridge, AnalysisResultBridge } from "bridges.slint";
 import { AnalysisResultPage } from "../pages/analysis-result.slint";
 
 export component Stack inherits Rectangle {
@@ -33,6 +33,7 @@ export component Stack inherits Rectangle {
         height: 100%;
         start-profile-analysis => {
             UIState.current-page = Page.AnalysisResult;
+            AnalysisResultBridge.initialize();
         }
     }
 
