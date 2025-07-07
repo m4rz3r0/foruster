@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use std::{collections::HashMap, hash::Hasher, path::PathBuf};
+use std::{collections::HashMap, path::PathBuf};
 
 #[derive(PartialEq, Eq, Hash)]
 pub enum HashFunction {
@@ -12,7 +12,7 @@ pub enum HashFunction {
 pub struct FileEntry {
     path: PathBuf,
     size: usize,
-    hash: HashMap<HashFunction, Box<dyn Hasher>>,
+    hash: HashMap<HashFunction, String>,
 }
 
 impl FileEntry {
@@ -32,11 +32,11 @@ impl FileEntry {
         self.size
     }
 
-    pub fn hash(&self, hash_function: &HashFunction) -> Option<&dyn Hasher> {
-        self.hash.get(hash_function).map(|b| b.as_ref())
+    pub fn hash(&self, hash_function: &HashFunction) -> Option<&String> {
+        self.hash.get(hash_function)
     }
 
-    pub fn add_hash(&mut self, hash_function: HashFunction, hasher: Box<dyn Hasher>) {
-        self.hash.insert(hash_function, hasher);
+    pub fn add_hash(&mut self, hash_function: HashFunction, hash_result: String) {
+        self.hash.insert(hash_function, hash_result);
     }
 }

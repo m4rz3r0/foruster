@@ -92,3 +92,32 @@ pub fn setup(
     bridge.on_save_analysis(move || {});
     bridge.on_go_back(move || {});
 }
+
+/*
+// En tu bridge
+pub fn setup_progress_monitoring(
+    window: &MainWindow,
+    analysis_api: Rc<RefCell<AnalysisAPI>>,
+) {
+    let window_weak = window.as_weak();
+    let analysis_api_clone = analysis_api.clone();
+    
+    // Timer para actualizar progreso cada 100ms
+    slint::Timer::default().start(
+        slint::TimerMode::Repeated, 
+        std::time::Duration::from_millis(100), 
+        move || {
+            if let Some(window) = window_weak.upgrade() {
+                let progress = analysis_api_clone.borrow().get_progress();
+                let bridge = window.global::<AnalysisResultBridge>();
+                
+                // Actualizar propiedades del bridge
+                bridge.set_analysis_percentage(progress.overall_percentage() as i32);
+                bridge.set_scanned_files(progress.scanned_files.to_string().into());
+                bridge.set_current_file(progress.current_path.into());
+                // ... más actualizaciones
+            }
+        }
+    );
+}
+ */
