@@ -36,4 +36,22 @@ impl Finding {
     pub fn total_files(&self) -> usize {
         self.total_files
     }
+
+    pub fn set_files(&mut self, files: Vec<PathBuf>) {
+        let mut locked_files = self.files.lock().unwrap();
+        *locked_files = files;
+    }
+
+    pub fn set_analyzed_files(&mut self, files: Vec<FileEntry>) {
+        let mut locked_analyzed_files = self.analyzed_files.lock().unwrap();
+        *locked_analyzed_files = files;
+    }
+
+    pub fn set_analyzed_files_num(&mut self, num: usize) {
+        self.analyzed_files_num = num;
+    }
+
+    pub fn set_total_files(&mut self, num: usize) {
+        self.total_files = num;
+    }
 }

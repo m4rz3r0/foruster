@@ -11,3 +11,4 @@ app_core = { path = "../core" }
 storage = { path = "../storage" }
 profiling = { path = "../profiling" }
 analysis = { path = "../analysis" }
+tokio = { version =  "1.46.1", features = ["full"]  }

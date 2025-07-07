@@ -1,30 +1,34 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use std::cell::RefCell;
 use std::path::PathBuf;
-use std::rc::Rc;
+use std::sync::{Arc, Mutex};
 use analysis::{AnalysisState, Engine};
 use profiling::Profile;
 
 pub struct AnalysisAPI {
-    engine: Engine,
+    engine: Arc<Mutex<Engine>>,
 }
 
 impl AnalysisAPI {
     pub fn new() -> AnalysisAPI {
         Self {
-            engine: Engine::default(),
+            engine: Arc::new(Mutex::new(Engine::default())),
         }
     }
     
     pub fn initialize(&mut self, profiles: Vec<Profile>, paths: Vec<PathBuf>) {
-        self.engine.initialize(profiles, paths);
+        let mut engine = self.engine.lock().unwrap();
+        engine.initialize(profiles, paths);
     }
     
-    pub fn analysis_state(&self) -> Rc<RefCell<AnalysisState>> {
-        self.engine.state()
+    pub fn analysis_state(&self) -> Arc<Mutex<AnalysisState>> {
+        let engine = self.engine.lock().unwrap();
+        engine.state()
     }
     
     pub fn start(&mut self) {
-        self.engine.start();
+        /*tokio::spawn(async move {
+            let mut engine = self.engine.lock().unwrap();
+            engine.start();
+        });*/
     }
 }

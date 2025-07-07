@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use std::cell::RefCell;
 use std::path::PathBuf;
-use std::rc::Rc;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use profiling::Profile;
 use crate::config::Config;
 use crate::finding::Finding;
@@ -20,7 +18,7 @@ pub enum AnalysisState {
 
 #[derive(Default)]
 pub struct Engine {
-    state: Rc<RefCell<AnalysisState>>,
+    state: Arc<Mutex<AnalysisState>>,
     config: Arc<Config>,
     finding: Finding
 }
@@ -30,7 +28,7 @@ impl Engine {
         *Arc::make_mut(&mut self.config) = Config::new(profiles, paths);
     }
     
-    pub fn state(&self) -> Rc<RefCell<AnalysisState>> {
+    pub fn state(&self) -> Arc<Mutex<AnalysisState>> {
         self.state.clone()
     }
     
@@ -42,20 +40,33 @@ impl Engine {
         &self.finding
     }
 
-    pub fn start(&mut self) {
-        if matches!(*self.state.borrow(), AnalysisState::Idle) {
-            *self.state.borrow_mut() = AnalysisState::Walking;
+    pub async fn start(&mut self) {
+        *self.state.lock().unwrap() = AnalysisState::Walking;
 
-            let walkers = self.config.paths().par_iter().map(|path| {
-                let mut walker = Walker::new(path);
+        let handles: Vec<_> = self.config.paths().par_iter().map(|path| {
+            let mut walker = Walker::new(path);
+            tokio::spawn(async move {
+                walker.start().await;
+                walker // Devolver el walker del async block
+            })
+        }).collect();
 
-                walker.start();
+        // Esperar a que todos los walkers terminen y recoger los resultados
+        let walkers = futures::future::join_all(handles)
+            .await
+            .into_iter()
+            .map(|result| result.unwrap())
+            .collect::<Vec<_>>();
 
-                walker
-            }).collect::<Vec<_>>();
+        let files = walkers.iter().map(|walker| walker.files().iter().cloned().collect()).collect::<Vec<_>>();
+        let total_files = walkers.iter().map(|walker| walker.total_files()).sum::<usize>();
 
-            println!("Walker started with {} walkers", walkers.len());
-            println!("Walkers total files: {}", walkers.iter().map(|walker| walker.total_files()).sum::<u64>());
-        }
+        self.finding.set_files(files);
+        self.finding.set_total_files(total_files);
+
+        println!("Files: {:?}", self.finding.files());
+        println!("Total files: {}", self.finding.total_files());
+
+        *self.state.lock().unwrap() = AnalysisState::Analyzing;
     }
 }
