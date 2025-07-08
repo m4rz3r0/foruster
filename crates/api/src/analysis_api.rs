@@ -156,105 +156,107 @@ impl AnalysisAPI {
         }
 
         // Ejecutar análisis con actualizaciones de progreso optimizadas
-        let progress_callback: Box<dyn Fn(&str, HashMap<String, String>) + Send + Sync> = Box::new({
-            let progress = Arc::clone(&progress);
-            let start_time = Arc::clone(&start_time);
+        let progress_callback: Box<dyn Fn(&str, HashMap<String, String>) + Send + Sync> =
+            Box::new({
+                let progress = Arc::clone(&progress);
+                let start_time = Arc::clone(&start_time);
 
-            move |update_type: &str, data: HashMap<String, String>| {
-                if let Ok(mut prog) = progress.lock() {
-                    // Actualizar tiempo transcurrido
-                    if let Ok(start_opt) = start_time.lock() {
-                        if let Some(start) = *start_opt {
-                            prog.elapsed_time = start.elapsed().unwrap_or_default();
-                        }
-                    }
-
-                    match update_type {
-                        "state_change" => {
-                            if let Some(state_str) = data.get("state") {
-                                prog.state = match state_str.as_str() {
-                                    "Walking" => AnalysisState::Walking,
-                                    "Analyzing" => AnalysisState::Analyzing,
-                                    "Done" => AnalysisState::Done,
-                                    _ => AnalysisState::Idle,
-                                };
+                move |update_type: &str, data: HashMap<String, String>| {
+                    if let Ok(mut prog) = progress.lock() {
+                        // Actualizar tiempo transcurrido
+                        if let Ok(start_opt) = start_time.lock() {
+                            if let Some(start) = *start_opt {
+                                prog.elapsed_time = start.elapsed().unwrap_or_default();
                             }
                         }
-                        "file_scanned" => {
-                            if let Some(scanned_str) = data.get("scanned_files") {
-                                if let Ok(scanned) = scanned_str.parse::<usize>() {
-                                    prog.scanned_files = scanned;
+
+                        match update_type {
+                            "state_change" => {
+                                if let Some(state_str) = data.get("state") {
+                                    prog.state = match state_str.as_str() {
+                                        "Walking" => AnalysisState::Walking,
+                                        "Analyzing" => AnalysisState::Analyzing,
+                                        "Done" => AnalysisState::Done,
+                                        _ => AnalysisState::Idle,
+                                    };
                                 }
                             }
-                            if let Some(analyzed_str) = data.get("analyzed_files") {
-                                if let Ok(analyzed) = analyzed_str.parse::<usize>() {
-                                    prog.analyzed_files = analyzed;
+                            "file_scanned" => {
+                                if let Some(scanned_str) = data.get("scanned_files") {
+                                    if let Ok(scanned) = scanned_str.parse::<usize>() {
+                                        prog.scanned_files = scanned;
+                                    }
+                                }
+                                if let Some(analyzed_str) = data.get("analyzed_files") {
+                                    if let Ok(analyzed) = analyzed_str.parse::<usize>() {
+                                        prog.analyzed_files = analyzed;
+                                    }
+                                }
+                                if let Some(matched_str) = data.get("matched_files") {
+                                    if let Ok(matched) = matched_str.parse::<usize>() {
+                                        prog.matched_files = matched;
+                                    }
+                                }
+                                if let Some(path) = data.get("current_path") {
+                                    prog.current_path = path.clone();
+                                }
+                                if let Some(total_str) = data.get("total_estimated") {
+                                    if let Ok(total) = total_str.parse::<usize>() {
+                                        prog.total_files = total;
+                                    }
                                 }
                             }
-                            if let Some(matched_str) = data.get("matched_files") {
-                                if let Ok(matched) = matched_str.parse::<usize>() {
-                                    prog.matched_files = matched;
+                            "analysis_completed" => {
+                                if let Some(total_str) = data.get("total_files") {
+                                    if let Ok(total) = total_str.parse::<usize>() {
+                                        prog.total_files = total;
+                                    }
                                 }
-                            }
-                            if let Some(path) = data.get("current_path") {
-                                prog.current_path = path.clone();
-                            }
-                            if let Some(total_str) = data.get("total_estimated") {
-                                if let Ok(total) = total_str.parse::<usize>() {
-                                    prog.total_files = total;
+                                if let Some(analyzed_str) = data.get("analyzed_files") {
+                                    if let Ok(analyzed) = analyzed_str.parse::<usize>() {
+                                        prog.analyzed_files = analyzed;
+                                    }
                                 }
+                                if let Some(matched_str) = data.get("matched_files") {
+                                    if let Ok(matched) = matched_str.parse::<usize>() {
+                                        prog.matched_files = matched;
+                                    }
+                                }
+                                prog.state = AnalysisState::Done;
                             }
+                            _ => {}
                         }
-                        "analysis_completed" => {
-                            if let Some(total_str) = data.get("total_files") {
-                                if let Ok(total) = total_str.parse::<usize>() {
-                                    prog.total_files = total;
-                                }
-                            }
-                            if let Some(analyzed_str) = data.get("analyzed_files") {
-                                if let Ok(analyzed) = analyzed_str.parse::<usize>() {
-                                    prog.analyzed_files = analyzed;
-                                }
-                            }
-                            if let Some(matched_str) = data.get("matched_files") {
-                                if let Ok(matched) = matched_str.parse::<usize>() {
-                                    prog.matched_files = matched;
-                                }
-                            }
-                            prog.state = AnalysisState::Done;
-                        }
-                        _ => {}
-                    }
 
-                    // Calcular tiempo estimado restante
-                    if prog.total_files > 0 && prog.elapsed_time.as_secs() > 0 {
-                        let progress_ratio = match prog.state {
-                            AnalysisState::Walking => {
-                                if prog.total_files > 0 {
-                                    prog.analyzed_files as f64 / prog.total_files as f64
-                                } else {
-                                    0.0
+                        // Calcular tiempo estimado restante
+                        if prog.total_files > 0 && prog.elapsed_time.as_secs() > 0 {
+                            let progress_ratio = match prog.state {
+                                AnalysisState::Walking => {
+                                    if prog.total_files > 0 {
+                                        prog.analyzed_files as f64 / prog.total_files as f64
+                                    } else {
+                                        0.0
+                                    }
                                 }
-                            }
-                            AnalysisState::Done => 1.0,
-                            _ => 0.0,
-                        };
+                                AnalysisState::Done => 1.0,
+                                _ => 0.0,
+                            };
 
-                        if progress_ratio > 0.0 && progress_ratio < 1.0 {
-                            let elapsed_secs = prog.elapsed_time.as_secs_f64();
-                            let estimated_total_time = elapsed_secs / progress_ratio;
-                            let remaining_time = estimated_total_time - elapsed_secs;
+                            if progress_ratio > 0.0 && progress_ratio < 1.0 {
+                                let elapsed_secs = prog.elapsed_time.as_secs_f64();
+                                let estimated_total_time = elapsed_secs / progress_ratio;
+                                let remaining_time = estimated_total_time - elapsed_secs;
 
-                            if remaining_time > 0.0 {
-                                prog.estimated_remaining = Some(Duration::from_secs_f64(remaining_time));
+                                if remaining_time > 0.0 {
+                                    prog.estimated_remaining =
+                                        Some(Duration::from_secs_f64(remaining_time));
+                                }
+                            } else if progress_ratio >= 1.0 {
+                                prog.estimated_remaining = Some(Duration::ZERO);
                             }
-                        } else if progress_ratio >= 1.0 {
-                            prog.estimated_remaining = Some(Duration::ZERO);
                         }
                     }
                 }
-            }
-        });
+            });
 
         // Ejecutar el análisis usando el engine
         if let Err(e) = engine.analyze(progress_callback).await {
@@ -289,7 +291,10 @@ impl AnalysisAPI {
 
     pub fn is_running(&self) -> bool {
         if let Ok(progress) = self.progress.lock() {
-            matches!(progress.state, AnalysisState::Walking | AnalysisState::Analyzing)
+            matches!(
+                progress.state,
+                AnalysisState::Walking | AnalysisState::Analyzing
+            )
         } else {
             false
         }
@@ -340,7 +345,9 @@ impl AnalysisAPI {
         let mut profile_counts = HashMap::new();
 
         for finding in findings {
-            *profile_counts.entry(finding.profile_name.clone()).or_insert(0) += 1;
+            *profile_counts
+                .entry(finding.profile_name.clone())
+                .or_insert(0) += 1;
         }
 
         profile_counts
@@ -360,7 +367,11 @@ impl AnalysisAPI {
             .unwrap_or_default()
     }
 
-    pub fn search_files_in_profile(&self, profile_name: &str, search_term: &str) -> Vec<std::path::PathBuf> {
+    pub fn search_files_in_profile(
+        &self,
+        profile_name: &str,
+        search_term: &str,
+    ) -> Vec<std::path::PathBuf> {
         self.engine
             .lock()
             .map(|engine| engine.search_files_in_profile(profile_name, search_term))

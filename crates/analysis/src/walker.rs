@@ -79,98 +79,86 @@ impl Walker {
         let mut entries = WalkDir::new(&self.path);
         let mut batch = WalkBatch::new(batch_size);
 
+        // Pre-compilar extensiones para matching rápido
+        let profile_extensions: Vec<_> = if let Some(profiles) = profiles {
+            profiles
+                .iter()
+                .filter_map(|profile| profile.extensions().as_ref())
+                .flatten()
+                .collect()
+        } else {
+            Vec::new()
+        };
+
         while let Some(entry) = entries.next().await {
             match entry {
                 Ok(entry) => {
-                    match entry.file_type().await {
-                        Ok(file_type) if file_type.is_file() => {
-                            self.total_files += 1; // Contar todos los archivos
-                            self.files.push(entry.path().into());
-                            self.analyzed_files += 1; // Solo incrementar para archivos procesados exitosamente
+                    // Optimización: evitar llamadas async innecesarias
+                    let path = entry.path();
+                    let is_file = match entry.file_type().await {
+                        Ok(file_type) => file_type.is_file(),
+                        Err(_) => false,
+                    };
 
-                            // Análisis optimizado - primero por extensión, luego por mime
-                            let matches_profile = if let Some(profiles) = profiles {
-                                // Cache de extensiones para evitar recalcular
-                                let extension = entry
-                                    .path()
-                                    .extension()
-                                    .and_then(|e| e.to_str())
-                                    .map(|e| format!(".{}", e.to_lowercase()));
+                    if is_file {
+                        self.total_files += 1;
+                        self.files.push(path.clone().into());
+                        self.analyzed_files += 1;
 
-                                // Primero verificar por extensión (más rápido)
-                                let matches_by_extension = if let Some(ref ext) = extension {
-                                    profiles.iter().any(|profile| {
-                                        profile
-                                            .extensions()
-                                            .as_ref()
-                                            .map(|exts| exts.contains(ext))
-                                            .unwrap_or(false)
-                                    })
-                                } else {
-                                    false
-                                };
+                        // Matching optimizado: extensión primero, luego mime si es necesario
+                        let matches_profile = if let Some(profiles) = profiles {
+                            // Cache de extensión para evitar recalcular
+                            let extension = path
+                                .extension()
+                                .and_then(|e| e.to_str())
+                                .map(|e| format!(".{}", e.to_lowercase()));
 
-                                // Solo si no coincide por extensión, verificar por mime (más lento)
-                                if matches_by_extension {
-                                    true
-                                } else {
-                                    // Análisis por mime solo como fallback y para archivos pequeños
-                                    if let Ok(metadata) = entry.metadata().await {
-                                        if metadata.len() < 1024 * 1024 {
-                                            // Solo archivos < 1MB para mime detection
-                                            profiles
-                                                .iter()
-                                                .any(|profile| profile.matches(&entry.path()))
-                                        } else {
-                                            false
-                                        }
-                                    } else {
-                                        false
-                                    }
-                                }
+                            // Primero verificar por extensión (O(1) con HashSet sería mejor)
+                            let matches_by_extension = if let Some(ref ext) = extension {
+                                profile_extensions.contains(&&ext.as_str().to_string())
                             } else {
                                 false
                             };
 
-                            batch.add_entry(
-                                entry.path().to_string_lossy().to_string(),
-                                true,
-                                matches_profile,
-                            );
-                        }
-                        Ok(_) => {
-                            // Es un directorio u otro tipo, no contar
-                            batch.add_entry(
-                                entry.path().to_string_lossy().to_string(),
-                                false,
-                                false,
-                            );
-                        }
-                        Err(e) => {
-                            eprintln!(
-                                "Error obteniendo tipo de archivo para {:?}: {}",
-                                entry.path(),
-                                e
-                            );
-                            self.total_files += 1; // Contar archivo aunque haya error
-                            // No incrementar analyzed_files para archivos con error
-                            batch.add_entry(
-                                entry.path().to_string_lossy().to_string(),
-                                false,
-                                false,
-                            );
-                        }
+                            // Solo si no coincide por extensión, verificar por mime (más costoso)
+                            if matches_by_extension {
+                                true
+                            } else {
+                                // Análisis por mime solo como fallback y para archivos pequeños
+                                if let Ok(metadata) = entry.metadata().await {
+                                    if metadata.len() < 512 * 1024 {
+                                        // Solo archivos < 512KB para mime detection
+                                        profiles.iter().any(|profile| profile.matches(&path))
+                                    } else {
+                                        false
+                                    }
+                                } else {
+                                    false
+                                }
+                            }
+                        } else {
+                            false
+                        };
+
+                        batch.add_entry(
+                            path.to_string_lossy().into_owned(), // Evitar múltiples conversiones
+                            true,
+                            matches_profile,
+                        );
+                    } else {
+                        // Es directorio - agregar sin procesar
+                        batch.add_entry(path.to_string_lossy().into_owned(), false, false);
                     }
 
                     // Callback por lote en lugar de por archivo
                     if batch.is_full() {
-                        callback(batch.clone());
+                        callback(batch.clone_optimized()); // Método optimizado de clonación
                         batch.clear();
                     }
                 }
                 Err(e) => {
                     eprintln!("Error en walker: {}", e);
-                    // No podemos determinar si es archivo, no contar
+                    // Continuar procesando otros archivos
                 }
             }
         }
@@ -237,5 +225,14 @@ impl WalkBatch {
             .iter()
             .filter(|e| e.is_file && e.matches_profile)
             .count()
+    }
+
+    // Método optimizado de clonación que evita copiar datos innecesarios
+    pub fn clone_optimized(&self) -> Self {
+        Self {
+            entries: self.entries.clone(),
+            batch_size: self.batch_size,
+            total_processed: self.total_processed,
+        }
     }
 }

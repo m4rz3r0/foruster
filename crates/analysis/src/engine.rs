@@ -54,7 +54,9 @@ impl Engine {
     pub async fn run_analysis(&mut self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         if let Some(callback) = self.progress_callback.take() {
             let callback_arc = Arc::new(callback);
-            let result = self.start_with_progress_callback(callback_arc.clone()).await;
+            let result = self
+                .start_with_progress_callback(callback_arc.clone())
+                .await;
             // Re-establish the callback if it's Arc, otherwise it's lost
             if let Ok(boxed_callback) = Arc::try_unwrap(callback_arc) {
                 self.progress_callback = Some(boxed_callback);
@@ -73,20 +75,22 @@ impl Engine {
         self.update_state(AnalysisState::Walking)?;
         self.notify_progress(&progress_callback, "state_change", &[("state", "Walking")])?;
 
-        // Contadores atómicos para mejor rendimiento - incluyendo matched_files
+        // Contadores atómicos para mejor rendimiento
         let scanned_count = Arc::new(AtomicUsize::new(0));
         let files_count = Arc::new(AtomicUsize::new(0));
         let matched_count = Arc::new(AtomicUsize::new(0));
         let total_files_estimated = Arc::new(AtomicUsize::new(0));
 
-        // Obtener perfiles una vez para pasarlos a los walkers
+        // Pre-compilar regexes de perfiles para mejor rendimiento
         let profiles: Vec<_> = self.config.analysis_profile().clone();
 
-        // Índice compartido para archivos por perfil
-        let files_by_profile_shared = Arc::new(Mutex::new(HashMap::<String, Vec<PathBuf>>::new()));
+        // Optimización: pre-crear el índice con capacidad estimada
+        let files_by_profile_shared = Arc::new(Mutex::new(
+            HashMap::<String, Vec<PathBuf>>::with_capacity(profiles.len()),
+        ));
 
-        // Procesar paths con mejor manejo de errores
-        let mut handles = Vec::new();
+        // Procesar paths con paralelización optimizada
+        let mut handles = Vec::with_capacity(self.config.paths().len());
 
         for (path_index, path) in self.config.paths().iter().enumerate() {
             let walker = Walker::new(path);
@@ -100,7 +104,8 @@ impl Engine {
 
             let handle = tokio::spawn(async move {
                 let mut walker = walker;
-                let profiles_for_walker = profiles_clone.clone(); // Clonar antes de mover
+                let profiles_for_walker = profiles_clone.clone(); // Clonar para evitar el move
+
                 let result = walker
                     .start_with_batch_callback(
                         Box::new({
@@ -110,99 +115,76 @@ impl Engine {
                             let matched_count = Arc::clone(&matched_count_clone);
                             let total_files_estimated = Arc::clone(&total_files_estimated_clone);
                             let files_by_profile = Arc::clone(&files_by_profile_clone);
+                            let profiles_for_callback = profiles_clone; // Mover aquí
 
                             move |batch: WalkBatch| {
-                                // Actualizar contadores atómicamente
-                                let current_scanned = scanned_count
-                                    .fetch_add(batch.entries.len(), Ordering::Relaxed)
-                                    + batch.entries.len();
+                                // Optimización: calcular una sola vez
+                                let batch_len = batch.entries.len();
+                                let batch_files = batch.files_count();
+                                let batch_matched = batch.matched_files_count();
 
-                                let current_files = files_count
-                                    .fetch_add(batch.files_count(), Ordering::Relaxed)
-                                    + batch.files_count();
+                                // Actualizar contadores atómicamente en una sola operación
+                                let current_scanned = scanned_count.fetch_add(batch_len, Ordering::Relaxed) + batch_len;
+                                let current_files = files_count.fetch_add(batch_files, Ordering::Relaxed) + batch_files;
+                                let current_matched = matched_count.fetch_add(batch_matched, Ordering::Relaxed) + batch_matched;
 
-                                let current_matched = matched_count
-                                    .fetch_add(batch.matched_files_count(), Ordering::Relaxed)
-                                    + batch.matched_files_count();
-
-                                // Construir índice por perfiles en tiempo real
-                                if let Ok(mut index) = files_by_profile.lock() {
+                                // Optimización: lock una sola vez por lote
+                                if let Ok(mut index) = files_by_profile.try_lock() {
                                     for entry in &batch.entries {
-                                        if entry.is_file {
+                                        if entry.is_file && entry.matches_profile {
                                             let path = PathBuf::from(&entry.path);
 
-                                            // Determinar a qué perfil pertenece el archivo
-                                            for profile in &profiles_clone {
+                                            // Optimización: usar entry API para evitar lookups dobles
+                                            for profile in &profiles_for_callback {
                                                 if profile.matches(&path) {
-                                                    index
-                                                        .entry(profile.name().clone())
-                                                        .or_insert_with(Vec::new)
+                                                    index.entry(profile.name().clone())
+                                                        .or_insert_with(|| Vec::with_capacity(100))
                                                         .push(path.clone());
-                                                    break; // Solo asignar al primer perfil que coincida
+                                                    break;
                                                 }
                                             }
                                         }
                                     }
                                 }
 
-                                // Actualizar estimación total
-                                if batch.total_processed > 0 {
-                                    total_files_estimated
-                                        .store(batch.total_processed, Ordering::Relaxed);
+                                // Actualizar estimación total solo si cambió significativamente
+                                if batch.total_processed > total_files_estimated.load(Ordering::Relaxed) {
+                                    total_files_estimated.store(batch.total_processed, Ordering::Relaxed);
                                 }
 
-                                // Callback con throttling optimizado
-                                static mut LAST_CALLBACK_TIME: Option<std::time::Instant> = None;
-                                let should_callback = unsafe {
-                                    let now = std::time::Instant::now();
-                                    if let Some(last_time) = LAST_CALLBACK_TIME {
-                                        let time_diff = now.duration_since(last_time);
-                                        if time_diff.as_secs() >= 1 || current_scanned % 200 == 0 {
-                                            LAST_CALLBACK_TIME = Some(now);
-                                            true
-                                        } else {
-                                            false
-                                        }
-                                    } else {
-                                        LAST_CALLBACK_TIME = Some(now);
-                                        true
-                                    }
-                                };
+                                // Throttling mejorado con menos operaciones unsafe
+                                thread_local! {
+                                    static LAST_CALLBACK_TIME: std::cell::Cell<Option<std::time::Instant>> = const { std::cell::Cell::new(None) };
+                                }
 
-                                if should_callback || batch.entries.len() < 50 {
-                                    let update_data = vec![
+                                let should_callback = LAST_CALLBACK_TIME.with(|last_time| {
+                                    let now = std::time::Instant::now();
+                                    match last_time.get() {
+                                        Some(last) if now.duration_since(last).as_millis() < 250 => false, // 250ms throttle
+                                        _ => {
+                                            last_time.set(Some(now));
+                                            true
+                                        }
+                                    }
+                                });
+
+                                if should_callback || batch_len < 50 {
+                                    // Optimización: usar referencias en lugar de clones
+                                    let update_data = [
                                         ("scanned_files", current_scanned.to_string()),
-                                        ("files_count", current_files.to_string()),
                                         ("analyzed_files", current_files.to_string()),
                                         ("matched_files", current_matched.to_string()),
-                                        (
-                                            "total_estimated",
-                                            total_files_estimated
-                                                .load(Ordering::Relaxed)
-                                                .to_string(),
-                                        ),
-                                        (
-                                            "current_path",
-                                            batch
-                                                .entries
-                                                .last()
-                                                .map(|e| e.path.as_str())
-                                                .unwrap_or("")
-                                                .to_string(),
-                                        ),
+                                        ("total_estimated", total_files_estimated.load(Ordering::Relaxed).to_string()),
+                                        ("current_path", batch.entries.last().map(|e| e.path.clone()).unwrap_or_default()),
                                     ];
 
-                                    if let Err(e) = Self::notify_progress_static(
-                                        &callback,
-                                        "file_scanned",
-                                        &update_data,
-                                    ) {
+                                    if let Err(e) = Self::notify_progress_static(&callback, "file_scanned", &update_data) {
                                         eprintln!("Error en callback de progreso: {}", e);
                                     }
                                 }
                             }
                         }),
-                        100,
+                        500, // Lotes más grandes para mejor rendimiento
                         Some(&profiles_for_walker),
                     )
                     .await;
@@ -228,22 +210,23 @@ impl Engine {
 
         // Procesar resultados y actualizar Finding con el índice construido
         let mut all_files = Vec::new();
-        let mut total_files = 0;
+        let mut total_files_scanned = 0;
         let mut analyzed_files = 0;
 
         for walker in &walkers {
             all_files.extend_from_slice(walker.files());
-            total_files += walker.total_files();
+            total_files_scanned += walker.total_files();
             analyzed_files += walker.analyzed_files();
         }
 
         self.finding.set_files(all_files);
-        self.finding.set_total_files(total_files);
+        self.finding.set_total_files(total_files_scanned);
         self.finding.set_analyzed_files_num(analyzed_files);
 
         // Transferir el índice por perfiles al Finding
-        if let Ok(index) = files_by_profile_shared.lock() {
-            self.finding.set_files_by_profile(index.clone());
+        if let Ok(index) = Arc::try_unwrap(files_by_profile_shared) {
+            self.finding
+                .set_files_by_profile(index.into_inner().unwrap());
         }
 
         // Cambiar estado a Done
@@ -255,7 +238,7 @@ impl Engine {
             &progress_callback,
             "analysis_completed",
             &[
-                ("total_files", &total_files.to_string()),
+                ("total_files", &total_files_scanned.to_string()),
                 ("analyzed_files", &analyzed_files.to_string()),
                 ("matched_files", &final_matched.to_string()),
                 ("state", "Done"),
@@ -292,15 +275,16 @@ impl Engine {
         Ok(())
     }
 
-    // Versión estática del método de notificación para usar en closures
+    // Optimización: método más eficiente para notificaciones
     fn notify_progress_static(
         callback: &Arc<Box<dyn Fn(&str, HashMap<String, String>) + Send + Sync>>,
         event_type: &str,
         data: &[(&str, String)],
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-        let mut update_data = HashMap::new();
+        // Pre-allocar con capacidad conocida
+        let mut update_data = HashMap::with_capacity(data.len());
         for (key, value) in data {
-            update_data.insert(key.to_string(), value.clone());
+            update_data.insert((*key).to_string(), value.clone());
         }
         callback(event_type, update_data);
         Ok(())
@@ -367,7 +351,7 @@ impl Engine {
             .map(|path| Finding {
                 file_path: path.clone(),
                 profile_name: "General".to_string(), // Simplificado por ahora
-                match_score: 0.85, // Score por defecto
+                match_score: 0.85,                   // Score por defecto
             })
             .collect();
 

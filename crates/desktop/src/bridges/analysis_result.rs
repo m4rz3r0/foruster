@@ -284,7 +284,10 @@ fn filter_files_by_profile(
 ) {
     println!("Filtrando archivos por perfil: {}", profile_name);
 
-    let filtered_paths = analysis_api.borrow().deref().get_files_by_profile(profile_name);
+    let filtered_paths = analysis_api
+        .borrow()
+        .deref()
+        .get_files_by_profile(profile_name);
 
     let filtered_files: Vec<File> = filtered_paths
         .iter()
@@ -300,61 +303,63 @@ fn filter_files_by_profile(
 }
 
 fn create_file_from_path(path: &std::path::PathBuf) -> File {
+    // Cache para extensiones comunes para evitar recálculos
+    thread_local! {
+        static EXTENSION_CACHE: std::cell::RefCell<std::collections::HashMap<String, String>> = std::cell::RefCell::new(std::collections::HashMap::new());
+    }
+
     let file_name = path
         .file_name()
         .and_then(|name| name.to_str())
-        .unwrap_or("archivo_sin_nombre")
-        .to_string();
+        .unwrap_or("archivo_sin_nombre");
 
     let parent_path = path
         .parent()
-        .map(|p| p.to_string_lossy().to_string())
-        .unwrap_or_else(|| "Ruta desconocida".to_string());
+        .map(|p| p.to_string_lossy())
+        .unwrap_or_else(|| "Ruta desconocida".into());
 
-    // Determinar tipo de archivo por extensión
-    let file_type = path
-        .extension()
-        .and_then(|ext| ext.to_str())
-        .map(|ext| match ext.to_lowercase().as_str() {
-            "pdf" | "doc" | "docx" | "txt" | "rtf" | "odt" => "Documento",
-            "jpg" | "jpeg" | "png" | "gif" | "bmp" | "svg" | "webp" => "Imagen",
-            "mp3" | "wav" | "flac" | "ogg" | "aac" | "m4a" => "Audio",
-            "mp4" | "avi" | "mkv" | "mov" | "wmv" | "flv" => "Video",
-            "exe" | "msi" | "deb" | "rpm" | "dmg" | "app" => "Aplicación",
-            "blend" | "obj" | "fbx" | "dae" | "3ds" | "max" => "Modelo 3D",
-            _ => "Archivo",
+    // Optimización: usar cache para tipos de archivo
+    let file_type = if let Some(ext) = path.extension().and_then(|ext| ext.to_str()) {
+        let ext_lower = ext.to_lowercase();
+
+        EXTENSION_CACHE.with(|cache| {
+            cache
+                .borrow_mut()
+                .entry(ext_lower.clone())
+                .or_insert_with(|| {
+                    match ext_lower.as_str() {
+                        "pdf" | "doc" | "docx" | "txt" | "rtf" | "odt" => "Documento",
+                        "jpg" | "jpeg" | "png" | "gif" | "bmp" | "svg" | "webp" => "Imagen",
+                        "mp3" | "wav" | "flac" | "ogg" | "aac" | "m4a" => "Audio",
+                        "mp4" | "avi" | "mkv" | "mov" | "wmv" | "flv" => "Video",
+                        "exe" | "msi" | "deb" | "rpm" | "dmg" | "app" => "Aplicación",
+                        "blend" | "obj" | "fbx" | "dae" | "3ds" | "max" => "Modelo 3D",
+                        _ => "Archivo",
+                    }
+                    .to_string()
+                })
+                .clone()
         })
-        .unwrap_or("Archivo");
-
-    let file_size = "Calculando...".to_string();
-
-    // Score de coincidencia basado en el tipo de archivo
-    let match_score = match file_type {
-        "Documento" => "88%",
-        "Imagen" => "92%",
-        "Audio" => "94%",
-        "Video" => "90%",
-        "Aplicación" => "85%",
-        "Modelo 3D" => "89%",
-        _ => "75%",
+    } else {
+        "Archivo".to_string()
     };
 
-    // Determinar perfil basado en extensión
-    let profile = match file_type {
-        "Documento" => "Textos",
-        "Imagen" => "Imágenes",
-        "Audio" => "Audio",
-        "Video" => "Vídeos",
-        "Aplicación" => "Aplicaciones",
-        "Modelo 3D" => "Modelos",
-        _ => "Otros",
+    // Pre-calcular scores y perfiles usando constantes
+    let (match_score, profile) = match file_type.as_str() {
+        "Documento" => ("88%", "Textos"),
+        "Imagen" => ("92%", "Imágenes"),
+        "Audio" => ("94%", "Audio"),
+        "Video" => ("90%", "Vídeos"),
+        "Aplicación" => ("85%", "Aplicaciones"),
+        "Modelo 3D" => ("89%", "Modelos"),
+        _ => ("75%", "Otros"),
     };
 
     File {
         name: file_name.into(),
-        path: parent_path.into(),
+        path: parent_path.to_string().into(),
         r#type: file_type.into(),
-        size: file_size.into(),
+        size: "Calculando...".into(),
         match_score: match_score.into(),
         profile: profile.into(),
     }
@@ -372,7 +377,10 @@ fn search_files(
 
     println!("Buscando archivos: '{}'", search_term);
 
-    let search_results = analysis_api.borrow().deref().search_files_in_profile("Todos", search_term);
+    let search_results = analysis_api
+        .borrow()
+        .deref()
+        .search_files_in_profile("Todos", search_term);
 
     let filtered_files: Vec<File> = search_results
         .iter()
