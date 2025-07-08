@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-mod file_analyzer;
-mod engine;
 mod config;
-mod walker;
+mod engine;
 mod finding;
+mod walker;
 
 pub use engine::{AnalysisState, Engine};
+pub use finding::{Finding, FindingContainer};

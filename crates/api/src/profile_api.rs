@@ -21,6 +21,10 @@ impl ProfileAPI {
     }
 
     pub fn get_by_label(&self, label: String) -> Option<Profile> {
-        self.profiles.iter().filter(|profile| *profile.name() == label).cloned().next()
+        self.profiles
+            .iter()
+            .filter(|profile| *profile.name() == label)
+            .cloned()
+            .next()
     }
 }

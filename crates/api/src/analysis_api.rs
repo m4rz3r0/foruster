@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use analysis::{AnalysisState, Engine};
 use profiling::Profile;
+use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::mpsc::{self, Sender};
 use std::sync::{Arc, Mutex};
@@ -68,7 +69,6 @@ pub enum AnalysisCommand {
     },
     Start,
     Stop,
-    GetProgress,
 }
 
 pub struct AnalysisAPI {
@@ -132,9 +132,6 @@ impl AnalysisAPI {
                             prog.state = AnalysisState::Idle;
                         }
                     }
-                    AnalysisCommand::GetProgress => {
-                        // Este comando se maneja directamente desde el getter
-                    }
                 }
             }
         });
@@ -147,20 +144,31 @@ impl AnalysisAPI {
         }
     }
 
+    // Corregir el método run_analysis_with_progress
     async fn run_analysis_with_progress(
         engine: &mut Engine,
         progress: Arc<Mutex<AnalysisProgress>>,
         start_time: Arc<Mutex<Option<SystemTime>>>,
     ) {
-        // Actualizar estado a Walking
-        if let Ok(mut prog) = progress.lock() {
-            prog.state = AnalysisState::Walking;
+        // Marcar tiempo de inicio
+        if let Ok(mut start) = start_time.lock() {
+            *start = Some(SystemTime::now());
         }
 
-        // Ejecutar análisis con actualizaciones de progreso
-        engine
-            .start_with_progress_callback(Box::new(move |update_type, data| {
+        // Ejecutar análisis con actualizaciones de progreso optimizadas
+        let progress_callback: Box<dyn Fn(&str, HashMap<String, String>) + Send + Sync> = Box::new({
+            let progress = Arc::clone(&progress);
+            let start_time = Arc::clone(&start_time);
+
+            move |update_type: &str, data: HashMap<String, String>| {
                 if let Ok(mut prog) = progress.lock() {
+                    // Actualizar tiempo transcurrido
+                    if let Ok(start_opt) = start_time.lock() {
+                        if let Some(start) = *start_opt {
+                            prog.elapsed_time = start.elapsed().unwrap_or_default();
+                        }
+                    }
+
                     match update_type {
                         "state_change" => {
                             if let Some(state_str) = data.get("state") {
@@ -173,91 +181,261 @@ impl AnalysisAPI {
                             }
                         }
                         "file_scanned" => {
-                            if let Some(path) = data.get("path") {
-                                prog.current_path = path.clone();
-                                prog.scanned_files += 1;
+                            if let Some(scanned_str) = data.get("scanned_files") {
+                                if let Ok(scanned) = scanned_str.parse::<usize>() {
+                                    prog.scanned_files = scanned;
+                                }
                             }
-                        }
-                        "file_analyzed" => {
-                            prog.analyzed_files += 1;
-                        }
-                        "file_matched" => {
-                            prog.matched_files += 1;
-                        }
-                        "total_files_estimated" => {
-                            if let Some(total_str) = data.get("total") {
+                            if let Some(analyzed_str) = data.get("analyzed_files") {
+                                if let Ok(analyzed) = analyzed_str.parse::<usize>() {
+                                    prog.analyzed_files = analyzed;
+                                }
+                            }
+                            if let Some(matched_str) = data.get("matched_files") {
+                                if let Ok(matched) = matched_str.parse::<usize>() {
+                                    prog.matched_files = matched;
+                                }
+                            }
+                            if let Some(path) = data.get("current_path") {
+                                prog.current_path = path.clone();
+                            }
+                            if let Some(total_str) = data.get("total_estimated") {
                                 if let Ok(total) = total_str.parse::<usize>() {
                                     prog.total_files = total;
                                 }
                             }
                         }
+                        "analysis_completed" => {
+                            if let Some(total_str) = data.get("total_files") {
+                                if let Ok(total) = total_str.parse::<usize>() {
+                                    prog.total_files = total;
+                                }
+                            }
+                            if let Some(analyzed_str) = data.get("analyzed_files") {
+                                if let Ok(analyzed) = analyzed_str.parse::<usize>() {
+                                    prog.analyzed_files = analyzed;
+                                }
+                            }
+                            if let Some(matched_str) = data.get("matched_files") {
+                                if let Ok(matched) = matched_str.parse::<usize>() {
+                                    prog.matched_files = matched;
+                                }
+                            }
+                            prog.state = AnalysisState::Done;
+                        }
                         _ => {}
                     }
 
-                    // Actualizar tiempo transcurrido y estimación
-                    if let Ok(start_opt) = start_time.lock() {
-                        if let Some(start) = *start_opt {
-                            prog.elapsed_time = start.elapsed().unwrap_or_default();
-
-                            // Calcular tiempo estimado restante
-                            if prog.scanned_files > 0 && prog.total_files > prog.scanned_files {
-                                let rate =
-                                    prog.scanned_files as f64 / prog.elapsed_time.as_secs_f64();
-                                let remaining_files = prog.total_files - prog.scanned_files;
-                                let estimated_seconds = remaining_files as f64 / rate;
-                                prog.estimated_remaining =
-                                    Some(Duration::from_secs_f64(estimated_seconds));
+                    // Calcular tiempo estimado restante
+                    if prog.total_files > 0 && prog.elapsed_time.as_secs() > 0 {
+                        let progress_ratio = match prog.state {
+                            AnalysisState::Walking => {
+                                if prog.total_files > 0 {
+                                    prog.analyzed_files as f64 / prog.total_files as f64
+                                } else {
+                                    0.0
+                                }
                             }
+                            AnalysisState::Done => 1.0,
+                            _ => 0.0,
+                        };
+
+                        if progress_ratio > 0.0 && progress_ratio < 1.0 {
+                            let elapsed_secs = prog.elapsed_time.as_secs_f64();
+                            let estimated_total_time = elapsed_secs / progress_ratio;
+                            let remaining_time = estimated_total_time - elapsed_secs;
+
+                            if remaining_time > 0.0 {
+                                prog.estimated_remaining = Some(Duration::from_secs_f64(remaining_time));
+                            }
+                        } else if progress_ratio >= 1.0 {
+                            prog.estimated_remaining = Some(Duration::ZERO);
                         }
                     }
                 }
-            }))
-            .await;
+            }
+        });
+
+        // Ejecutar el análisis usando el engine
+        if let Err(e) = engine.analyze(progress_callback).await {
+            eprintln!("Error durante el análisis: {}", e);
+        }
     }
 
-    pub fn initialize(&self, profiles: Vec<Profile>, paths: Vec<PathBuf>) {
-        let _ = self
-            .command_sender
-            .send(AnalysisCommand::Initialize { profiles, paths });
+    pub fn initialize(&self, profiles: Vec<Profile>, paths: Vec<PathBuf>) -> Result<(), String> {
+        self.command_sender
+            .send(AnalysisCommand::Initialize { profiles, paths })
+            .map_err(|e| format!("Error enviando comando de inicialización: {}", e))
     }
 
-    pub fn start(&self) {
-        let _ = self.command_sender.send(AnalysisCommand::Start);
+    pub fn start_analysis(&self) -> Result<(), String> {
+        self.command_sender
+            .send(AnalysisCommand::Start)
+            .map_err(|e| format!("Error iniciando análisis: {}", e))
     }
 
-    pub fn stop(&self) {
-        let _ = self.command_sender.send(AnalysisCommand::Stop);
+    pub fn stop_analysis(&self) -> Result<(), String> {
+        self.command_sender
+            .send(AnalysisCommand::Stop)
+            .map_err(|e| format!("Error deteniendo análisis: {}", e))
     }
 
-    // Método no bloqueante para obtener el progreso actual
-    pub fn get_progress(&self) -> AnalysisProgress {
+    pub fn get_progress(&self) -> Result<AnalysisProgress, String> {
         self.progress
             .lock()
             .map(|prog| prog.clone())
+            .map_err(|e| format!("Error obteniendo progreso: {}", e))
+    }
+
+    pub fn is_running(&self) -> bool {
+        if let Ok(progress) = self.progress.lock() {
+            matches!(progress.state, AnalysisState::Walking | AnalysisState::Analyzing)
+        } else {
+            false
+        }
+    }
+
+    pub fn get_findings(&self) -> Result<Vec<analysis::Finding>, String> {
+        self.engine
+            .lock()
+            .map_err(|e| format!("Error accediendo al engine: {}", e))?
+            .get_findings()
+            .map_err(|e| format!("Error obteniendo resultados: {}", e))
+    }
+
+    pub fn reset(&self) -> Result<(), String> {
+        // Resetear el progreso
+        if let Ok(mut prog) = self.progress.lock() {
+            *prog = AnalysisProgress::default();
+        }
+
+        // Resetear el tiempo de inicio
+        if let Ok(mut start) = self.start_time.lock() {
+            *start = None;
+        }
+
+        // Resetear el engine
+        if let Ok(mut engine) = self.engine.lock() {
+            engine.reset();
+        }
+
+        Ok(())
+    }
+
+    pub fn get_analysis_summary(&self) -> Result<AnalysisSummary, String> {
+        let progress = self.get_progress()?;
+        let findings = self.get_findings()?;
+
+        Ok(AnalysisSummary {
+            total_files_scanned: progress.scanned_files,
+            total_files_analyzed: progress.analyzed_files,
+            total_matches_found: progress.matched_files,
+            analysis_duration: progress.elapsed_time,
+            state: progress.state,
+            findings_by_profile: Self::group_findings_by_profile(&findings),
+        })
+    }
+
+    fn group_findings_by_profile(findings: &[analysis::Finding]) -> HashMap<String, usize> {
+        let mut profile_counts = HashMap::new();
+
+        for finding in findings {
+            *profile_counts.entry(finding.profile_name.clone()).or_insert(0) += 1;
+        }
+
+        profile_counts
+    }
+
+    pub fn get_files_by_profile(&self, profile_name: &str) -> Vec<std::path::PathBuf> {
+        self.engine
+            .lock()
+            .map(|engine| engine.get_files_by_profile(profile_name))
             .unwrap_or_default()
     }
 
-    // Método para obtener solo el porcentaje (más eficiente)
-    pub fn get_progress_percentage(&self) -> f32 {
-        self.progress
+    pub fn get_analyzed_files(&self) -> Vec<std::path::PathBuf> {
+        self.engine
             .lock()
-            .map(|prog| prog.overall_percentage())
-            .unwrap_or(0.0)
+            .map(|engine| engine.get_analyzed_files())
+            .unwrap_or_default()
     }
 
-    // Método para verificar si está en progreso
-    pub fn is_running(&self) -> bool {
-        self.progress
+    pub fn search_files_in_profile(&self, profile_name: &str, search_term: &str) -> Vec<std::path::PathBuf> {
+        self.engine
             .lock()
-            .map(|prog| !matches!(prog.state, AnalysisState::Idle | AnalysisState::Done))
-            .unwrap_or(false)
+            .map(|engine| engine.search_files_in_profile(profile_name, search_term))
+            .unwrap_or_default()
     }
 
-    pub fn analysis_state(&self) -> Arc<Mutex<AnalysisState>> {
-        if let Ok(engine) = self.engine.lock() {
-            engine.state()
-        } else {
-            Arc::new(Mutex::new(AnalysisState::default()))
-        }
+    pub fn get_profile_statistics(&self) -> HashMap<String, usize> {
+        self.engine
+            .lock()
+            .map(|engine| engine.get_profile_statistics())
+            .unwrap_or_default()
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct AnalysisSummary {
+    pub total_files_scanned: usize,
+    pub total_files_analyzed: usize,
+    pub total_matches_found: usize,
+    pub analysis_duration: Duration,
+    pub state: AnalysisState,
+    pub findings_by_profile: HashMap<String, usize>,
+}
+
+impl Default for AnalysisAPI {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::path::Path;
+
+    #[test]
+    fn test_analysis_progress_percentages() {
+        let mut progress = AnalysisProgress::default();
+        progress.total_files = 100;
+        progress.scanned_files = 50;
+        progress.analyzed_files = 25;
+
+        assert_eq!(progress.scan_percentage(), 50.0);
+        assert_eq!(progress.analysis_percentage(), 50.0);
+    }
+
+    #[test]
+    fn test_analysis_api_creation() {
+        let api = AnalysisAPI::new();
+        assert!(!api.is_running());
+
+        let progress = api.get_progress().unwrap();
+        assert!(matches!(progress.state, AnalysisState::Idle));
+    }
+
+    #[test]
+    fn test_progress_overall_percentage() {
+        let mut progress = AnalysisProgress::default();
+
+        // Test idle state
+        assert_eq!(progress.overall_percentage(), 0.0);
+
+        // Test walking state
+        progress.state = AnalysisState::Walking;
+        progress.total_files = 100;
+        progress.scanned_files = 50;
+        assert_eq!(progress.overall_percentage(), 15.0); // 50% of 30%
+
+        // Test analyzing state
+        progress.state = AnalysisState::Analyzing;
+        progress.analyzed_files = 25;
+        assert_eq!(progress.overall_percentage(), 65.0); // 30% + (50% of 70%)
+
+        // Test done state
+        progress.state = AnalysisState::Done;
+        assert_eq!(progress.overall_percentage(), 100.0);
     }
 }

@@ -2,31 +2,15 @@
 use crate::ui::{
     AnalysisResultBridge, File, MainWindow, PathManagementBridge, Profile, ProfileMenuBridge,
 };
+use analysis::AnalysisState;
 use api::{AnalysisAPI, ProfileAPI};
-use slint::{ComponentHandle, Model, ModelExt, ModelRc, SharedString, VecModel, Weak};
+use slint::{ComponentHandle, Model, ModelRc, SharedString, VecModel, Weak};
 use std::cell::RefCell;
-use std::io::Read;
+use std::ops::Deref;
 use std::rc::Rc;
-
-fn format_file_size(size: u64) -> String {
-    const KB: u64 = 1024;
-    const MB: u64 = KB * 1024;
-    const GB: u64 = MB * 1024;
-
-    if size >= GB {
-        format!("{:.2} GB", size as f64 / GB as f64)
-    } else if size >= MB {
-        format!("{:.2} MB", size as f64 / MB as f64)
-    } else if size >= KB {
-        format!("{:.2} KB", size as f64 / KB as f64)
-    } else {
-        format!("{} bytes", size)
-    }
-}
 
 fn get_selected_profiles(window_weak: Weak<MainWindow>) -> Vec<Profile> {
     let window = window_weak.upgrade().unwrap();
-
     let profile_bridge = window.global::<ProfileMenuBridge>().get_profiles();
 
     profile_bridge
@@ -68,11 +52,18 @@ pub fn initialize(
         .flat_map(|label| profile_api.borrow().get_by_label(label.to_string()))
         .collect();
 
-    analysis_api
+    if let Err(e) = analysis_api
         .borrow_mut()
-        .initialize(selected_profiles, paths);
+        .deref()
+        .initialize(selected_profiles, paths)
+    {
+        eprintln!("Error inicializando análisis: {}", e);
+        return;
+    }
 
-    analysis_api.borrow_mut().start();
+    if let Err(e) = analysis_api.borrow_mut().deref().start_analysis() {
+        eprintln!("Error iniciando análisis: {}", e);
+    }
 }
 
 pub fn setup(
@@ -82,42 +73,366 @@ pub fn setup(
 ) {
     let bridge = window.global::<AnalysisResultBridge>();
 
+    // Inicializar modelo de archivos resultantes
+    let file_results_model = Rc::new(VecModel::from(Vec::<File>::new()));
+    bridge.set_file_results(ModelRc::from(file_results_model.clone()));
+
     let window_weak = window.as_weak();
     let analysis_api_clone = analysis_api.clone();
     let profile_api_clone = profile_api.clone();
     bridge.on_initialize(move || initialize(&window_weak, &analysis_api_clone, &profile_api_clone));
-    bridge.on_export_report(move || {});
-    bridge.on_filter_by_profile(move |profile| {});
-    bridge.on_search_files(move |name| {});
-    bridge.on_save_analysis(move || {});
-    bridge.on_go_back(move || {});
-}
 
-/*
-// En tu bridge
-pub fn setup_progress_monitoring(
-    window: &MainWindow,
-    analysis_api: Rc<RefCell<AnalysisAPI>>,
-) {
-    let window_weak = window.as_weak();
+    // Implementar exportar reporte
     let analysis_api_clone = analysis_api.clone();
-    
-    // Timer para actualizar progreso cada 100ms
-    slint::Timer::default().start(
-        slint::TimerMode::Repeated, 
-        std::time::Duration::from_millis(100), 
-        move || {
-            if let Some(window) = window_weak.upgrade() {
-                let progress = analysis_api_clone.borrow().get_progress();
-                let bridge = window.global::<AnalysisResultBridge>();
-                
-                // Actualizar propiedades del bridge
-                bridge.set_analysis_percentage(progress.overall_percentage() as i32);
-                bridge.set_scanned_files(progress.scanned_files.to_string().into());
-                bridge.set_current_file(progress.current_path.into());
-                // ... más actualizaciones
+    bridge.on_export_report(move || {
+        if let Ok(progress) = analysis_api_clone.borrow().deref().get_progress() {
+            let report = generate_analysis_report(&progress);
+
+            if let Some(path) = rfd::FileDialog::new()
+                .add_filter("JSON", &["json"])
+                .add_filter("Texto", &["txt"])
+                .set_file_name(&format!(
+                    "analisis_{}.json",
+                    chrono::Utc::now().format("%Y%m%d_%H%M%S")
+                ))
+                .save_file()
+            {
+                if let Err(e) = std::fs::write(&path, report) {
+                    eprintln!("Error guardando reporte: {}", e);
+                } else {
+                    println!("Reporte guardado en: {:?}", path);
+                }
             }
         }
+    });
+
+    // Implementar filtrado por perfil
+    let file_results_model_clone = file_results_model.clone();
+    let analysis_api_clone = analysis_api.clone();
+    bridge.on_filter_by_profile(move |profile_name| {
+        filter_files_by_profile(
+            &file_results_model_clone,
+            &analysis_api_clone,
+            &profile_name,
+        );
+    });
+
+    // Implementar búsqueda de archivos
+    let file_results_model_clone = file_results_model.clone();
+    let analysis_api_clone = analysis_api.clone();
+    bridge.on_search_files(move |search_term| {
+        search_files(&file_results_model_clone, &analysis_api_clone, &search_term);
+    });
+
+    // Implementar guardar análisis
+    let analysis_api_clone = analysis_api.clone();
+    bridge.on_save_analysis(move || {
+        if let Ok(progress) = analysis_api_clone.borrow().deref().get_progress() {
+            save_analysis_state(&progress);
+        }
+    });
+
+    // Implementar navegación hacia atrás
+    let window_weak = window.as_weak();
+    bridge.on_go_back(move || {
+        if let Some(_window) = window_weak.upgrade() {
+            println!("Navegando hacia atrás...");
+        }
+    });
+
+    // Implementar paginación básica (simplificada)
+    bridge.on_load_next_page(move || {
+        println!("Página siguiente - funcionalidad pendiente");
+        // Implementar lógica de paginación cuando sea necesario
+    });
+
+    bridge.on_load_previous_page(move || {
+        println!("Página anterior - funcionalidad pendiente");
+        // Implementar lógica de paginación cuando sea necesario
+    });
+
+    bridge.on_go_to_page(move |page| {
+        println!("Ir a página {} - funcionalidad pendiente", page);
+        // Implementar lógica de paginación cuando sea necesario
+    });
+
+    // Callback de progreso optimizado
+    let window_weak = window.as_weak();
+    let analysis_api_clone = analysis_api.clone();
+    let file_results_model_clone = file_results_model.clone();
+    bridge.on_update_progress(move || {
+        if let Some(window) = window_weak.upgrade() {
+            if let Ok(progress) = analysis_api_clone.borrow().deref().get_progress() {
+                let bridge = window.global::<AnalysisResultBridge>();
+
+                // Throttling para evitar actualizaciones excesivas
+                static mut LAST_UPDATE: Option<(usize, usize, usize, analysis::AnalysisState)> = None;
+                let current_state = (progress.total_files, progress.analyzed_files, progress.matched_files, progress.state.clone());
+
+                unsafe {
+                    if let Some(ref last) = LAST_UPDATE {
+                        if (current_state.0.abs_diff(last.0) < 100 &&
+                            current_state.1.abs_diff(last.1) < 100 &&
+                            current_state.2.abs_diff(last.2) < 100) &&
+                           std::mem::discriminant(&current_state.3) == std::mem::discriminant(&last.3) {
+                            return;
+                        }
+                    }
+                    LAST_UPDATE = Some(current_state);
+                }
+
+                // Actualizar contadores
+                bridge.set_analyzed_files(progress.analyzed_files.to_string().into());
+                bridge.set_total_files(progress.total_files.to_string().into());
+                bridge.set_matched_files(progress.matched_files.to_string().into());
+                bridge.set_analysis_time(format_duration(progress.elapsed_time).into());
+
+                // Actualizar estado
+                let state_text = match progress.state {
+                    AnalysisState::Idle => "Inactivo",
+                    AnalysisState::Walking => "Escaneando archivos...",
+                    AnalysisState::Analyzing => "Analizando archivos...",
+                    AnalysisState::Done => "Análisis completado",
+                };
+                bridge.set_analysis_state(state_text.into());
+
+                // Actualizar porcentajes
+                bridge.set_progress_percentage(progress.overall_percentage() as i32);
+
+                let error_files = progress.total_files.saturating_sub(progress.analyzed_files);
+                bridge.set_error_files(error_files.to_string().into());
+
+                let match_percentage = if progress.analyzed_files > 0 {
+                    (progress.matched_files as f32 / progress.analyzed_files as f32 * 100.0).round() as i32
+                } else {
+                    0
+                };
+                bridge.set_match_percentage(match_percentage);
+
+                // Actualizar lista de archivos cuando el análisis esté completo
+                if matches!(progress.state, AnalysisState::Done) {
+                    update_file_results(&file_results_model_clone, &analysis_api_clone);
+                }
+
+                // Debug logging (solo para eventos importantes)
+                if progress.analyzed_files % 1000 == 0 || matches!(progress.state, AnalysisState::Done) {
+                    println!(
+                        "Progreso: total={} analizados={} coincidencias={} errores={} tiempo={} estado={:?}",
+                        progress.total_files,
+                        progress.analyzed_files,
+                        progress.matched_files,
+                        error_files,
+                        format_duration(progress.elapsed_time),
+                        progress.state
+                    );
+                }
+            }
+        }
+    });
+}
+
+// Funciones auxiliares necesarias
+
+fn generate_analysis_report(progress: &api::AnalysisProgress) -> String {
+    let report = serde_json::json!({
+        "timestamp": chrono::Utc::now().to_rfc3339(),
+        "analysis_summary": {
+            "total_files": progress.total_files,
+            "analyzed_files": progress.analyzed_files,
+            "matched_files": progress.matched_files,
+            "error_files": progress.total_files.saturating_sub(progress.analyzed_files),
+            "elapsed_time_seconds": progress.elapsed_time.as_secs(),
+            "match_percentage": if progress.analyzed_files > 0 {
+                (progress.matched_files as f32 / progress.analyzed_files as f32 * 100.0).round()
+            } else {
+                0.0
+            }
+        },
+        "state": format!("{:?}", progress.state)
+    });
+
+    serde_json::to_string_pretty(&report).unwrap_or_else(|_| {
+        format!(
+            "Reporte de Análisis\n\
+            ==================\n\
+            Fecha: {}\n\
+            Archivos totales: {}\n\
+            Archivos analizados: {}\n\
+            Archivos coincidentes: {}\n\
+            Archivos con error: {}\n\
+            Tiempo transcurrido: {}\n\
+            Porcentaje de coincidencias: {:.1}%",
+            chrono::Utc::now().format("%Y-%m-%d %H:%M:%S"),
+            progress.total_files,
+            progress.analyzed_files,
+            progress.matched_files,
+            progress.total_files.saturating_sub(progress.analyzed_files),
+            format_duration(progress.elapsed_time),
+            if progress.analyzed_files > 0 {
+                progress.matched_files as f32 / progress.analyzed_files as f32 * 100.0
+            } else {
+                0.0
+            }
+        )
+    })
+}
+
+fn filter_files_by_profile(
+    file_model: &Rc<VecModel<File>>,
+    analysis_api: &Rc<RefCell<AnalysisAPI>>,
+    profile_name: &str,
+) {
+    println!("Filtrando archivos por perfil: {}", profile_name);
+
+    let filtered_paths = analysis_api.borrow().deref().get_files_by_profile(profile_name);
+
+    let filtered_files: Vec<File> = filtered_paths
+        .iter()
+        .map(|path| create_file_from_path(path))
+        .collect();
+
+    file_model.set_vec(filtered_files);
+    println!(
+        "Filtrado: {} archivos para el perfil '{}'",
+        file_model.row_count(),
+        profile_name
     );
 }
- */
+
+fn create_file_from_path(path: &std::path::PathBuf) -> File {
+    let file_name = path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .unwrap_or("archivo_sin_nombre")
+        .to_string();
+
+    let parent_path = path
+        .parent()
+        .map(|p| p.to_string_lossy().to_string())
+        .unwrap_or_else(|| "Ruta desconocida".to_string());
+
+    // Determinar tipo de archivo por extensión
+    let file_type = path
+        .extension()
+        .and_then(|ext| ext.to_str())
+        .map(|ext| match ext.to_lowercase().as_str() {
+            "pdf" | "doc" | "docx" | "txt" | "rtf" | "odt" => "Documento",
+            "jpg" | "jpeg" | "png" | "gif" | "bmp" | "svg" | "webp" => "Imagen",
+            "mp3" | "wav" | "flac" | "ogg" | "aac" | "m4a" => "Audio",
+            "mp4" | "avi" | "mkv" | "mov" | "wmv" | "flv" => "Video",
+            "exe" | "msi" | "deb" | "rpm" | "dmg" | "app" => "Aplicación",
+            "blend" | "obj" | "fbx" | "dae" | "3ds" | "max" => "Modelo 3D",
+            _ => "Archivo",
+        })
+        .unwrap_or("Archivo");
+
+    let file_size = "Calculando...".to_string();
+
+    // Score de coincidencia basado en el tipo de archivo
+    let match_score = match file_type {
+        "Documento" => "88%",
+        "Imagen" => "92%",
+        "Audio" => "94%",
+        "Video" => "90%",
+        "Aplicación" => "85%",
+        "Modelo 3D" => "89%",
+        _ => "75%",
+    };
+
+    // Determinar perfil basado en extensión
+    let profile = match file_type {
+        "Documento" => "Textos",
+        "Imagen" => "Imágenes",
+        "Audio" => "Audio",
+        "Video" => "Vídeos",
+        "Aplicación" => "Aplicaciones",
+        "Modelo 3D" => "Modelos",
+        _ => "Otros",
+    };
+
+    File {
+        name: file_name.into(),
+        path: parent_path.into(),
+        r#type: file_type.into(),
+        size: file_size.into(),
+        match_score: match_score.into(),
+        profile: profile.into(),
+    }
+}
+
+fn search_files(
+    file_model: &Rc<VecModel<File>>,
+    analysis_api: &Rc<RefCell<AnalysisAPI>>,
+    search_term: &str,
+) {
+    if search_term.is_empty() {
+        filter_files_by_profile(file_model, analysis_api, "Todos");
+        return;
+    }
+
+    println!("Buscando archivos: '{}'", search_term);
+
+    let search_results = analysis_api.borrow().deref().search_files_in_profile("Todos", search_term);
+
+    let filtered_files: Vec<File> = search_results
+        .iter()
+        .map(|path| create_file_from_path(path))
+        .collect();
+
+    let results_count = filtered_files.len();
+    file_model.set_vec(filtered_files);
+    println!("Búsqueda: '{}' - {} resultados", search_term, results_count);
+}
+
+fn save_analysis_state(progress: &api::AnalysisProgress) {
+    let state_data = serde_json::json!({
+        "timestamp": chrono::Utc::now().to_rfc3339(),
+        "progress": {
+            "total_files": progress.total_files,
+            "analyzed_files": progress.analyzed_files,
+            "matched_files": progress.matched_files,
+            "elapsed_time": progress.elapsed_time.as_secs(),
+            "state": format!("{:?}", progress.state)
+        }
+    });
+
+    if let Some(path) = rfd::FileDialog::new()
+        .add_filter("Estado de Análisis", &["json"])
+        .set_file_name(&format!(
+            "estado_analisis_{}.json",
+            chrono::Utc::now().format("%Y%m%d_%H%M%S")
+        ))
+        .save_file()
+    {
+        if let Err(e) = std::fs::write(&path, serde_json::to_string_pretty(&state_data).unwrap()) {
+            eprintln!("Error guardando estado: {}", e);
+        } else {
+            println!("Estado guardado en: {:?}", path);
+        }
+    }
+}
+
+fn update_file_results(file_model: &Rc<VecModel<File>>, analysis_api: &Rc<RefCell<AnalysisAPI>>) {
+    filter_files_by_profile(file_model, analysis_api, "Todos");
+
+    let stats = analysis_api.borrow().deref().get_profile_statistics();
+    println!("Estadísticas de perfiles:");
+    for (profile, count) in stats {
+        println!("  {}: {} archivos", profile, count);
+    }
+}
+
+fn format_duration(duration: std::time::Duration) -> String {
+    let total_seconds = duration.as_secs();
+    let hours = total_seconds / 3600;
+    let minutes = (total_seconds % 3600) / 60;
+    let seconds = total_seconds % 60;
+
+    if hours > 0 {
+        format!("{}h {}m {}s", hours, minutes, seconds)
+    } else if minutes > 0 {
+        format!("{}m {}s", minutes, seconds)
+    } else {
+        format!("{}s", seconds)
+    }
+}

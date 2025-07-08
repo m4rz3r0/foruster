@@ -850,6 +850,7 @@ dependencies = [
  "iana-time-zone",
  "js-sys",
  "num-traits",
+ "serde",
  "wasm-bindgen",
  "windows-link",
 ]
@@ -1222,10 +1223,13 @@ dependencies = [
 name = "desktop"
 version = "0.1.0"
 dependencies = [
+ "analysis",
  "api",
  "app_core",
+ "chrono",
  "profiling 0.1.0",
  "rfd",
+ "serde_json",
  "slint",
  "slint-build",
 ]

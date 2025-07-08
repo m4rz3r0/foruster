@@ -1,21 +1,36 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+use app_core::FileEntry;
+use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
-use app_core::FileEntry;
 
-#[derive(Default)]
+// Nueva estructura para representar un hallazgo individual
+#[derive(Clone, Debug)]
 pub struct Finding {
+    pub file_path: PathBuf,
+    pub profile_name: String,
+    pub match_score: f64,
+}
+
+// Renombrar la estructura principal para evitar conflicto de nombres
+#[derive(Default)]
+pub struct FindingContainer {
     files: Arc<Mutex<Vec<PathBuf>>>,
     analyzed_files: Arc<Mutex<Vec<FileEntry>>>,
+    matched_files: Arc<Mutex<Vec<FileEntry>>>, // Archivos que coinciden con perfiles
+    // Nuevo: índice de archivos por perfil para filtrado instantáneo
+    files_by_profile: Arc<Mutex<HashMap<String, Vec<PathBuf>>>>,
     analyzed_files_num: usize,
     total_files: usize,
 }
 
-impl Finding {
-    pub fn new() -> Finding {
-        Finding {
+impl FindingContainer {
+    pub fn new() -> FindingContainer {
+        FindingContainer {
             files: Arc::new(Mutex::new(Vec::new())),
             analyzed_files: Arc::new(Mutex::new(Vec::new())),
+            matched_files: Arc::new(Mutex::new(Vec::new())),
+            files_by_profile: Arc::new(Mutex::new(HashMap::new())),
             analyzed_files_num: 0,
             total_files: 0,
         }
@@ -27,6 +42,10 @@ impl Finding {
 
     pub fn analyzed_files(&self) -> &Arc<Mutex<Vec<FileEntry>>> {
         &self.analyzed_files
+    }
+
+    pub fn matched_files(&self) -> &Arc<Mutex<Vec<FileEntry>>> {
+        &self.matched_files
     }
 
     pub fn analyzed_files_num(&self) -> usize {
@@ -47,11 +66,59 @@ impl Finding {
         *locked_analyzed_files = files;
     }
 
+    pub fn set_matched_files(&mut self, files: Vec<FileEntry>) {
+        let mut locked_matched_files = self.matched_files.lock().unwrap();
+        *locked_matched_files = files;
+    }
+
     pub fn set_analyzed_files_num(&mut self, num: usize) {
         self.analyzed_files_num = num;
     }
 
     pub fn set_total_files(&mut self, num: usize) {
         self.total_files = num;
+    }
+
+    pub fn files_by_profile(&self) -> &Arc<Mutex<HashMap<String, Vec<PathBuf>>>> {
+        &self.files_by_profile
+    }
+
+    pub fn set_files_by_profile(&mut self, files_by_profile: HashMap<String, Vec<PathBuf>>) {
+        let mut locked_files_by_profile = self.files_by_profile.lock().unwrap();
+        *locked_files_by_profile = files_by_profile;
+    }
+
+    pub fn add_file_to_profile(&self, profile_name: String, file_path: PathBuf) {
+        if let Ok(mut files_by_profile) = self.files_by_profile.lock() {
+            files_by_profile
+                .entry(profile_name)
+                .or_insert_with(Vec::new)
+                .push(file_path);
+        }
+    }
+
+    pub fn get_files_for_profile(&self, profile_name: &str) -> Vec<PathBuf> {
+        if let Ok(files_by_profile) = self.files_by_profile.lock() {
+            files_by_profile
+                .get(profile_name)
+                .cloned()
+                .unwrap_or_default()
+        } else {
+            Vec::new()
+        }
+    }
+
+    pub fn get_all_profile_names(&self) -> Vec<String> {
+        if let Ok(files_by_profile) = self.files_by_profile.lock() {
+            files_by_profile.keys().cloned().collect()
+        } else {
+            Vec::new()
+        }
+    }
+
+    pub fn clear_profile_index(&self) {
+        if let Ok(mut files_by_profile) = self.files_by_profile.lock() {
+            files_by_profile.clear();
+        }
     }
 }

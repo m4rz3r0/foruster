@@ -203,6 +203,14 @@ component AnalysisStats inherits Rectangle {
     in property <string> matched-files: "874";
     in property <string> analysis-time: "3.5 min";
 
+    Timer {
+        interval: 1s;
+        running: true;
+        triggered() => {
+            AnalysisResultBridge.update-progress()
+        }
+    }
+
     stats-grid := GridLayout {
         padding: Styles.sizes.p-md;
         spacing: Styles.sizes.s-md;
