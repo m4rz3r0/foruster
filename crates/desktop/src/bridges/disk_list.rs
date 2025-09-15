@@ -69,10 +69,13 @@ pub fn setup(window: &MainWindow, storage_api: Rc<RefCell<StorageAPI>>) {
             .map(map_disk_to_ui)
             .collect::<Vec<_>>(),
     ));
+
+    #[cfg(windows)]
     let event_listener = storage_api.borrow().get_device_event_listener();
 
     bridge.set_disks(ModelRc::from(disk_list_model.clone()));
-
+    
+    #[cfg(windows)]
     bridge.on_check_for_changes(move || event_listener.borrow_mut().poll_event().is_some());
 
     let disk_list_model_clone = disk_list_model.clone();

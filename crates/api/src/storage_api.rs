@@ -3,12 +3,14 @@ use std::cell::RefCell;
 use std::path::PathBuf;
 use std::rc::Rc;
 
+#[cfg(windows)]
 use foruster_storage::platform::DeviceEventListener;
 use foruster_storage::platform::storage_devices;
 
 pub use foruster_storage::core::Disk;
 
 pub struct StorageAPI {
+    #[cfg(windows)]
     event_listener: Rc<RefCell<DeviceEventListener>>,
     cached_disks: Vec<Disk>,
 }
@@ -16,6 +18,7 @@ pub struct StorageAPI {
 impl StorageAPI {
     pub fn new() -> StorageAPI {
         Self {
+            #[cfg(windows)]
             event_listener: Rc::new(RefCell::new(DeviceEventListener::new())),
             cached_disks: Vec::new(),
         }
@@ -29,6 +32,7 @@ impl StorageAPI {
         &self.cached_disks
     }
 
+    #[cfg(windows)]
     pub fn get_device_event_listener(&self) -> Rc<RefCell<DeviceEventListener>> {
         self.event_listener.clone()
     }
