@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use app_core::Disk;
 use std::cell::RefCell;
 use std::path::PathBuf;
 use std::rc::Rc;
-use storage::device_event_listener::DeviceEventListener;
+use foruster_storage::DeviceEventListener;
+
+pub use foruster_storage::core::Disk;
 
 pub struct StorageAPI {
     event_listener: Rc<RefCell<DeviceEventListener>>,
-    cached_disks: Vec<Disk>,
+    cached_disks: Vec<foruster_storage::core::Disk>,
 }
 
 impl StorageAPI {
@@ -19,7 +20,7 @@ impl StorageAPI {
     }
 
     pub fn refresh_disks(&mut self) {
-        self.cached_disks = storage::storage_extractor().unwrap_or_default();
+        self.cached_disks = foruster_storage::storage_devices().unwrap_or_default();
     }
 
     pub fn get_disks(&self) -> &Vec<Disk> {
@@ -43,15 +44,11 @@ impl StorageAPI {
             .collect::<Vec<_>>();
 
         for volume in volumes {
-            let drive_letters = volume.drive_letters();
             let mount_points = volume.mount_points();
 
-            if drive_letters
+            if mount_points
                 .iter()
-                .any(|drive_letter| path.starts_with(drive_letter.to_string() + ":"))
-                || mount_points
-                    .iter()
-                    .any(|mount_point| path.starts_with(mount_point))
+                .any(|mount_point| path.starts_with(mount_point))
             {
                 return Some(volume.guid().to_string());
             }

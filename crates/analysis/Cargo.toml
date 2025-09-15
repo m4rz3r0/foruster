@@ -5,12 +5,12 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-file-format = "0.27.0"
+file-format = "0.28.0"
 app_core = { path = "../core" }
 profiling = { path = "../profiling" }
-rayon = "1.10.0"
+rayon = "1.11.0"
 async-walkdir = "2.1.0"
-tokio = { version =  "1.46.1", features = ["full"]  }
-futures-lite = "2.6.0"
+tokio = { version =  "1.47.1", features = ["full"]  }
+futures-lite = "2.6.1"
 futures = "0.3.31"
 

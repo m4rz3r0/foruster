@@ -10,7 +10,7 @@ app_core = { path = "../core" }
 profiling = { path = "../profiling" }
 api = { path = "../api" }
 analysis = { path = "../analysis" }
-rfd = "0.15.3"
+rfd = "0.15.4"
 serde_json = "1.0"
 chrono = { version = "0.4", features = ["serde"] }
 

@@ -44,11 +44,7 @@ fn get_start_paths(
                 .flat_map(|partition| partition.volume())
                 .flat_map(|volume| {
                     let mut vec = volume
-                        .drive_letters()
-                        .iter()
-                        .map(|drive_letter| format!("{}:\\", drive_letter).into())
-                        .collect::<Vec<PathBuf>>();
-                    vec.extend_from_slice(volume.mount_points());
+                        .mount_points();
 
                     if vec.is_empty() {
                         None
@@ -59,7 +55,7 @@ fn get_start_paths(
                 .map(|(paths, volume_guid)| {
                     paths
                         .into_iter()
-                        .map(|path| map_path_to_ui(path, volume_guid.to_string()))
+                        .map(|path| map_path_to_ui(path.clone(), volume_guid.to_string()))
                 })
                 .flatten()
                 .collect::<Vec<Path>>()

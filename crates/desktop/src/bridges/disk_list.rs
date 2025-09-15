@@ -5,7 +5,7 @@ use slint::{ComponentHandle, Model, ModelRc, VecModel};
 use std::cell::{Ref, RefCell};
 use std::rc::Rc;
 
-fn map_disk_to_ui(disk: &app_core::Disk) -> Disk {
+fn map_disk_to_ui(disk: &api::Disk) -> Disk {
     Disk {
         name: disk.name().into(),
         size: disk.total_size_str().into(),
