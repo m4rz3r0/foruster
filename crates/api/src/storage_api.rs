@@ -2,13 +2,15 @@
 use std::cell::RefCell;
 use std::path::PathBuf;
 use std::rc::Rc;
-use foruster_storage::DeviceEventListener;
+
+use foruster_storage::platform::DeviceEventListener;
+use foruster_storage::platform::storage_devices;
 
 pub use foruster_storage::core::Disk;
 
 pub struct StorageAPI {
     event_listener: Rc<RefCell<DeviceEventListener>>,
-    cached_disks: Vec<foruster_storage::core::Disk>,
+    cached_disks: Vec<Disk>,
 }
 
 impl StorageAPI {
@@ -20,7 +22,7 @@ impl StorageAPI {
     }
 
     pub fn refresh_disks(&mut self) {
-        self.cached_disks = foruster_storage::storage_devices().unwrap_or_default();
+        self.cached_disks = storage_devices().unwrap_or_default();
     }
 
     pub fn get_disks(&self) -> &Vec<Disk> {
