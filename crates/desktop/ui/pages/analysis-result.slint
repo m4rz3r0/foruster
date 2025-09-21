@@ -205,7 +205,7 @@ component AnalysisStats inherits Rectangle {
 
     Timer {
         interval: 1s;
-        running: true;
+        running: AnalysisResultBridge.progress-percentage != 100;
         triggered() => {
             AnalysisResultBridge.update-progress()
         }
