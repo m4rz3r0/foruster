@@ -6,7 +6,7 @@ use profiling::Profile;
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicUsize, Ordering};
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, RwLock};
 
 #[derive(Default, Clone, Debug)]
 pub enum AnalysisState {
@@ -19,7 +19,7 @@ pub enum AnalysisState {
 
 #[derive(Default)]
 pub struct Engine {
-    state: Arc<Mutex<AnalysisState>>,
+    state: Arc<RwLock<AnalysisState>>,
     config: Arc<Config>,
     finding: FindingContainer,
     progress_callback: Option<Box<dyn Fn(&str, HashMap<String, String>) + Send + Sync>>,
@@ -30,7 +30,7 @@ impl Engine {
         *Arc::make_mut(&mut self.config) = Config::new(profiles, paths);
     }
 
-    pub fn state(&self) -> Arc<Mutex<AnalysisState>> {
+    pub fn state(&self) -> Arc<RwLock<AnalysisState>> {
         self.state.clone()
     }
 
@@ -85,7 +85,7 @@ impl Engine {
         let profiles: Vec<_> = self.config.analysis_profile().clone();
 
         // Optimización: pre-crear el índice con capacidad estimada
-        let files_by_profile_shared = Arc::new(Mutex::new(
+        let files_by_profile_shared = Arc::new(RwLock::new(
             HashMap::<String, Vec<PathBuf>>::with_capacity(profiles.len()),
         ));
 
@@ -129,7 +129,7 @@ impl Engine {
                                 let current_matched = matched_count.fetch_add(batch_matched, Ordering::Relaxed) + batch_matched;
 
                                 // Optimización: lock una sola vez por lote
-                                if let Ok(mut index) = files_by_profile.try_lock() {
+                                if let Ok(mut index) = files_by_profile.try_write() {
                                     for entry in &batch.entries {
                                         if entry.is_file && entry.matches_profile {
                                             let path = PathBuf::from(&entry.path);
@@ -255,7 +255,7 @@ impl Engine {
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         *self
             .state
-            .lock()
+            .write()
             .map_err(|e| format!("Error actualizando estado: {}", e))? = new_state;
         Ok(())
     }
@@ -340,7 +340,7 @@ impl Engine {
 
     pub fn get_findings(&self) -> Result<Vec<Finding>, String> {
         // Retornar archivos con información básica
-        let files = if let Ok(files) = self.finding.files().lock() {
+        let files = if let Ok(files) = self.finding.files().read() {
             files.clone()
         } else {
             return Err("Error accediendo a archivos".to_string());
@@ -360,13 +360,13 @@ impl Engine {
 
     pub fn reset(&mut self) {
         self.finding = FindingContainer::new();
-        if let Ok(mut state) = self.state.lock() {
+        if let Ok(mut state) = self.state.write() {
             *state = AnalysisState::Idle;
         }
     }
 
     pub fn get_analyzed_files(&self) -> Vec<PathBuf> {
-        if let Ok(files) = self.finding.files().lock() {
+        if let Ok(files) = self.finding.files().read() {
             files.clone()
         } else {
             Vec::new()
@@ -398,7 +398,7 @@ impl Engine {
     }
 
     pub fn get_profile_statistics(&self) -> HashMap<String, usize> {
-        if let Ok(files_by_profile) = self.finding.files_by_profile().lock() {
+        if let Ok(files_by_profile) = self.finding.files_by_profile().read() {
             files_by_profile
                 .iter()
                 .map(|(profile, files)| (profile.clone(), files.len()))

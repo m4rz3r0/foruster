@@ -2,7 +2,7 @@
 use app_core::FileEntry;
 use std::collections::HashMap;
 use std::path::PathBuf;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, RwLock};
 
 // Nueva estructura para representar un hallazgo individual
 #[derive(Clone, Debug)]
@@ -15,11 +15,11 @@ pub struct Finding {
 // Renombrar la estructura principal para evitar conflicto de nombres
 #[derive(Default)]
 pub struct FindingContainer {
-    files: Arc<Mutex<Vec<PathBuf>>>,
-    analyzed_files: Arc<Mutex<Vec<FileEntry>>>,
-    matched_files: Arc<Mutex<Vec<FileEntry>>>, // Archivos que coinciden con perfiles
+    files: Arc<RwLock<Vec<PathBuf>>>,
+    analyzed_files: Arc<RwLock<Vec<FileEntry>>>,
+    matched_files: Arc<RwLock<Vec<FileEntry>>>, // Archivos que coinciden con perfiles
     // Nuevo: índice de archivos por perfil para filtrado instantáneo
-    files_by_profile: Arc<Mutex<HashMap<String, Vec<PathBuf>>>>,
+    files_by_profile: Arc<RwLock<HashMap<String, Vec<PathBuf>>>>,
     analyzed_files_num: usize,
     total_files: usize,
 }
@@ -27,24 +27,24 @@ pub struct FindingContainer {
 impl FindingContainer {
     pub fn new() -> FindingContainer {
         FindingContainer {
-            files: Arc::new(Mutex::new(Vec::new())),
-            analyzed_files: Arc::new(Mutex::new(Vec::new())),
-            matched_files: Arc::new(Mutex::new(Vec::new())),
-            files_by_profile: Arc::new(Mutex::new(HashMap::new())),
+            files: Arc::new(RwLock::new(Vec::new())),
+            analyzed_files: Arc::new(RwLock::new(Vec::new())),
+            matched_files: Arc::new(RwLock::new(Vec::new())),
+            files_by_profile: Arc::new(RwLock::new(HashMap::new())),
             analyzed_files_num: 0,
             total_files: 0,
         }
     }
 
-    pub fn files(&self) -> &Arc<Mutex<Vec<PathBuf>>> {
+    pub fn files(&self) -> &Arc<RwLock<Vec<PathBuf>>> {
         &self.files
     }
 
-    pub fn analyzed_files(&self) -> &Arc<Mutex<Vec<FileEntry>>> {
+    pub fn analyzed_files(&self) -> &Arc<RwLock<Vec<FileEntry>>> {
         &self.analyzed_files
     }
 
-    pub fn matched_files(&self) -> &Arc<Mutex<Vec<FileEntry>>> {
+    pub fn matched_files(&self) -> &Arc<RwLock<Vec<FileEntry>>> {
         &self.matched_files
     }
 
@@ -57,17 +57,17 @@ impl FindingContainer {
     }
 
     pub fn set_files(&mut self, files: Vec<PathBuf>) {
-        let mut locked_files = self.files.lock().unwrap();
+        let mut locked_files = self.files.write().unwrap();
         *locked_files = files;
     }
 
     pub fn set_analyzed_files(&mut self, files: Vec<FileEntry>) {
-        let mut locked_analyzed_files = self.analyzed_files.lock().unwrap();
+        let mut locked_analyzed_files = self.analyzed_files.write().unwrap();
         *locked_analyzed_files = files;
     }
 
     pub fn set_matched_files(&mut self, files: Vec<FileEntry>) {
-        let mut locked_matched_files = self.matched_files.lock().unwrap();
+        let mut locked_matched_files = self.matched_files.write().unwrap();
         *locked_matched_files = files;
     }
 
@@ -79,17 +79,17 @@ impl FindingContainer {
         self.total_files = num;
     }
 
-    pub fn files_by_profile(&self) -> &Arc<Mutex<HashMap<String, Vec<PathBuf>>>> {
+    pub fn files_by_profile(&self) -> &Arc<RwLock<HashMap<String, Vec<PathBuf>>>> {
         &self.files_by_profile
     }
 
     pub fn set_files_by_profile(&mut self, files_by_profile: HashMap<String, Vec<PathBuf>>) {
-        let mut locked_files_by_profile = self.files_by_profile.lock().unwrap();
+        let mut locked_files_by_profile = self.files_by_profile.write().unwrap();
         *locked_files_by_profile = files_by_profile;
     }
 
     pub fn add_file_to_profile(&self, profile_name: String, file_path: PathBuf) {
-        if let Ok(mut files_by_profile) = self.files_by_profile.lock() {
+        if let Ok(mut files_by_profile) = self.files_by_profile.write() {
             files_by_profile
                 .entry(profile_name)
                 .or_insert_with(Vec::new)
@@ -98,7 +98,7 @@ impl FindingContainer {
     }
 
     pub fn get_files_for_profile(&self, profile_name: &str) -> Vec<PathBuf> {
-        if let Ok(files_by_profile) = self.files_by_profile.lock() {
+        if let Ok(files_by_profile) = self.files_by_profile.read() {
             files_by_profile
                 .get(profile_name)
                 .cloned()
@@ -109,7 +109,7 @@ impl FindingContainer {
     }
 
     pub fn get_all_profile_names(&self) -> Vec<String> {
-        if let Ok(files_by_profile) = self.files_by_profile.lock() {
+        if let Ok(files_by_profile) = self.files_by_profile.read() {
             files_by_profile.keys().cloned().collect()
         } else {
             Vec::new()
@@ -117,7 +117,7 @@ impl FindingContainer {
     }
 
     pub fn clear_profile_index(&self) {
-        if let Ok(mut files_by_profile) = self.files_by_profile.lock() {
+        if let Ok(mut files_by_profile) = self.files_by_profile.write() {
             files_by_profile.clear();
         }
     }
