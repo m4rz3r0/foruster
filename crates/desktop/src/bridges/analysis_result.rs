@@ -173,7 +173,11 @@ pub fn setup(
 
             if current_page < total_pages {
                 bridge.set_current_page(current_page + 1);
-                update_page_results(&window.as_weak(), &file_results_model_next, &all_filtered_files_next);
+                update_page_results(
+                    &window.as_weak(),
+                    &file_results_model_next,
+                    &all_filtered_files_next,
+                );
             }
         }
     });
@@ -188,7 +192,11 @@ pub fn setup(
 
             if current_page > 1 {
                 bridge.set_current_page(current_page - 1);
-                update_page_results(&window.as_weak(), &file_results_model_prev, &all_filtered_files_prev);
+                update_page_results(
+                    &window.as_weak(),
+                    &file_results_model_prev,
+                    &all_filtered_files_prev,
+                );
             }
         }
     });
@@ -203,7 +211,11 @@ pub fn setup(
 
             if page >= 1 && page <= total_pages {
                 bridge.set_current_page(page);
-                update_page_results(&window.as_weak(), &file_results_model_goto, &all_filtered_files_goto);
+                update_page_results(
+                    &window.as_weak(),
+                    &file_results_model_goto,
+                    &all_filtered_files_goto,
+                );
             }
         }
     });
@@ -319,10 +331,7 @@ fn filter_files_by_profile(
         .deref()
         .get_files_by_profile(profile_name);
 
-    let filtered_files: Vec<File> = filtered_paths
-        .iter()
-        .map(create_file_from_path)
-        .collect();
+    let filtered_files: Vec<File> = filtered_paths.iter().map(create_file_from_path).collect();
 
     // Guardar TODOS los archivos filtrados (sin paginación)
     all_filtered_files.borrow_mut().clear();
@@ -381,7 +390,7 @@ fn create_file_from_path(path: &std::path::PathBuf) -> File {
                         "blend" | "obj" | "fbx" | "dae" | "3ds" | "max" => "Modelo 3D",
                         _ => "Archivo",
                     }
-                        .to_string()
+                    .to_string()
                 })
                 .clone()
         })
@@ -407,7 +416,13 @@ fn search_files(
     all_filtered_files: &Rc<RefCell<Vec<File>>>,
 ) {
     if search_term.is_empty() {
-        filter_files_by_profile(file_model, analysis_api, "Todos", window_weak, all_filtered_files);
+        filter_files_by_profile(
+            file_model,
+            analysis_api,
+            "Todos",
+            window_weak,
+            all_filtered_files,
+        );
         return;
     }
 
@@ -418,10 +433,7 @@ fn search_files(
         .deref()
         .search_files_in_profile("Todos", search_term);
 
-    let filtered_files: Vec<File> = search_results
-        .iter()
-        .map(create_file_from_path)
-        .collect();
+    let filtered_files: Vec<File> = search_results.iter().map(create_file_from_path).collect();
 
     // Guardar TODOS los archivos de búsqueda (sin paginación)
     all_filtered_files.borrow_mut().clear();
@@ -439,7 +451,11 @@ fn search_files(
         update_page_results(&window.as_weak(), file_model, all_filtered_files);
     }
 
-    println!("Búsqueda: '{}' - {} resultados", search_term, all_filtered_files.borrow().len());
+    println!(
+        "Búsqueda: '{}' - {} resultados",
+        search_term,
+        all_filtered_files.borrow().len()
+    );
 }
 
 fn save_analysis_state(progress: &api::AnalysisProgress) {
@@ -475,7 +491,13 @@ fn update_file_results(
     analysis_api: &Rc<RefCell<AnalysisAPI>>,
     window_weak: &Weak<MainWindow>,
 ) {
-    filter_files_by_profile(file_model, analysis_api, "Todos", window_weak, &Rc::new(RefCell::new(Vec::<File>::new())));
+    filter_files_by_profile(
+        file_model,
+        analysis_api,
+        "Todos",
+        window_weak,
+        &Rc::new(RefCell::new(Vec::<File>::new())),
+    );
 
     let stats = analysis_api.borrow().deref().get_profile_statistics();
     println!("Estadísticas de perfiles:");

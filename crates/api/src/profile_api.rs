@@ -30,6 +30,7 @@ impl ProfileAPI {
         self.profiles
             .iter()
             .filter(|profile| *profile.name() == label)
-            .next().cloned()
+            .next()
+            .cloned()
     }
 }
