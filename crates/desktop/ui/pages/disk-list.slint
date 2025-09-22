@@ -54,7 +54,6 @@ export component DiskItem inherits Rectangle {
         padding: 20px;
         spacing: 16px;
         icon := Image {
-            padding: 4px;
             width: 13rem;
             height: 13rem;
             source: is_usb ? @image-url("../assets/pendrive-usb.svg") : @image-url("../assets/hard-drive.svg");
@@ -70,7 +69,6 @@ export component DiskItem inherits Rectangle {
                     text: model;
                     font-size: 20px;
                     font-weight: 800;
-                    padding-bottom: 4px;
                 }
             }
 

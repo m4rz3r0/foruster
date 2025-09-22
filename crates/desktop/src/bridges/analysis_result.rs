@@ -217,21 +217,6 @@ pub fn setup(
             && let Ok(progress) = analysis_api_clone.borrow().deref().get_progress() {
                 let bridge = window.global::<AnalysisResultBridge>();
 
-                // Throttling para evitar actualizaciones excesivas
-                static mut LAST_UPDATE: Option<(usize, usize, usize, analysis::AnalysisState)> = None;
-                let current_state = (progress.total_files, progress.analyzed_files, progress.matched_files, progress.state.clone());
-
-                unsafe {
-                    if let Some(ref last) = LAST_UPDATE
-                        && (current_state.0.abs_diff(last.0) < 100 &&
-                            current_state.1.abs_diff(last.1) < 100 &&
-                            current_state.2.abs_diff(last.2) < 100) &&
-                            std::mem::discriminant(&current_state.3) == std::mem::discriminant(&last.3) {
-                            return;
-                        }
-                    LAST_UPDATE = Some(current_state);
-                }
-
                 // Actualizar contadores
                 bridge.set_analyzed_files(progress.analyzed_files.to_string().into());
                 bridge.set_total_files(progress.total_files.to_string().into());
@@ -252,13 +237,6 @@ pub fn setup(
 
                 let error_files = progress.total_files.saturating_sub(progress.analyzed_files);
                 bridge.set_error_files(error_files.to_string().into());
-
-                let match_percentage = if progress.analyzed_files > 0 {
-                    (progress.matched_files as f32 / progress.analyzed_files as f32 * 100.0).round() as i32
-                } else {
-                    0
-                };
-                bridge.set_match_percentage(match_percentage);
 
                 // Actualizar lista de archivos cuando el análisis esté completo
                 if matches!(progress.state, AnalysisState::Done) {

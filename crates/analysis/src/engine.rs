@@ -351,7 +351,6 @@ impl Engine {
             .map(|path| Finding {
                 file_path: path.clone(),
                 profile_name: "General".to_string(), // Simplificado por ahora
-                match_score: 0.85,                   // Score por defecto
             })
             .collect();
 

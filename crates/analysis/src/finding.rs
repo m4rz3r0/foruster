@@ -9,7 +9,6 @@ use std::sync::{Arc, RwLock};
 pub struct Finding {
     pub file_path: PathBuf,
     pub profile_name: String,
-    pub match_score: f64,
 }
 
 // Renombrar la estructura principal para evitar conflicto de nombres
