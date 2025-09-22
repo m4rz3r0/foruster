@@ -7,6 +7,7 @@ use api::{AnalysisAPI, ProfileAPI};
 use slint::{ComponentHandle, Model, ModelRc, SharedString, VecModel, Weak};
 use std::cell::RefCell;
 use std::ops::Deref;
+use std::path::Path;
 use std::rc::Rc;
 
 fn get_selected_profiles(window_weak: Weak<MainWindow>) -> Vec<Profile> {
@@ -331,7 +332,10 @@ fn filter_files_by_profile(
         .deref()
         .get_files_by_profile(profile_name);
 
-    let filtered_files: Vec<File> = filtered_paths.iter().map(create_file_from_path).collect();
+    let filtered_files: Vec<File> = filtered_paths
+        .iter()
+        .map(|p| create_file_from_path(p))
+        .collect();
 
     // Guardar TODOS los archivos filtrados (sin paginación)
     all_filtered_files.borrow_mut().clear();
@@ -356,10 +360,10 @@ fn filter_files_by_profile(
     );
 }
 
-fn create_file_from_path(path: &std::path::PathBuf) -> File {
+fn create_file_from_path(path: &Path) -> File {
     // Cache para extensiones comunes para evitar recálculos
     thread_local! {
-        static EXTENSION_CACHE: std::cell::RefCell<std::collections::HashMap<String, String>> = std::cell::RefCell::new(std::collections::HashMap::new());
+        static EXTENSION_CACHE: RefCell<std::collections::HashMap<String, String>> = RefCell::new(std::collections::HashMap::new());
     }
 
     let file_name = path
@@ -433,7 +437,10 @@ fn search_files(
         .deref()
         .search_files_in_profile("Todos", search_term);
 
-    let filtered_files: Vec<File> = search_results.iter().map(create_file_from_path).collect();
+    let filtered_files: Vec<File> = search_results
+        .iter()
+        .map(|p| create_file_from_path(p))
+        .collect();
 
     // Guardar TODOS los archivos de búsqueda (sin paginación)
     all_filtered_files.borrow_mut().clear();
