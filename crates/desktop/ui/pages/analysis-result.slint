@@ -121,7 +121,6 @@ component AnalysisResultItem inherits Rectangle {
     in property <string> file-path: "/ruta/hacia/el/archivo";
     in property <string> file-type: "Texto";
     in property <string> file-size: "15.2 KB";
-    in property <string> match-score: "87%";
 
     ta := TouchArea {
         width: 100%;
@@ -142,21 +141,6 @@ component AnalysisResultItem inherits Rectangle {
                 color: Styles.palette.primary-fg;
                 font-size: Styles.sizes.font + 2px;
                 vertical-alignment: center;
-            }
-
-            Rectangle {
-                width: 70px;
-                height: 26px;
-                border-radius: Styles.sizes.r-sm;
-                background: Styles.palette.primary-bg;
-
-                Text {
-                    text: root.match-score;
-                    font-size: Styles.sizes.font - 2px;
-                    color: Styles.palette.primary-fg;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                }
             }
         }
 
@@ -392,7 +376,6 @@ export component AnalysisResultPage {
                                 file-path: file.path;
                                 file-type: file.type;
                                 file-size: file.size;
-                                match-score: file.match-score;
                             }
 
                             // Mostrar un mensaje si no hay resultados

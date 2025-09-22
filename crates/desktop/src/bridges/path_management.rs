@@ -43,7 +43,7 @@ fn get_start_paths(
                 .iter()
                 .flat_map(|partition| partition.volume())
                 .flat_map(|volume| {
-                    let mut vec = volume.mount_points();
+                    let vec = volume.mount_points();
 
                     if vec.is_empty() {
                         None

@@ -77,6 +77,15 @@ pub fn setup(
     let file_results_model = Rc::new(VecModel::from(Vec::<File>::new()));
     bridge.set_file_results(ModelRc::from(file_results_model.clone()));
 
+    // Modelo para almacenar TODOS los archivos filtrados (sin paginación)
+    let all_filtered_files = Rc::new(RefCell::new(Vec::<File>::new()));
+
+    // Inicializar propiedades de paginación
+    bridge.set_current_page(1);
+    bridge.set_total_pages(1);
+    bridge.set_total_items(0);
+    bridge.set_items_per_page(50);
+
     let window_weak = window.as_weak();
     let analysis_api_clone = analysis_api.clone();
     let profile_api_clone = profile_api.clone();
@@ -109,19 +118,31 @@ pub fn setup(
     // Implementar filtrado por perfil
     let file_results_model_clone = file_results_model.clone();
     let analysis_api_clone = analysis_api.clone();
+    let window_weak_filter = window.as_weak();
+    let all_filtered_files_clone = all_filtered_files.clone();
     bridge.on_filter_by_profile(move |profile_name| {
         filter_files_by_profile(
             &file_results_model_clone,
             &analysis_api_clone,
-            &profile_name,
+            &profile_name.to_string(),
+            &window_weak_filter,
+            &all_filtered_files_clone,
         );
     });
 
     // Implementar búsqueda de archivos
     let file_results_model_clone = file_results_model.clone();
     let analysis_api_clone = analysis_api.clone();
+    let window_weak_search = window.as_weak();
+    let all_filtered_files_clone = all_filtered_files.clone();
     bridge.on_search_files(move |search_term| {
-        search_files(&file_results_model_clone, &analysis_api_clone, &search_term);
+        search_files(
+            &file_results_model_clone,
+            &analysis_api_clone,
+            &search_term.to_string(),
+            &window_weak_search,
+            &all_filtered_files_clone,
+        );
     });
 
     // Implementar guardar análisis
@@ -140,20 +161,51 @@ pub fn setup(
         }
     });
 
-    // Implementar paginación básica (simplificada)
+    // Implementar paginación
+    let window_weak_next = window.as_weak();
+    let file_results_model_next = file_results_model.clone();
+    let all_filtered_files_next = all_filtered_files.clone();
     bridge.on_load_next_page(move || {
-        println!("Página siguiente - funcionalidad pendiente");
-        // Implementar lógica de paginación cuando sea necesario
+        if let Some(window) = window_weak_next.upgrade() {
+            let bridge = window.global::<AnalysisResultBridge>();
+            let current_page = bridge.get_current_page();
+            let total_pages = bridge.get_total_pages();
+
+            if current_page < total_pages {
+                bridge.set_current_page(current_page + 1);
+                update_page_results(&window.as_weak(), &file_results_model_next, &all_filtered_files_next);
+            }
+        }
     });
 
+    let window_weak_prev = window.as_weak();
+    let file_results_model_prev = file_results_model.clone();
+    let all_filtered_files_prev = all_filtered_files.clone();
     bridge.on_load_previous_page(move || {
-        println!("Página anterior - funcionalidad pendiente");
-        // Implementar lógica de paginación cuando sea necesario
+        if let Some(window) = window_weak_prev.upgrade() {
+            let bridge = window.global::<AnalysisResultBridge>();
+            let current_page = bridge.get_current_page();
+
+            if current_page > 1 {
+                bridge.set_current_page(current_page - 1);
+                update_page_results(&window.as_weak(), &file_results_model_prev, &all_filtered_files_prev);
+            }
+        }
     });
 
+    let window_weak_goto = window.as_weak();
+    let file_results_model_goto = file_results_model.clone();
+    let all_filtered_files_goto = all_filtered_files.clone();
     bridge.on_go_to_page(move |page| {
-        println!("Ir a página {} - funcionalidad pendiente", page);
-        // Implementar lógica de paginación cuando sea necesario
+        if let Some(window) = window_weak_goto.upgrade() {
+            let bridge = window.global::<AnalysisResultBridge>();
+            let total_pages = bridge.get_total_pages();
+
+            if page >= 1 && page <= total_pages {
+                bridge.set_current_page(page);
+                update_page_results(&window.as_weak(), &file_results_model_goto, &all_filtered_files_goto);
+            }
+        }
     });
 
     // Callback de progreso optimizado
@@ -211,7 +263,7 @@ pub fn setup(
 
                 // Actualizar lista de archivos cuando el análisis esté completo
                 if matches!(progress.state, AnalysisState::Done) {
-                    update_file_results(&file_results_model_clone, &analysis_api_clone);
+                    update_file_results(&file_results_model_clone, &analysis_api_clone, &window.as_weak());
                 }
 
                 // Debug logging (solo para eventos importantes)
@@ -281,6 +333,8 @@ fn filter_files_by_profile(
     file_model: &Rc<VecModel<File>>,
     analysis_api: &Rc<RefCell<AnalysisAPI>>,
     profile_name: &str,
+    window_weak: &Weak<MainWindow>,
+    all_filtered_files: &Rc<RefCell<Vec<File>>>,
 ) {
     println!("Filtrando archivos por perfil: {}", profile_name);
 
@@ -294,10 +348,25 @@ fn filter_files_by_profile(
         .map(|path| create_file_from_path(path))
         .collect();
 
-    file_model.set_vec(filtered_files);
+    // Guardar TODOS los archivos filtrados (sin paginación)
+    all_filtered_files.borrow_mut().clear();
+    all_filtered_files.borrow_mut().extend(filtered_files);
+
+    // Actualizar paginación basada en archivos filtrados
+    if let Some(window) = window_weak.upgrade() {
+        let bridge = window.global::<AnalysisResultBridge>();
+        let total_filtered = all_filtered_files.borrow().len() as i32;
+        bridge.set_total_items(total_filtered);
+        bridge.set_current_page(1);
+        update_pagination(&window.as_weak());
+
+        // Mostrar solo la primera página de los archivos filtrados
+        update_page_results(&window.as_weak(), file_model, all_filtered_files);
+    }
+
     println!(
         "Filtrado: {} archivos para el perfil '{}'",
-        file_model.row_count(),
+        all_filtered_files.borrow().len(),
         profile_name
     );
 }
@@ -344,24 +413,13 @@ fn create_file_from_path(path: &std::path::PathBuf) -> File {
         "Archivo".to_string()
     };
 
-    // Pre-calcular scores y perfiles usando constantes
-    let (match_score, profile) = match file_type.as_str() {
-        "Documento" => ("88%", "Textos"),
-        "Imagen" => ("92%", "Imágenes"),
-        "Audio" => ("94%", "Audio"),
-        "Video" => ("90%", "Vídeos"),
-        "Aplicación" => ("85%", "Aplicaciones"),
-        "Modelo 3D" => ("89%", "Modelos"),
-        _ => ("75%", "Otros"),
-    };
-
     File {
         name: file_name.into(),
         path: parent_path.to_string().into(),
         r#type: file_type.into(),
         size: "Calculando...".into(),
-        match_score: match_score.into(),
-        profile: profile.into(),
+        match_score: "".into(), // Eliminado match score como se solicitó
+        profile: "General".into(),
     }
 }
 
@@ -369,9 +427,11 @@ fn search_files(
     file_model: &Rc<VecModel<File>>,
     analysis_api: &Rc<RefCell<AnalysisAPI>>,
     search_term: &str,
+    window_weak: &Weak<MainWindow>,
+    all_filtered_files: &Rc<RefCell<Vec<File>>>,
 ) {
     if search_term.is_empty() {
-        filter_files_by_profile(file_model, analysis_api, "Todos");
+        filter_files_by_profile(file_model, analysis_api, "Todos", window_weak, all_filtered_files);
         return;
     }
 
@@ -387,9 +447,23 @@ fn search_files(
         .map(|path| create_file_from_path(path))
         .collect();
 
-    let results_count = filtered_files.len();
-    file_model.set_vec(filtered_files);
-    println!("Búsqueda: '{}' - {} resultados", search_term, results_count);
+    // Guardar TODOS los archivos de búsqueda (sin paginación)
+    all_filtered_files.borrow_mut().clear();
+    all_filtered_files.borrow_mut().extend(filtered_files);
+
+    // Actualizar paginación basada en resultados de búsqueda
+    if let Some(window) = window_weak.upgrade() {
+        let bridge = window.global::<AnalysisResultBridge>();
+        let total_search_results = all_filtered_files.borrow().len() as i32;
+        bridge.set_total_items(total_search_results);
+        bridge.set_current_page(1);
+        update_pagination(&window.as_weak());
+
+        // Mostrar solo la primera página de los resultados de búsqueda
+        update_page_results(&window.as_weak(), file_model, all_filtered_files);
+    }
+
+    println!("Búsqueda: '{}' - {} resultados", search_term, all_filtered_files.borrow().len());
 }
 
 fn save_analysis_state(progress: &api::AnalysisProgress) {
@@ -420,13 +494,82 @@ fn save_analysis_state(progress: &api::AnalysisProgress) {
     }
 }
 
-fn update_file_results(file_model: &Rc<VecModel<File>>, analysis_api: &Rc<RefCell<AnalysisAPI>>) {
-    filter_files_by_profile(file_model, analysis_api, "Todos");
+fn update_file_results(
+    file_model: &Rc<VecModel<File>>,
+    analysis_api: &Rc<RefCell<AnalysisAPI>>,
+    window_weak: &Weak<MainWindow>,
+) {
+    filter_files_by_profile(file_model, analysis_api, "Todos", window_weak, &Rc::new(RefCell::new(Vec::<File>::new())));
 
     let stats = analysis_api.borrow().deref().get_profile_statistics();
     println!("Estadísticas de perfiles:");
     for (profile, count) in stats {
         println!("  {}: {} archivos", profile, count);
+    }
+}
+
+fn update_pagination(window_weak: &Weak<MainWindow>) {
+    if let Some(window) = window_weak.upgrade() {
+        let bridge = window.global::<AnalysisResultBridge>();
+        let total_items = bridge.get_total_items();
+        let items_per_page = bridge.get_items_per_page();
+
+        let total_pages = if total_items > 0 {
+            ((total_items as f32) / (items_per_page as f32)).ceil() as i32
+        } else {
+            1
+        };
+
+        bridge.set_total_pages(total_pages);
+
+        let current_page = bridge.get_current_page();
+        if current_page > total_pages {
+            bridge.set_current_page(total_pages);
+        }
+        if current_page < 1 {
+            bridge.set_current_page(1);
+        }
+    }
+}
+
+fn update_page_results(
+    window_weak: &Weak<MainWindow>,
+    file_results_model: &Rc<VecModel<File>>,
+    all_filtered_files: &Rc<RefCell<Vec<File>>>,
+) {
+    if let Some(window) = window_weak.upgrade() {
+        let bridge = window.global::<AnalysisResultBridge>();
+        let current_page = bridge.get_current_page();
+        let items_per_page = bridge.get_items_per_page();
+
+        // Calcular el rango de elementos para la página actual
+        let all_files = all_filtered_files.borrow();
+        let total_files = all_files.len();
+
+        let start_index = ((current_page - 1) * items_per_page) as usize;
+        let end_index = (start_index + items_per_page as usize).min(total_files);
+
+        // Obtener solo los archivos de la página actual
+        let page_files: Vec<File> = if start_index < total_files {
+            all_files[start_index..end_index].to_vec()
+        } else {
+            Vec::new()
+        };
+
+        // Actualizar el modelo con solo los archivos de la página actual
+        file_results_model.set_vec(page_files);
+
+        // Actualizar la paginación
+        update_pagination(&window.as_weak());
+
+        println!(
+            "Mostrando página {} de {}: elementos {} a {} de {} totales",
+            current_page,
+            bridge.get_total_pages(),
+            start_index + 1,
+            end_index,
+            total_files
+        );
     }
 }
 
