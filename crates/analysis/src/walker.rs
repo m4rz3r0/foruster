@@ -43,7 +43,7 @@ impl Walker {
                     match entry.file_type().await {
                         Ok(file_type) if file_type.is_file() => {
                             self.total_files += 1; // Contar todos los archivos
-                            self.files.push(entry.path().into());
+                            self.files.push(entry.path());
                             self.analyzed_files += 1; // Solo incrementar para archivos procesados exitosamente
                         }
                         Ok(_) => {
@@ -102,7 +102,7 @@ impl Walker {
 
                     if is_file {
                         self.total_files += 1;
-                        self.files.push(path.clone().into());
+                        self.files.push(path.clone());
                         self.analyzed_files += 1;
 
                         // Matching optimizado: extensión primero, luego mime si es necesario

@@ -32,13 +32,13 @@ fn get_start_paths(
     storage_api
         .borrow()
         .get_disks()
-        .into_iter()
+        .iter()
         .filter(|disk| {
             selected_disks
                 .iter()
                 .any(|sel_disk| sel_disk.name == disk.name())
         })
-        .map(|disk| {
+        .flat_map(|disk| {
             disk.partitions()
                 .iter()
                 .flat_map(|partition| partition.volume())
@@ -51,15 +51,13 @@ fn get_start_paths(
                         Some((vec, volume.guid()))
                     }
                 })
-                .map(|(paths, volume_guid)| {
+                .flat_map(|(paths, volume_guid)| {
                     paths
-                        .into_iter()
+                        .iter()
                         .map(|path| map_path_to_ui(path.clone(), volume_guid.to_string()))
                 })
-                .flatten()
                 .collect::<Vec<Path>>()
         })
-        .flatten()
         .collect()
 }
 

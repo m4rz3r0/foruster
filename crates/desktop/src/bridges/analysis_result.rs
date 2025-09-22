@@ -100,7 +100,7 @@ pub fn setup(
             if let Some(path) = rfd::FileDialog::new()
                 .add_filter("JSON", &["json"])
                 .add_filter("Texto", &["txt"])
-                .set_file_name(&format!(
+                .set_file_name(format!(
                     "analisis_{}.json",
                     chrono::Utc::now().format("%Y%m%d_%H%M%S")
                 ))
@@ -124,7 +124,7 @@ pub fn setup(
         filter_files_by_profile(
             &file_results_model_clone,
             &analysis_api_clone,
-            &profile_name.to_string(),
+            profile_name.as_ref(),
             &window_weak_filter,
             &all_filtered_files_clone,
         );
@@ -139,7 +139,7 @@ pub fn setup(
         search_files(
             &file_results_model_clone,
             &analysis_api_clone,
-            &search_term.to_string(),
+            search_term.as_ref(),
             &window_weak_search,
             &all_filtered_files_clone,
         );
@@ -213,8 +213,8 @@ pub fn setup(
     let analysis_api_clone = analysis_api.clone();
     let file_results_model_clone = file_results_model.clone();
     bridge.on_update_progress(move || {
-        if let Some(window) = window_weak.upgrade() {
-            if let Ok(progress) = analysis_api_clone.borrow().deref().get_progress() {
+        if let Some(window) = window_weak.upgrade()
+            && let Ok(progress) = analysis_api_clone.borrow().deref().get_progress() {
                 let bridge = window.global::<AnalysisResultBridge>();
 
                 // Throttling para evitar actualizaciones excesivas
@@ -222,14 +222,13 @@ pub fn setup(
                 let current_state = (progress.total_files, progress.analyzed_files, progress.matched_files, progress.state.clone());
 
                 unsafe {
-                    if let Some(ref last) = LAST_UPDATE {
-                        if (current_state.0.abs_diff(last.0) < 100 &&
+                    if let Some(ref last) = LAST_UPDATE
+                        && (current_state.0.abs_diff(last.0) < 100 &&
                             current_state.1.abs_diff(last.1) < 100 &&
                             current_state.2.abs_diff(last.2) < 100) &&
                             std::mem::discriminant(&current_state.3) == std::mem::discriminant(&last.3) {
                             return;
                         }
-                    }
                     LAST_UPDATE = Some(current_state);
                 }
 
@@ -279,7 +278,6 @@ pub fn setup(
                     );
                 }
             }
-        }
     });
 }
 
@@ -345,7 +343,7 @@ fn filter_files_by_profile(
 
     let filtered_files: Vec<File> = filtered_paths
         .iter()
-        .map(|path| create_file_from_path(path))
+        .map(create_file_from_path)
         .collect();
 
     // Guardar TODOS los archivos filtrados (sin paginación)
@@ -444,7 +442,7 @@ fn search_files(
 
     let filtered_files: Vec<File> = search_results
         .iter()
-        .map(|path| create_file_from_path(path))
+        .map(create_file_from_path)
         .collect();
 
     // Guardar TODOS los archivos de búsqueda (sin paginación)
@@ -480,7 +478,7 @@ fn save_analysis_state(progress: &api::AnalysisProgress) {
 
     if let Some(path) = rfd::FileDialog::new()
         .add_filter("Estado de Análisis", &["json"])
-        .set_file_name(&format!(
+        .set_file_name(format!(
             "estado_analisis_{}.json",
             chrono::Utc::now().format("%Y%m%d_%H%M%S")
         ))

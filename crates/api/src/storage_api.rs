@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use std::cell::RefCell;
 use std::path::PathBuf;
-use std::rc::Rc;
 
 #[cfg(windows)]
 use foruster_storage::platform::DeviceEventListener;
@@ -13,6 +11,12 @@ pub struct StorageAPI {
     #[cfg(windows)]
     event_listener: Rc<RefCell<DeviceEventListener>>,
     cached_disks: Vec<Disk>,
+}
+
+impl Default for StorageAPI {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl StorageAPI {
@@ -41,12 +45,11 @@ impl StorageAPI {
         let volumes = self
             .cached_disks
             .iter()
-            .map(|disk| {
+            .flat_map(|disk| {
                 disk.partitions()
                     .iter()
                     .flat_map(|partition| partition.volume())
             })
-            .flatten()
             .collect::<Vec<_>>();
 
         for volume in volumes {

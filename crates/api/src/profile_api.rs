@@ -5,6 +5,12 @@ pub struct ProfileAPI {
     profiles: Vec<Profile>,
 }
 
+impl Default for ProfileAPI {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ProfileAPI {
     pub fn new() -> ProfileAPI {
         ProfileAPI {
@@ -24,7 +30,6 @@ impl ProfileAPI {
         self.profiles
             .iter()
             .filter(|profile| *profile.name() == label)
-            .cloned()
-            .next()
+            .next().cloned()
     }
 }
