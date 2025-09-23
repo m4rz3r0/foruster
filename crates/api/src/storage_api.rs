@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+use std::cell::RefCell;
 use std::path::PathBuf;
-
+use std::rc::Rc;
 #[cfg(windows)]
 use foruster_storage::platform::DeviceEventListener;
 use foruster_storage::platform::storage_devices;

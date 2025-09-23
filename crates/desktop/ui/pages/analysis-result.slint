@@ -310,32 +310,6 @@ export component AnalysisResultPage {
         HorizontalLayout {
             spacing: Styles.sizes.s-md;
 
-            property <string> filter-type: AnalysisResultBridge.active-profile-filter;
-            property <string> search-text: "";
-
-            ComboBox {
-                width: 200px;
-                model: AnalysisResultBridge.used-profiles;
-                current-value: filter-type;
-                selected => {
-                    filter-type = self.current-value;
-                    AnalysisResultBridge.filter-by-profile(filter-type);
-                }
-            }
-
-            LineEdit {
-                placeholder-text: "Buscar archivos...";
-                width: 300px;
-                edited => {
-                    search-text = self.text;
-                    AnalysisResultBridge.search-files(search-text);
-                }
-            }
-
-            Rectangle {
-                horizontal-stretch: 1;
-            }
-
             Button {
                 text: "Exportar Reporte";
                 primary: true;
@@ -352,6 +326,34 @@ export component AnalysisResultPage {
 
                 VerticalLayout {
                     spacing: Styles.sizes.s-md;
+
+                    if (AnalysisResultBridge.progress-percentage == 100) : HorizontalBox {
+                        property <string> filter-type: AnalysisResultBridge.active-profile-filter;
+                        property <string> search-text: "";
+
+                        ComboBox {
+                            width: 200px;
+                            model: AnalysisResultBridge.used-profiles;
+                            current-value: filter-type;
+                            selected => {
+                                filter-type = self.current-value;
+                                AnalysisResultBridge.filter-by-profile(filter-type);
+                            }
+                        }
+
+                        LineEdit {
+                            placeholder-text: "Buscar archivos...";
+                            width: 300px;
+                            edited => {
+                                search-text = self.text;
+                                AnalysisResultBridge.search-files(search-text);
+                            }
+                        }
+
+                        Rectangle {
+                            horizontal-stretch: 1;
+                        }
+                    }
 
                     // Controles de paginación (arriba)
                     if (AnalysisResultBridge.total-pages > 1) : PaginationControls {
