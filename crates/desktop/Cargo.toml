@@ -13,6 +13,7 @@ analysis = { path = "../analysis" }
 rfd = "0.15.4"
 serde_json = "1.0"
 chrono = { version = "0.4", features = ["serde"] }
+image = "0.25.8"
 
 [build-dependencies]
 slint-build = { workspace = true }

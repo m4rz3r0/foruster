@@ -121,54 +121,86 @@ component AnalysisResultItem inherits Rectangle {
     in property <string> file-path: "/ruta/hacia/el/archivo";
     in property <string> file-type: "Texto";
     in property <string> file-size: "15.2 KB";
+    in property <image> thumbnail; // Add this line
 
     ta := TouchArea {
         width: 100%;
         height: 100%;
     }
 
-    content-layout := VerticalLayout {
+    content-layout := HorizontalLayout {
         padding: Styles.sizes.p-sm;
-        spacing: Styles.sizes.s-xs;
+        spacing: Styles.sizes.s-md;
+        alignment: start;
 
-        HorizontalLayout {
-            alignment: start;
-            spacing: Styles.sizes.s-md;
-
-            Text {
-                text: root.file-name;
-                font-weight: 700;
-                color: Styles.palette.primary-fg;
-                font-size: Styles.sizes.font + 2px;
-                vertical-alignment: center;
-            }
+        // Thumbnail Display Logic
+        if root.file-type == "Imagen" && root.thumbnail.width > 0 : Image {
+            padding: Styles.sizes.p-lg;
+            source: root.thumbnail;
+            width: 64px;
+            height: 64px;
+            image-fit: contain;
         }
-
-        HorizontalLayout {
-            alignment: start;
-            spacing: Styles.sizes.s-md;
-
-            Text {
-                text: root.file-path;
-                color: Styles.palette.window-fg;
-                font-size: Styles.sizes.font - 2px;
-            }
-        }
-
-        HorizontalLayout {
-            alignment: start;
-            spacing: Styles.sizes.s-md;
-
-            Text {
-                text: "Tipo: " + root.file-type;
-                color: Styles.palette.window-fg;
-                font-size: Styles.sizes.font - 2px;
+        if root.file-type != "Imagen" :
+            // Placeholder for non-images or if thumbnail fails
+            Rectangle {
+                width: 64px;
+                height: 64px;
+                background: Styles.palette.layer-1;
+                border-radius: Styles.sizes.r-sm;
+                // You could put a generic icon here
+                Image {
+                    source: @image-url("../assets/profile_icons/image.svg");
+                    colorize: Styles.palette.disabled-fg;
+                    width: 32px;
+                    height: 32px;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
             }
 
-            Text {
-                text: "Tamaño: " + root.file-size;
-                color: Styles.palette.window-fg;
-                font-size: Styles.sizes.font - 2px;
+        VerticalLayout {
+            spacing: Styles.sizes.s-xs;
+
+            HorizontalLayout {
+                alignment: start;
+                spacing: Styles.sizes.s-md;
+
+                Text {
+                    text: root.file-name;
+                    font-weight: 700;
+                    color: Styles.palette.primary-fg;
+                    font-size: Styles.sizes.font + 2px;
+                    vertical-alignment: center;
+                }
+            }
+
+            HorizontalLayout {
+                alignment: start;
+                spacing: Styles.sizes.s-md;
+
+                Text {
+                    text: root.file-path;
+                    color: Styles.palette.window-fg;
+                    font-size: Styles.sizes.font - 2px;
+                }
+            }
+
+            HorizontalLayout {
+                alignment: start;
+                spacing: Styles.sizes.s-md;
+
+                Text {
+                    text: "Tipo: " + root.file-type;
+                    color: Styles.palette.window-fg;
+                    font-size: Styles.sizes.font - 2px;
+                }
+
+                Text {
+                    text: "Tamaño: " + root.file-size;
+                    color: Styles.palette.window-fg;
+                    font-size: Styles.sizes.font - 2px;
+                }
             }
         }
     }
@@ -375,6 +407,7 @@ export component AnalysisResultPage {
                                 file-path: file.path;
                                 file-type: file.type;
                                 file-size: file.size;
+                                thumbnail: file.thumbnail;
                             }
 
                             // Mostrar un mensaje si no hay resultados

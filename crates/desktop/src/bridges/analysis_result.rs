@@ -10,6 +10,35 @@ use std::ops::Deref;
 use std::path::Path;
 use std::rc::Rc;
 
+use image::imageops::FilterType;
+use image::ImageReader;
+use slint::Image as SlintImage;
+use slint::SharedPixelBuffer;
+use std::io::Cursor;
+
+fn generate_thumbnail(path: &Path) -> Option<SlintImage> {
+    const THUMBNAIL_SIZE: u32 = 64;
+
+    // Use a buffered reader for efficiency, especially with large files
+    let img_bytes = std::fs::read(path).ok()?;
+    let img_reader = ImageReader::new(Cursor::new(img_bytes))
+        .with_guessed_format()
+        .ok()?;
+
+    if let Ok(img) = img_reader.decode() {
+        let thumbnail = img.thumbnail_exact(THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+        let rgba_image = thumbnail.to_rgba8();
+        let buffer = SharedPixelBuffer::<slint::Rgba8Pixel>::clone_from_slice(
+            rgba_image.as_raw(),
+            rgba_image.width(),
+            rgba_image.height(),
+        );
+        Some(SlintImage::from_rgba8(buffer))
+    } else {
+        None
+    }
+}
+
 fn get_selected_profiles(window_weak: Weak<MainWindow>) -> Vec<Profile> {
     let window = window_weak.upgrade().unwrap();
     let profile_bridge = window.global::<ProfileMenuBridge>().get_profiles();
@@ -376,7 +405,6 @@ fn create_file_from_path(path: &Path) -> File {
         .map(|p| p.to_string_lossy())
         .unwrap_or_else(|| "Ruta desconocida".into());
 
-    // Optimización: usar cache para tipos de archivo
     let file_type = if let Some(ext) = path.extension().and_then(|ext| ext.to_str()) {
         let ext_lower = ext.to_lowercase();
 
@@ -402,13 +430,21 @@ fn create_file_from_path(path: &Path) -> File {
         "Archivo".to_string()
     };
 
+    let thumbnail = if file_type == "Imagen" {
+        generate_thumbnail(path).unwrap_or_default()
+    } else {
+        SlintImage::default()
+    };
+
+
     File {
         name: file_name.into(),
         path: parent_path.to_string().into(),
         r#type: file_type.into(),
-        size: "Calculando...".into(),
-        match_score: "".into(), // Eliminado match score como se solicitó
+        size: "Calculando...".into(), // You might want to get actual file size here
+        match_score: "".into(),
         profile: "General".into(),
+        thumbnail, // Pass the generated thumbnail
     }
 }
 
