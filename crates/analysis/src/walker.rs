@@ -106,48 +106,23 @@ impl Walker {
                         self.analyzed_files += 1;
 
                         // Matching optimizado: extensión primero, luego mime si es necesario
-                        let matches_profile = if let Some(profiles) = profiles {
-                            // Cache de extensión para evitar recalcular
-                            let extension = path
-                                .extension()
-                                .and_then(|e| e.to_str())
-                                .map(|e| format!(".{}", e.to_lowercase()));
-
-                            // Primero verificar por extensión (O(1) con HashSet sería mejor)
-                            let matches_by_extension = if let Some(ref ext) = extension {
-                                profile_extensions.contains(&&ext.as_str().to_string())
-                            } else {
-                                false
-                            };
-
-                            // Solo si no coincide por extensión, verificar por mime (más costoso)
-                            if matches_by_extension {
-                                true
-                            } else {
-                                // Análisis por mime solo como fallback y para archivos pequeños
-                                if let Ok(metadata) = entry.metadata().await {
-                                    if metadata.len() < 512 * 1024 {
-                                        // Solo archivos < 512KB para mime detection
-                                        profiles.iter().any(|profile| profile.matches(&path))
-                                    } else {
-                                        false
-                                    }
-                                } else {
-                                    false
-                                }
-                            }
+                        let matched_profiles: Vec<String> = if let Some(profiles) = profiles {
+                            profiles.iter()
+                                .filter(|profile| profile.matches(&path))
+                                .map(|profile| profile.name().clone())
+                                .collect()
                         } else {
-                            false
+                            Vec::new()
                         };
 
                         batch.add_entry(
-                            path.to_string_lossy().into_owned(), // Evitar múltiples conversiones
+                            path.to_string_lossy().into_owned(),
                             true,
-                            matches_profile,
+                            matched_profiles, // Pass the list of names
                         );
                     } else {
-                        // Es directorio - agregar sin procesar
-                        batch.add_entry(path.to_string_lossy().into_owned(), false, false);
+                        // It's a directory - add with no matched profiles
+                        batch.add_entry(path.to_string_lossy().into_owned(), false, Vec::new());
                     }
 
                     // Callback por lote en lugar de por archivo
@@ -183,7 +158,7 @@ pub struct WalkBatch {
 pub struct WalkEntry {
     pub path: String,
     pub is_file: bool,
-    pub matches_profile: bool, // Nuevo campo para indicar si coincide con algún perfil
+    pub matched_profiles: Vec<String>,
 }
 
 impl WalkBatch {
@@ -195,11 +170,11 @@ impl WalkBatch {
         }
     }
 
-    pub fn add_entry(&mut self, path: String, is_file: bool, matches_profile: bool) {
+    pub fn add_entry(&mut self, path: String, is_file: bool, matched_profiles: Vec<String>) {
         self.entries.push(WalkEntry {
             path,
             is_file,
-            matches_profile,
+            matched_profiles,
         });
         self.total_processed += 1;
     }
@@ -223,7 +198,7 @@ impl WalkBatch {
     pub fn matched_files_count(&self) -> usize {
         self.entries
             .iter()
-            .filter(|e| e.is_file && e.matches_profile)
+            .filter(|e| e.is_file && !e.matched_profiles.is_empty()) // Check if the list is not empty
             .count()
     }
 

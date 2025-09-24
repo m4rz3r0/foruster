@@ -131,17 +131,14 @@ impl Engine {
                                 // Optimización: lock una sola vez por lote
                                 if let Ok(mut index) = files_by_profile.try_write() {
                                     for entry in &batch.entries {
-                                        if entry.is_file && entry.matches_profile {
+                                        if entry.is_file && !entry.matched_profiles.is_empty() {
                                             let path = PathBuf::from(&entry.path);
-
-                                            // Optimización: usar entry API para evitar lookups dobles
-                                            for profile in &profiles_for_callback {
-                                                if profile.matches(&path) {
-                                                    index.entry(profile.name().clone())
-                                                        .or_insert_with(|| Vec::with_capacity(100))
-                                                        .push(path.clone());
-                                                    break;
-                                                }
+                                            // Use the pre-calculated list of matching profiles
+                                            for profile_name in &entry.matched_profiles {
+                                                println!("{path:?} {profile_name:?}");
+                                                index.entry(profile_name.clone())
+                                                    .or_insert_with(|| Vec::with_capacity(100))
+                                                    .push(path.clone());
                                             }
                                         }
                                     }
@@ -376,6 +373,7 @@ impl Engine {
         if profile_name == "Todos" {
             return self.get_analyzed_files();
         }
+        println!("{:?}", self.finding.files_by_profile().read().unwrap().keys());
         self.finding.get_files_for_profile(profile_name)
     }
 

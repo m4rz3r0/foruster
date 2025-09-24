@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use crate::profile_style::{IconSource, ProfileStyle};
 use std::path::Path;
+use file_format::{FileFormat, Kind};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum FileCategory {
@@ -88,8 +89,10 @@ impl Profile {
             }
         }
 
-        if let Some(mime) = tree_magic_mini::from_filepath(path) {
+        if let Ok(mime) = FileFormat::from_file(path) {
+            let mime = mime.media_type();
             if let Some(mimes) = &self.mime_types {
+                println!("{path:?} {mime} {mimes:?}");
                 if mimes.contains(&mime.to_string()) {
                     return true;
                 }
@@ -114,7 +117,17 @@ pub fn default_profiles() -> Vec<Profile> {
         Profile::new(
             "Aplicaciones".to_string(),
             Some(vec![FileCategory::Application]),
-            None,
+            Some(vec![
+                "application/vnd.microsoft.portable-executable".to_string(),
+                "application/x-msdownload".to_string(),
+                "application/x-msi".to_string(),
+                "application/java-archive".to_string(),
+                "application/vnd.appimage".to_string(),
+                "application/x-executable".to_string(),
+                "application/vnd.debian.binary-package".to_string(),
+                "application/x-rpm".to_string(),
+                "application/x-apple-diskimage".to_string(),
+            ]),
             None,
             0xFF4CAF50,
             IconSource::App,
@@ -122,7 +135,16 @@ pub fn default_profiles() -> Vec<Profile> {
         Profile::new(
             "Audios".to_string(),
             Some(vec![FileCategory::Audio]),
-            None,
+            Some(vec![
+                "audio/mpeg".to_string(),
+                "audio/wav".to_string(),
+                "audio/flac".to_string(),
+                "audio/aac".to_string(),
+                "audio/ogg".to_string(),
+                "audio/mp4".to_string(),
+                "audio/x-m4a".to_string(),
+                "audio/x-ms-wma".to_string(),
+            ]),
             None,
             0xFF2196F3,
             IconSource::Audio,
@@ -130,7 +152,16 @@ pub fn default_profiles() -> Vec<Profile> {
         Profile::new(
             "Imágenes".to_string(),
             Some(vec![FileCategory::Image]),
-            None,
+            Some(vec![
+                "image/jpeg".to_string(),
+                "image/png".to_string(),
+                "image/gif".to_string(),
+                "image/bmp".to_string(),
+                "image/svg+xml".to_string(),
+                "image/webp".to_string(),
+                "image/tiff".to_string(),
+                "image/vnd.microsoft.icon".to_string(),
+            ]),
             None,
             0xFFFF9800,
             IconSource::Image,
@@ -138,7 +169,14 @@ pub fn default_profiles() -> Vec<Profile> {
         Profile::new(
             "Modelos".to_string(),
             Some(vec![FileCategory::Model]),
-            None,
+            Some(vec![
+                "model/obj".to_string(),
+                "model/stl".to_string(),
+                "model/gltf+json".to_string(),
+                "model/gltf-binary".to_string(),
+                "model/vnd.collada+xml".to_string(),
+                "application/x-3ds".to_string(),
+            ]),
             None,
             0xFF9C27B0,
             IconSource::Model,
@@ -146,7 +184,17 @@ pub fn default_profiles() -> Vec<Profile> {
         Profile::new(
             "Texto".to_string(),
             Some(vec![FileCategory::Text]),
-            None,
+            Some(vec![
+                "text/plain".to_string(),
+                "text/html".to_string(),
+                "text/css".to_string(),
+                "text/javascript".to_string(),
+                "application/json".to_string(),
+                "application/xml".to_string(),
+                "text/xml".to_string(),
+                "text/markdown".to_string(),
+                "application/rtf".to_string(),
+            ]),
             None,
             0xFF607D8B,
             IconSource::Text,
@@ -154,7 +202,15 @@ pub fn default_profiles() -> Vec<Profile> {
         Profile::new(
             "Vídeos".to_string(),
             Some(vec![FileCategory::Video]),
-            None,
+            Some(vec![
+                "video/mp4".to_string(),
+                "video/webm".to_string(),
+                "video/ogg".to_string(),
+                "video/x-msvideo".to_string(), // AVI
+                "video/quicktime".to_string(), // MOV
+                "video/x-matroska".to_string(), // MKV
+                "video/x-ms-wmv".to_string(),   // WMV
+            ]),
             None,
             0xFFF44336,
             IconSource::Video,
@@ -173,18 +229,21 @@ pub fn default_profiles() -> Vec<Profile> {
             Some(vec![
                 "application/zip".to_string(),
                 "application/x-zip-compressed".to_string(),
-                "application/x-zip".to_string(),
-                "application/x-compress".to_string(),
-                "application/x-compressed".to_string(),
-                "application/gzip".to_string(),
-                "application/x-gzip".to_string(),
+                "application/x-7z-compressed".to_string(),
+                "application/vnd.rar".to_string(),
+                "application/x-rar-compressed".to_string(),
                 "application/x-tar".to_string(),
+                "application/gzip".to_string(),
                 "application/x-bzip2".to_string(),
-                "application/x-bzip".to_string(),
             ]),
             Some(vec![
                 ".zip".to_string(),
+                ".rar".to_string(),
+                ".7z".to_string(),
+                ".tar".to_string(),
+                ".gz".to_string(),
                 ".tar.gz".to_string(),
+                ".bz2".to_string(),
                 ".tar.bz2".to_string(),
             ]),
             0xFF795548,
@@ -203,6 +262,7 @@ pub fn default_profiles() -> Vec<Profile> {
                 "application/vnd.ms-powerpoint".to_string(),
                 "application/vnd.openxmlformats-officedocument.presentationml.presentation"
                     .to_string(),
+                "application/vnd.oasis.opendocument.text".to_string(),
             ]),
             Some(vec![
                 ".pdf".to_string(),
@@ -212,6 +272,7 @@ pub fn default_profiles() -> Vec<Profile> {
                 ".xlsx".to_string(),
                 ".ppt".to_string(),
                 ".pptx".to_string(),
+                ".odt".to_string(),
             ]),
             0xFF3F51B5,
             IconSource::Text,
