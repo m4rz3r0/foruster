@@ -376,10 +376,6 @@ impl Engine {
     }
 
     pub fn get_files_by_profile(&self, profile_name: &str) -> Vec<PathBuf> {
-        if profile_name == "Todos" {
-            return self.get_analyzed_files();
-        }
-        println!("{:?}", self.finding.files_by_profile().read().unwrap().keys());
         self.finding.get_files_for_profile(profile_name)
     }
 

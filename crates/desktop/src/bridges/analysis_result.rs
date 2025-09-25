@@ -376,17 +376,32 @@ fn filter_files_by_profile(
     window_weak: &Weak<MainWindow>,
     all_filtered_files: &Rc<RefCell<Vec<File>>>,
 ) {
-    println!("Filtrando archivos por perfil: {}", profile_name);
+    let mut filtered_files = vec![];
+    if profile_name == "Todos" {
+        let selected_profiles = get_selected_profiles(window_weak.clone());
 
-    let filtered_paths = analysis_api
-        .borrow()
-        .deref()
-        .get_files_by_profile(profile_name);
+        for selected_profile in selected_profiles {
+            let filtered_paths = analysis_api
+                .borrow()
+                .deref()
+                .get_files_by_profile(&*selected_profile.label);
 
-    let filtered_files: Vec<File> = filtered_paths
-        .iter()
-        .map(|p| create_file_from_path(p))
-        .collect();
+            filtered_files.extend(filtered_paths
+                                      .iter()
+                                      .map(|p| create_file_from_path(p))
+                                      .collect::<Vec<File>>());
+        }
+    } else {
+        let filtered_paths = analysis_api
+            .borrow()
+            .deref()
+            .get_files_by_profile(profile_name);
+
+        filtered_files = filtered_paths
+            .iter()
+            .map(|p| create_file_from_path(p))
+            .collect::<Vec<File>>();
+    }
 
     // Guardar TODOS los archivos filtrados (sin paginación)
     all_filtered_files.borrow_mut().clear();
