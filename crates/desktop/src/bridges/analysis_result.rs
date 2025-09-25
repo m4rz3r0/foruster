@@ -10,7 +10,6 @@ use std::ops::Deref;
 use std::path::Path;
 use std::rc::Rc;
 
-use image::imageops::FilterType;
 use image::ImageReader;
 use slint::Image as SlintImage;
 use slint::SharedPixelBuffer;

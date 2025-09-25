@@ -134,12 +134,14 @@ component AnalysisResultItem inherits Rectangle {
         alignment: start;
 
         // Thumbnail Display Logic
-        if root.file-type == "Imagen" && root.thumbnail.width > 0 : Image {
+        if root.file-type == "Imagen" && root.thumbnail.width > 0 : HorizontalBox {
             padding: Styles.sizes.p-lg;
-            source: root.thumbnail;
-            width: 64px;
-            height: 64px;
-            image-fit: contain;
+            Image {
+                source: root.thumbnail;
+                width: 64px;
+                height: 64px;
+                image-fit: contain;
+            }
         }
         if root.file-type != "Imagen" :
             // Placeholder for non-images or if thumbnail fails
