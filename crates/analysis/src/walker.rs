@@ -1,13 +1,164 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use async_walkdir::WalkDir;
+use file_format::{FileFormat, Kind};
 use futures_lite::stream::StreamExt;
-use std::path::PathBuf;
+use once_cell::sync::Lazy;
+use std::collections::HashMap;
+use std::path::{Path, PathBuf};
+
+// A comprehensive map of common file extensions to their expected file "Kind".
+// This is now used for BOTH content-mismatch and deceptive filename detection.
+static EXT_TO_KIND_MAP: Lazy<HashMap<&'static str, Kind>> = Lazy::new(|| {
+    let mut m = HashMap::new();
+    // Executable
+    m.insert("exe", Kind::Executable);
+    m.insert("dll", Kind::Executable);
+    m.insert("so", Kind::Executable);
+    m.insert("elf", Kind::Executable);
+    m.insert("com", Kind::Executable);
+    m.insert("bat", Kind::Executable);
+    m.insert("cmd", Kind::Executable);
+    m.insert("scr", Kind::Executable);
+    m.insert("msi", Kind::Executable);
+    m.insert("jar", Kind::Executable);
+    m.insert("sh", Kind::Executable);
+    m.insert("ps1", Kind::Executable);
+    // Archive
+    m.insert("7z", Kind::Archive);
+    m.insert("zip", Kind::Archive);
+    m.insert("rar", Kind::Archive);
+    m.insert("tar", Kind::Archive);
+    m.insert("gz", Kind::Archive);
+    m.insert("bz2", Kind::Archive);
+    m.insert("xz", Kind::Archive);
+    m.insert("zst", Kind::Archive);
+    m.insert("deb", Kind::Archive);
+    m.insert("rpm", Kind::Archive);
+    // Audio
+    m.insert("mp3", Kind::Audio);
+    m.insert("wav", Kind::Audio);
+    m.insert("flac", Kind::Audio);
+    m.insert("ogg", Kind::Audio);
+    m.insert("m4a", Kind::Audio);
+    m.insert("aac", Kind::Audio);
+    // Document
+    m.insert("pdf", Kind::Document);
+    m.insert("doc", Kind::Document);
+    m.insert("docx", Kind::Document);
+    m.insert("odt", Kind::Document);
+    m.insert("rtf", Kind::Document);
+    m.insert("xls", Kind::Spreadsheet);
+    m.insert("xlsx", Kind::Spreadsheet);
+    m.insert("ods", Kind::Spreadsheet);
+    m.insert("ppt", Kind::Presentation);
+    m.insert("pptx", Kind::Presentation);
+    m.insert("odp", Kind::Presentation);
+    // Image
+    m.insert("jpg", Kind::Image);
+    m.insert("jpeg", Kind::Image);
+    m.insert("png", Kind::Image);
+    m.insert("gif", Kind::Image);
+    m.insert("bmp", Kind::Image);
+    m.insert("tif", Kind::Image);
+    m.insert("tiff", Kind::Image);
+    m.insert("webp", Kind::Image);
+    m.insert("heic", Kind::Image);
+    m.insert("heif", Kind::Image);
+    m.insert("ico", Kind::Image);
+    m.insert("psd", Kind::Image);
+    // Video
+    m.insert("mp4", Kind::Video);
+    m.insert("mkv", Kind::Video);
+    m.insert("mov", Kind::Video);
+    m.insert("avi", Kind::Video);
+    m.insert("wmv", Kind::Video);
+    m.insert("webm", Kind::Video);
+    m.insert("flv", Kind::Video);
+    m
+});
+
+/// **NEW**: Checks for deceptive filename patterns like "file.jpg.exe" or "archive.zip.txt".
+/// This detects attempts to hide a file's true nature from users who might have
+/// "hide known extensions" enabled.
+fn has_suspicious_extension_pattern(path: &Path) -> bool {
+    let filename = match path.file_name().and_then(|s| s.to_str()) {
+        Some(name) => name,
+        None => return false,
+    };
+
+    let parts: Vec<&str> = filename.split('.').collect();
+
+    // The pattern requires at least three parts: [name].[middle_ext].[final_ext]
+    if parts.len() < 3 {
+        return false;
+    }
+
+    // The potentially deceptive extension is the one just before the last one.
+    let middle_ext = parts[parts.len() - 2].to_lowercase();
+
+    // If this "middle" extension is a known file type from our map, it's a suspicious pattern.
+    if EXT_TO_KIND_MAP.contains_key(middle_ext.as_str()) {
+        println!(
+            "Suspicious extension pattern detected: {:?} (hidden extension '.{}')",
+            path, middle_ext
+        );
+        return true;
+    }
+
+    false
+}
+
+
+/// **REVISED**: Determines if a file is suspicious using a two-pronged approach.
+fn is_file_suspicious(path: &Path, format_result: &Result<FileFormat, std::io::Error>) -> bool {
+    // Check 1: Deceptive filename pattern (e.g., "photo.jpg.exe"). This is a strong, immediate flag.
+    if has_suspicious_extension_pattern(path) {
+        return true;
+    }
+
+    // Check 2: Mismatch between file content and final extension.
+    let detected_kind = match format_result {
+        Ok(fmt) => fmt.kind(),
+        Err(_) => return false, // Can't read content, can't check for mismatch.
+    };
+
+    let expected_kind_opt = path
+        .extension()
+        .and_then(|s| s.to_str())
+        .and_then(|ext| EXT_TO_KIND_MAP.get(ext.to_lowercase().as_str()));
+
+    let expected_kind = match expected_kind_opt {
+        Some(kind) => kind,
+        None => return false, // Extension is not in our map, so no expectation to mismatch against.
+    };
+
+    if detected_kind != *expected_kind {
+        // Exception for modern office documents (.docx, etc.) which are ZIP archives.
+        let is_office_archive_exception = (*expected_kind == Kind::Document
+            || *expected_kind == Kind::Spreadsheet
+            || *expected_kind == Kind::Presentation)
+            && detected_kind == Kind::Archive;
+
+        if is_office_archive_exception {
+            return false;
+        }
+
+        println!(
+            "Suspicious content mismatch detected: {:?}, extension implies {:?}, but content is {:?}",
+            path, expected_kind, detected_kind
+        );
+        return true;
+    }
+
+    false
+}
+
 
 pub struct Walker {
     path: PathBuf,
     files: Vec<PathBuf>,
-    total_files: usize,    // Todos los archivos encontrados (incluyendo errores)
-    analyzed_files: usize, // Solo archivos procesados exitosamente
+    total_files: usize,
+    analyzed_files: usize,
 }
 
 impl Walker {
@@ -21,6 +172,8 @@ impl Walker {
             analyzed_files: 0,
         }
     }
+
+    // ... (rest of Walker impl functions: files(), total_files(), analyzed_files(), start() remain unchanged)
 
     pub fn files(&self) -> &[PathBuf] {
         &self.files
@@ -74,26 +227,14 @@ impl Walker {
         &mut self,
         callback: Box<dyn Fn(WalkBatch) + Send + Sync>,
         batch_size: usize,
-        profiles: Option<&[profiling::Profile]>, // Añadir perfiles para análisis en tiempo real
+        profiles: Option<&[profiling::Profile]>,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         let mut entries = WalkDir::new(&self.path);
         let mut batch = WalkBatch::new(batch_size);
 
-        // Pre-compilar extensiones para matching rápido
-        let profile_extensions: Vec<_> = if let Some(profiles) = profiles {
-            profiles
-                .iter()
-                .filter_map(|profile| profile.extensions().as_ref())
-                .flatten()
-                .collect()
-        } else {
-            Vec::new()
-        };
-
         while let Some(entry) = entries.next().await {
             match entry {
                 Ok(entry) => {
-                    // Optimización: evitar llamadas async innecesarias
                     let path = entry.path();
                     let is_file = match entry.file_type().await {
                         Ok(file_type) => file_type.is_file(),
@@ -105,10 +246,15 @@ impl Walker {
                         self.files.push(path.clone());
                         self.analyzed_files += 1;
 
-                        // Matching optimizado: extensión primero, luego mime si es necesario
+                        // Read the file format ONCE for both suspicious check and profile matching.
+                        let format_result = FileFormat::from_file(&path);
+                        let is_suspicious = is_file_suspicious(&path, &format_result);
+                        let format_opt = format_result.ok();
+
                         let matched_profiles: Vec<String> = if let Some(profiles) = profiles {
-                            profiles.iter()
-                                .filter(|profile| profile.matches(&path))
+                            profiles
+                                .iter()
+                                .filter(|profile| profile.matches(&path, format_opt.as_ref()))
                                 .map(|profile| profile.name().clone())
                                 .collect()
                         } else {
@@ -118,27 +264,24 @@ impl Walker {
                         batch.add_entry(
                             path.to_string_lossy().into_owned(),
                             true,
-                            matched_profiles, // Pass the list of names
+                            matched_profiles,
+                            is_suspicious,
                         );
                     } else {
-                        // It's a directory - add with no matched profiles
-                        batch.add_entry(path.to_string_lossy().into_owned(), false, Vec::new());
+                        batch.add_entry(path.to_string_lossy().into_owned(), false, Vec::new(), false);
                     }
 
-                    // Callback por lote en lugar de por archivo
                     if batch.is_full() {
-                        callback(batch.clone_optimized()); // Método optimizado de clonación
+                        callback(batch.clone_optimized());
                         batch.clear();
                     }
                 }
                 Err(e) => {
-                    eprintln!("Error en walker: {}", e);
-                    // Continuar procesando otros archivos
+                    eprintln!("Error in walker: {}", e);
                 }
             }
         }
 
-        // Procesar último lote si no está vacío
         if !batch.is_empty() {
             callback(batch);
         }
@@ -146,6 +289,8 @@ impl Walker {
         Ok(())
     }
 }
+
+// ... (WalkBatch and WalkEntry structs remain exactly the same)
 
 #[derive(Clone, Debug)]
 pub struct WalkBatch {
@@ -159,6 +304,7 @@ pub struct WalkEntry {
     pub path: String,
     pub is_file: bool,
     pub matched_profiles: Vec<String>,
+    pub is_suspicious: bool,
 }
 
 impl WalkBatch {
@@ -170,11 +316,12 @@ impl WalkBatch {
         }
     }
 
-    pub fn add_entry(&mut self, path: String, is_file: bool, matched_profiles: Vec<String>) {
+    pub fn add_entry(&mut self, path: String, is_file: bool, matched_profiles: Vec<String>, is_suspicious: bool) {
         self.entries.push(WalkEntry {
             path,
             is_file,
             matched_profiles,
+            is_suspicious
         });
         self.total_processed += 1;
     }
@@ -186,6 +333,8 @@ impl WalkBatch {
     pub fn is_empty(&self) -> bool {
         self.entries.is_empty()
     }
+
+
 
     pub fn clear(&mut self) {
         self.entries.clear();
@@ -201,6 +350,11 @@ impl WalkBatch {
             .filter(|e| e.is_file && !e.matched_profiles.is_empty()) // Check if the list is not empty
             .count()
     }
+
+    pub fn suspicious_files_count(&self) -> usize {
+        self.entries.iter().filter(|e| e.is_suspicious).count()
+    }
+
 
     // Método optimizado de clonación que evita copiar datos innecesarios
     pub fn clone_optimized(&self) -> Self {

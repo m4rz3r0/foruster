@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use crate::profile_style::{IconSource, ProfileStyle};
-use std::path::Path;
 use file_format::{FileFormat, Kind};
+use std::path::Path;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum FileCategory {
@@ -79,7 +79,8 @@ impl Profile {
         self.profile_style.icon_source()
     }
 
-    pub fn matches(&self, path: &Path) -> bool {
+    pub fn matches(&self, path: &Path, format_opt: Option<&FileFormat>) -> bool {
+        // First, check by extension, as it's the fastest.
         if let Some(exts) = &self.extensions {
             if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
                 let ext = format!(".{}", ext.to_lowercase());
@@ -89,10 +90,10 @@ impl Profile {
             }
         }
 
-        if let Ok(mime) = FileFormat::from_file(path) {
-            let mime = mime.media_type();
+        // If we have pre-calculated format, use it for mime/category matching.
+        if let Some(format) = format_opt {
+            let mime = format.media_type();
             if let Some(mimes) = &self.mime_types {
-                println!("{path:?} {mime} {mimes:?}");
                 if mimes.contains(&mime.to_string()) {
                     return true;
                 }
@@ -103,6 +104,26 @@ impl Profile {
                 if let Some(cats) = &self.categories {
                     if cats.contains(&cat) {
                         return true;
+                    }
+                }
+            }
+        } else {
+            // Fallback to reading the file if format was not provided
+            // This maintains compatibility but is less efficient.
+            if let Ok(format) = FileFormat::from_file(path) {
+                let mime = format.media_type();
+                if let Some(mimes) = &self.mime_types {
+                    if mimes.contains(&mime.to_string()) {
+                        return true;
+                    }
+                }
+
+                if let Some(file_cat) = mime.split('/').next() {
+                    let cat = FileCategory::from(file_cat.to_string());
+                    if let Some(cats) = &self.categories {
+                        if cats.contains(&cat) {
+                            return true;
+                        }
                     }
                 }
             }

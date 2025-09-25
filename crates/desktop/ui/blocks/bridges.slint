@@ -129,6 +129,7 @@ export global AnalysisResultBridge {
     in property <string> total-files: "1,254";
     in property <string> analyzed-files: "1,203";
     in property <string> matched-files: "874";
+    in property <string> suspicious-files: "0";
     in property <string> analysis-time: "3.5 min";
     in property <string> error-files: "51";
     in property <string> analysis-state: "Análisis completado";
@@ -148,6 +149,8 @@ export global AnalysisResultBridge {
 
     in property <[string]> analyzed-profiles: ["Música", "Imágenes", "Comprimidos"];
     in property <string> active-profile-filter: "Todos";
+
+    in property <[File]> suspicious-file-results: [];
 
     // Test data
     in property <[File]> file-results: [

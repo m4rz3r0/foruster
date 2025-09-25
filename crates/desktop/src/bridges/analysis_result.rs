@@ -106,6 +106,8 @@ pub fn setup(
     // Inicializar modelo de archivos resultantes
     let file_results_model = Rc::new(VecModel::from(Vec::<File>::new()));
     bridge.set_file_results(ModelRc::from(file_results_model.clone()));
+    let suspicious_files_model = Rc::new(VecModel::from(Vec::<File>::new()));
+    bridge.set_suspicious_file_results(ModelRc::from(suspicious_files_model.clone()));
 
     // Modelo para almacenar TODOS los archivos filtrados (sin paginación)
     let all_filtered_files = Rc::new(RefCell::new(Vec::<File>::new()));
@@ -254,6 +256,7 @@ pub fn setup(
     let window_weak = window.as_weak();
     let analysis_api_clone = analysis_api.clone();
     let file_results_model_clone = file_results_model.clone();
+    let suspicious_files_model_clone = suspicious_files_model.clone();
     bridge.on_update_progress(move || {
         if let Some(window) = window_weak.upgrade()
             && let Ok(progress) = analysis_api_clone.borrow().deref().get_progress() {
@@ -263,6 +266,7 @@ pub fn setup(
                 bridge.set_analyzed_files(progress.analyzed_files.to_string().into());
                 bridge.set_total_files(progress.total_files.to_string().into());
                 bridge.set_matched_files(progress.matched_files.to_string().into());
+                bridge.set_suspicious_files(progress.suspicious_files.to_string().into());
                 bridge.set_analysis_time(format_duration(progress.elapsed_time).into());
 
                 // Actualizar estado
@@ -283,6 +287,7 @@ pub fn setup(
                 // Actualizar lista de archivos cuando el análisis esté completo
                 if matches!(progress.state, AnalysisState::Done) {
                     update_file_results(&file_results_model_clone, &analysis_api_clone, &window.as_weak());
+                    update_suspicious_files_results(&suspicious_files_model_clone, &analysis_api_clone, &window.as_weak());
                 }
 
                 // Debug logging (solo para eventos importantes)
@@ -345,6 +350,24 @@ fn generate_analysis_report(progress: &api::AnalysisProgress) -> String {
             }
         )
     })
+}
+
+fn update_suspicious_files_results(
+    file_model: &Rc<VecModel<File>>,
+    analysis_api: &Rc<RefCell<AnalysisAPI>>,
+    _window_weak: &Weak<MainWindow>,
+) {
+    println!("Actualizando lista de archivos sospechosos...");
+
+    let suspicious_paths = analysis_api.borrow().get_suspicious_files();
+    println!("Se encontraron {} archivos sospechosos.", suspicious_paths.len());
+
+    let suspicious_files: Vec<File> = suspicious_paths
+        .iter()
+        .map(|p| create_file_from_path(p))
+        .collect();
+
+    file_model.set_vec(suspicious_files);
 }
 
 fn filter_files_by_profile(

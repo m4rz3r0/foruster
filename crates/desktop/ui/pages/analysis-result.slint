@@ -217,6 +217,7 @@ component AnalysisStats inherits Rectangle {
     in property <string> total-files: "...";
     in property <string> analyzed-files: "...";
     in property <string> matched-files: "...";
+    in property <string> suspicious-files: "...";
     in property <string> analysis-time: "...";
 
     Timer {
@@ -300,6 +301,27 @@ component AnalysisStats inherits Rectangle {
 
                 VerticalLayout {
                     Text {
+                        text: "Archivos Sospechosos";
+                        color: Styles.palette.window-fg;
+                        font-size: Styles.sizes.font - 2px;
+                        horizontal-alignment: center;
+                    }
+                    Text {
+                        text: root.suspicious-files;
+                        color: Styles.palette.warn-fg; // Use a warning color
+                        font-size: Styles.sizes.font + 4px;
+                        font-weight: 700;
+                        horizontal-alignment: center;
+                    }
+                }
+            }
+
+            Rectangle {
+                border-radius: Styles.sizes.r-sm;
+                background: Styles.palette.layer-1;
+
+                VerticalLayout {
+                    Text {
                         text: "Tiempo de Análisis";
                         color: Styles.palette.window-fg;
                         font-size: Styles.sizes.font - 2px;
@@ -336,6 +358,7 @@ export component AnalysisResultPage {
             total-files: AnalysisResultBridge.total-files;
             analyzed-files: AnalysisResultBridge.analyzed-files;
             matched-files: AnalysisResultBridge.matched-files;
+            suspicious-files: AnalysisResultBridge.suspicious-files;
             analysis-time: AnalysisResultBridge.analysis-time;
         }
 
@@ -433,6 +456,41 @@ export component AnalysisResultPage {
                         total-pages: AnalysisResultBridge.total-pages;
                         total-items: AnalysisResultBridge.total-items;
                         items-per-page: AnalysisResultBridge.items-per-page;
+                    }
+                }
+            }
+
+            Tab {
+                title: "Sospechosos (" + AnalysisResultBridge.suspicious-files + ")";
+
+                VerticalLayout {
+                    spacing: Styles.sizes.s-md;
+
+                    ScrollView {
+                        VerticalLayout {
+                            padding-bottom: Styles.sizes.p-md;
+                            padding-left: Styles.sizes.p-lg;
+                            spacing: Styles.sizes.s-sm;
+
+                            for file in AnalysisResultBridge.suspicious-file-results : AnalysisResultItem {
+                                file-name: file.name;
+                                file-path: file.path;
+                                file-type: file.type;
+                                file-size: file.size;
+                                thumbnail: file.thumbnail;
+                            }
+
+                            if (AnalysisResultBridge.suspicious-file-results.length <= 0) : Rectangle {
+                                height: 100px;
+                                Text {
+                                    text: "No se encontraron archivos sospechosos.";
+                                    color: Styles.palette.window-fg;
+                                    font-size: Styles.sizes.font;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
                     }
                 }
             }
