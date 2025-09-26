@@ -1232,6 +1232,7 @@ dependencies = [
  "app_core",
  "chrono",
  "image",
+ "once_cell",
  "profiling 0.1.0",
  "rfd",
  "serde_json",

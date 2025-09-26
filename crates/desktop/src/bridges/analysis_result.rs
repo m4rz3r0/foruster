@@ -4,7 +4,7 @@ use crate::ui::{
 };
 use analysis::AnalysisState;
 use api::{AnalysisAPI, ProfileAPI};
-use slint::{ComponentHandle, Model, ModelRc, SharedString, VecModel, Weak};
+use slint::{ComponentHandle, Model, ModelRc, Rgba8Pixel, SharedString, VecModel, Weak};
 use std::cell::RefCell;
 use std::ops::Deref;
 use std::path::Path;
@@ -14,11 +14,20 @@ use image::ImageReader;
 use slint::Image as SlintImage;
 use slint::SharedPixelBuffer;
 use std::io::Cursor;
+use crate::cache::thumbnail_cache;
+use crate::cache::thumbnail_cache::CachedThumbnail;
 
 fn generate_thumbnail(path: &Path) -> Option<SlintImage> {
+    // 1. Check the cache for the raw, thread-safe data first.
+    if let Some(cached_data) = thumbnail_cache::get(path) {
+        // Found it! Re-create the UI-specific slint::Image from the raw data.
+        // This is cheap and safe to do on the UI thread.
+        return Some(SlintImage::from_rgba8(cached_data.buffer));
+    }
+
+    // 2. If not in cache, generate it from the file.
     const THUMBNAIL_SIZE: u32 = 64;
 
-    // Use a buffered reader for efficiency, especially with large files
     let img_bytes = std::fs::read(path).ok()?;
     let img_reader = ImageReader::new(Cursor::new(img_bytes))
         .with_guessed_format()
@@ -27,11 +36,21 @@ fn generate_thumbnail(path: &Path) -> Option<SlintImage> {
     if let Ok(img) = img_reader.decode() {
         let thumbnail = img.thumbnail_exact(THUMBNAIL_SIZE, THUMBNAIL_SIZE);
         let rgba_image = thumbnail.to_rgba8();
-        let buffer = SharedPixelBuffer::<slint::Rgba8Pixel>::clone_from_slice(
+        let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
             rgba_image.as_raw(),
             rgba_image.width(),
             rgba_image.height(),
         );
+
+        // 3. Create our cacheable, thread-safe struct.
+        let thumbnail_to_cache = CachedThumbnail {
+            buffer: buffer.clone(), // Clone the buffer for the cache
+        };
+
+        // 4. Add the raw data struct to the cache.
+        thumbnail_cache::insert(path.to_path_buf(), thumbnail_to_cache);
+
+        // 5. Return a new slint::Image created from the buffer for immediate use.
         Some(SlintImage::from_rgba8(buffer))
     } else {
         None
