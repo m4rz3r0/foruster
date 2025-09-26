@@ -19,5 +19,5 @@ pub fn setup(window: &MainWindow) {
     disk_list::setup(window, storage_api.clone());
     path_management::setup(window, storage_api.clone());
     profile_list::setup(window);
-    analysis_result::setup(window, analysis_api, profile_api);
+    analysis_result::setup(window, analysis_api, profile_api, storage_api);
 }

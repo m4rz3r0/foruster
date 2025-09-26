@@ -3,7 +3,7 @@ use crate::ui::{
     AnalysisResultBridge, File, MainWindow, PathManagementBridge, Profile, ProfileMenuBridge, FileDetailsBridge,
 };
 use analysis::AnalysisState;
-use api::{AnalysisAPI, ProfileAPI};
+use api::{AnalysisAPI, ProfileAPI, StorageAPI};
 use slint::{ComponentHandle, Model, ModelRc, Rgba8Pixel, SharedString, VecModel, Weak};
 use std::cell::RefCell;
 use std::fs;
@@ -18,6 +18,7 @@ use std::io::Cursor;
 use app_core::format_size;
 use crate::cache::thumbnail_cache;
 use crate::cache::thumbnail_cache::CachedThumbnail;
+use crate::pdf_report;
 
 fn generate_thumbnail(path: &Path) -> Option<SlintImage> {
     // 1. Check the cache for the raw, thread-safe data first.
@@ -120,6 +121,7 @@ pub fn setup(
     window: &MainWindow,
     analysis_api: Rc<RefCell<AnalysisAPI>>,
     profile_api: Rc<RefCell<ProfileAPI>>,
+    storage_api: Rc<RefCell<StorageAPI>>,
 ) {
     let bridge = window.global::<AnalysisResultBridge>();
 
@@ -145,25 +147,12 @@ pub fn setup(
 
     // Implementar exportar reporte
     let analysis_api_clone = analysis_api.clone();
+    let storage_api_clone = storage_api.clone(); // <-- Clone storage_api
     bridge.on_export_report(move || {
-        if let Ok(progress) = analysis_api_clone.borrow().deref().get_progress() {
-            let report = generate_analysis_report(&progress);
-
-            if let Some(path) = rfd::FileDialog::new()
-                .add_filter("JSON", &["json"])
-                .add_filter("Texto", &["txt"])
-                .set_file_name(format!(
-                    "analisis_{}.json",
-                    chrono::Utc::now().format("%Y%m%d_%H%M%S")
-                ))
-                .save_file()
-            {
-                if let Err(e) = std::fs::write(&path, report) {
-                    eprintln!("Error guardando reporte: {}", e);
-                } else {
-                    println!("Reporte guardado en: {:?}", path);
-                }
-            }
+        println!("Generating PDF report...");
+        match pdf_report::generate_pdf_report(analysis_api_clone.clone(), storage_api_clone.clone()) {
+            Ok(_) => println!("PDF report generated successfully."),
+            Err(e) => eprintln!("Error generating PDF report: {}", e),
         }
     });
 
