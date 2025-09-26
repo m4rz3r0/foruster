@@ -5,4 +5,4 @@ mod finding;
 mod walker;
 
 pub use engine::{AnalysisState, Engine};
-pub use finding::{Finding, FindingContainer};
+pub use finding::{Finding, FindingContainer, SuspicionReason};

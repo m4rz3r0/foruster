@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use crate::config::Config;
-use crate::finding::{Finding, FindingContainer};
+use crate::finding::{Finding, FindingContainer, SuspicionReason};
 use crate::walker::{WalkBatch, Walker};
 use profiling::Profile;
 use std::collections::HashMap;
@@ -120,7 +120,7 @@ impl Engine {
 
                                 // ** START OF REVISED LOGIC **
                                 let mut batch_matched_count = 0;
-                                let mut new_suspicious_files_in_batch = Vec::new();
+                                let mut new_suspicious_files_in_batch: Vec<(PathBuf, SuspicionReason)> = Vec::new();
 
                                 // Process the batch to correlate matches and suspicious flags
                                 if let Ok(mut index) = files_by_profile.try_write() {
@@ -138,8 +138,8 @@ impl Engine {
                                             }
 
                                             // **CRITICAL CHANGE**: Only if it's a match, check if it's also suspicious.
-                                            if entry.is_suspicious {
-                                                new_suspicious_files_in_batch.push(path);
+                                            if let Some(reason) = &entry.suspicion_reason {
+                                                new_suspicious_files_in_batch.push((path, reason.clone()));
                                             }
                                         }
                                     }

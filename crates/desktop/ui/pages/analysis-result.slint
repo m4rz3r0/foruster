@@ -1,7 +1,82 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import { Button, VerticalBox, HorizontalBox, ScrollView, ListView, LineEdit, GridBox, ComboBox, TabWidget } from "std-widgets.slint";
 import { Styles } from "../styles.slint";
-import { AnalysisResultBridge, ProfileMenuBridge } from "../blocks/bridges.slint";
+import { AnalysisResultBridge, ProfileMenuBridge, FileDetailsBridge } from "../blocks/bridges.slint";
+
+component FileDetailsModal inherits Rectangle {
+    visible: false;
+
+    callback close();
+
+    background: Styles.palette.window-bg.with-alpha(0.7);
+    //z-index: 100;
+
+    // Fades in and out
+    opacity: self.visible ? 1 : 0;
+    animate opacity { duration: 200ms; easing: ease-in-out; }
+
+    // Main modal content area
+    modal-content := Rectangle {
+        width: 500px;
+        height: 300px;
+        background: Styles.palette.window-alter-bg;
+        border-radius: Styles.sizes.r-lg;
+        border-width: 1px;
+        border-color: Styles.palette.element-border;
+        drop-shadow-blur: 16px;
+        drop-shadow-color: rgba(0,0,0,0.5);
+
+        VerticalLayout {
+            padding: Styles.sizes.p-lg;
+            spacing: Styles.sizes.s-md;
+
+            Text {
+                text: FileDetailsBridge.file_name;
+                font-size: Styles.sizes.font + 4px;
+                font-weight: 700;
+                color: Styles.palette.primary-fg;
+                horizontal-alignment: center;
+            }
+
+            Rectangle { height: 1px; background: Styles.palette.element-border; }
+
+            GridLayout {
+                spacing: Styles.sizes.s-md;
+                Row {
+                    Text { text: "Ruta Completa:"; font-weight: 600; }
+                    Text { text: FileDetailsBridge.full_path; wrap: word-wrap; }
+                }
+                Row {
+                    Text { text: "Tipo:"; font-weight: 600; }
+                    Text { text: FileDetailsBridge.file_type; }
+                }
+                Row {
+                    Text { text: "Tamaño:"; font-weight: 600; }
+                    Text { text: FileDetailsBridge.file_size; }
+                }
+                Row {
+                    Text { text: "Alerta:"; font-weight: 600; color: Styles.palette.warn-fg; }
+                    Text { text: FileDetailsBridge.suspicion_details; color: Styles.palette.warn-fg; wrap: word-wrap; }
+                }
+            }
+
+            VerticalLayout { vertical-stretch: 1; } // Spacer
+
+            HorizontalLayout {
+                alignment: space-between;
+                Button {
+                    text: "Abrir Carpeta Contenedora";
+                    clicked => { FileDetailsBridge.open_containing_folder(FileDetailsBridge.full_path); }
+                }
+                Button {
+                    text: "Cerrar";
+                    primary: true;
+                    clicked => { close(); }
+                }
+            }
+        }
+    }
+}
 
 component PaginationControls inherits Rectangle {
     height: 40px;
@@ -121,11 +196,24 @@ component AnalysisResultItem inherits Rectangle {
     in property <string> file-path: "/ruta/hacia/el/archivo";
     in property <string> file-type: "Texto";
     in property <string> file-size: "15.2 KB";
-    in property <image> thumbnail; // Add this line
+    in property <image> thumbnail;
+    in property <string> suspicion-details: "";
 
     ta := TouchArea {
         width: 100%;
         height: 100%;
+
+        clicked => {
+            // This now needs to be wrapped in a struct that matches the File struct in the bridge
+            AnalysisResultBridge.show-file-details({
+                name: root.file-name,
+                path: root.file-path,
+                type: root.file-type,
+                size: root.file-size,
+                thumbnail: root.thumbnail,
+                suspicion_details: root.suspicion-details
+            });
+        }
     }
 
     content-layout := HorizontalLayout {
@@ -175,6 +263,13 @@ component AnalysisResultItem inherits Rectangle {
                     font-size: Styles.sizes.font + 2px;
                     vertical-alignment: center;
                 }
+
+                if (root.suspicion-details != "") : Image {
+                    source: @image-url("../assets/profile_icons/app.svg"); // Replace with a warning icon
+                    colorize: Styles.palette.warn-fg;
+                    width: 16px;
+                    height: 16px;
+                }
             }
 
             HorizontalLayout {
@@ -203,6 +298,12 @@ component AnalysisResultItem inherits Rectangle {
                     color: Styles.palette.window-fg;
                     font-size: Styles.sizes.font - 2px;
                 }
+            }
+
+            if (root.suspicion-details != "") : Text {
+                text: "Motivo: " + root.suspicion-details;
+                color: Styles.palette.warn-fg;
+                font-size: Styles.sizes.font - 3px;
             }
         }
     }
@@ -480,6 +581,7 @@ export component AnalysisResultPage {
                                 file-type: file.type;
                                 file-size: file.size;
                                 thumbnail: file.thumbnail;
+                                suspicion-details: file.suspicion_details;
                             }
 
                             if (AnalysisResultBridge.suspicious-file-results.length <= 0) : Rectangle {
@@ -598,5 +700,10 @@ export component AnalysisResultPage {
                 }
             }
         }
+    }
+
+    FileDetailsModal {
+        visible: FileDetailsBridge.visible;
+        close => { FileDetailsBridge.visible = false; }
     }
 }

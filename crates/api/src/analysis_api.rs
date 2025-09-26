@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use analysis::{AnalysisState, Engine};
+use analysis::{AnalysisState, Engine, SuspicionReason};
 use profiling::Profile;
 use std::collections::HashMap;
 use std::path::PathBuf;
@@ -253,7 +253,7 @@ impl AnalysisAPI {
         self.engine.lock().map_err(|e| e.to_string())?.get_findings()
     }
 
-    pub fn get_suspicious_files(&self) -> Vec<std::path::PathBuf> {
+    pub fn get_suspicious_files(&self) -> Vec<(std::path::PathBuf, SuspicionReason)> {
         self.engine
             .lock()
             .map(|engine| {

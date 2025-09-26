@@ -1,8 +1,29 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use app_core::FileEntry;
 use std::collections::HashMap;
+use std::fmt;
 use std::path::PathBuf;
 use std::sync::{Arc, RwLock};
+use file_format::Kind;
+
+#[derive(Clone, Debug)]
+pub enum SuspicionReason {
+    DeceptiveExtension { hidden_ext: String },
+    ContentMismatch { expected: Kind, actual: Kind },
+}
+
+impl fmt::Display for SuspicionReason {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            SuspicionReason::DeceptiveExtension { hidden_ext } => {
+                write!(f, "Extensión engañosa, parece ocultar un archivo '.{}'", hidden_ext)
+            }
+            SuspicionReason::ContentMismatch { expected, actual } => {
+                write!(f, "El contenido parece ser '{:?}' pero la extensión indica '{:?}'", actual, expected)
+            }
+        }
+    }
+}
 
 #[derive(Clone, Debug)]
 pub struct Finding {
@@ -16,7 +37,7 @@ pub struct FindingContainer {
     analyzed_files: Arc<RwLock<Vec<FileEntry>>>,
     matched_files: Arc<RwLock<Vec<FileEntry>>>,
     files_by_profile: Arc<RwLock<HashMap<String, Vec<PathBuf>>>>,
-    suspicious_files: Arc<RwLock<Vec<PathBuf>>>, // New field
+    suspicious_files: Arc<RwLock<Vec<(PathBuf, SuspicionReason)>>>,
     analyzed_files_num: usize,
     total_files: usize,
 }
@@ -28,7 +49,7 @@ impl FindingContainer {
             analyzed_files: Arc::new(RwLock::new(Vec::new())),
             matched_files: Arc::new(RwLock::new(Vec::new())),
             files_by_profile: Arc::new(RwLock::new(HashMap::new())),
-            suspicious_files: Arc::new(RwLock::new(Vec::new())), // New field
+            suspicious_files: Arc::new(RwLock::new(Vec::new())),
             analyzed_files_num: 0,
             total_files: 0,
         }
@@ -38,14 +59,8 @@ impl FindingContainer {
         &self.files
     }
 
-    pub fn suspicious_files(&self) -> &Arc<RwLock<Vec<PathBuf>>> {
+    pub fn suspicious_files(&self) -> &Arc<RwLock<Vec<(PathBuf, SuspicionReason)>>> {
         &self.suspicious_files
-    }
-
-    pub fn add_suspicious_file(&self, file_path: PathBuf) {
-        if let Ok(mut suspicious_files) = self.suspicious_files.write() {
-            suspicious_files.push(file_path);
-        }
     }
 
     pub fn analyzed_files(&self) -> &Arc<RwLock<Vec<FileEntry>>> {

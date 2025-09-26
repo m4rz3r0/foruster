@@ -112,6 +112,7 @@ export struct File {
     match-score: string,
     profile: string,
     thumbnail: image,
+    suspicion_details: string,
 }
 
 export global AnalysisResultBridge {
@@ -125,6 +126,7 @@ export global AnalysisResultBridge {
     callback go-to-page(int);
     callback initialize();
     callback update-progress();
+    callback show_file_details(File);
 
     in property <string> total-files: "1,254";
     in property <string> analyzed-files: "1,203";
@@ -315,4 +317,15 @@ export global AnalysisResultBridge {
             profile: "Vídeos"
         }
     ];
+}
+
+export global FileDetailsBridge {
+    in-out property <bool> visible: false;
+    in-out property <string> file_name: "";
+    in-out property <string> full_path: "";
+    in-out property <string> file_type: "";
+    in-out property <string> file_size: "";
+    in-out property <string> suspicion_details: "";
+
+    callback open_containing_folder(string);
 }

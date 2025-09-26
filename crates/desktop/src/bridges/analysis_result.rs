@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use crate::ui::{
-    AnalysisResultBridge, File, MainWindow, PathManagementBridge, Profile, ProfileMenuBridge,
+    AnalysisResultBridge, File, MainWindow, PathManagementBridge, Profile, ProfileMenuBridge, FileDetailsBridge,
 };
 use analysis::AnalysisState;
 use api::{AnalysisAPI, ProfileAPI};
 use slint::{ComponentHandle, Model, ModelRc, Rgba8Pixel, SharedString, VecModel, Weak};
 use std::cell::RefCell;
+use std::fs;
 use std::ops::Deref;
 use std::path::Path;
 use std::rc::Rc;
@@ -14,6 +15,7 @@ use image::ImageReader;
 use slint::Image as SlintImage;
 use slint::SharedPixelBuffer;
 use std::io::Cursor;
+use app_core::format_size;
 use crate::cache::thumbnail_cache;
 use crate::cache::thumbnail_cache::CachedThumbnail;
 
@@ -322,6 +324,34 @@ pub fn setup(
                 }
             }
     });
+
+    let details_bridge = window.global::<FileDetailsBridge>();
+
+    let window_weak_details = window.as_weak();
+    window.global::<AnalysisResultBridge>().on_show_file_details(move |file| {
+        if let Some(window) = window_weak_details.upgrade() {
+            let bridge = window.global::<FileDetailsBridge>();
+            bridge.set_file_name(file.name.clone());
+            // Combine path and name for the full path
+            let full_path = std::path::Path::new(file.path.as_str()).join(file.name.as_str());
+            bridge.set_full_path(full_path.to_string_lossy().into_owned().into());
+            bridge.set_file_type(file.r#type.clone());
+            bridge.set_file_size(file.size.clone());
+            bridge.set_suspicion_details(file.suspicion_details.clone());
+            bridge.set_visible(true);
+        }
+    });
+
+    details_bridge.on_open_containing_folder(move |path_str| {
+        let path = Path::new(path_str.as_str());
+        if let Some(parent) = path.parent() {
+            if let Err(e) = opener::open(parent) {
+                eprintln!("Failed to open folder for {}: {}", path_str, e);
+            }
+        } else {
+            eprintln!("Could not get parent folder for: {}", path_str);
+        }
+    });
 }
 
 // Funciones auxiliares necesarias
@@ -376,13 +406,16 @@ fn update_suspicious_files_results(
     _window_weak: &Weak<MainWindow>,
 ) {
     println!("Actualizando lista de archivos sospechosos...");
+    let suspicious_items = analysis_api.borrow().get_suspicious_files();
+    println!("Se encontraron {} archivos sospechosos.", suspicious_items.len());
 
-    let suspicious_paths = analysis_api.borrow().get_suspicious_files();
-    println!("Se encontraron {} archivos sospechosos.", suspicious_paths.len());
-
-    let suspicious_files: Vec<File> = suspicious_paths
+    let suspicious_files: Vec<File> = suspicious_items
         .iter()
-        .map(|p| create_file_from_path(p))
+        .map(|(p, reason)| {
+            let mut file_ui = create_file_from_path(p);
+            file_ui.suspicion_details = reason.to_string().into(); // Set the reason here
+            file_ui
+        })
         .collect();
 
     file_model.set_vec(suspicious_files);
@@ -492,15 +525,20 @@ fn create_file_from_path(path: &Path) -> File {
         SlintImage::default()
     };
 
+    let size_str = match fs::metadata(path) {
+        Ok(metadata) => format_size(metadata.len() as usize),
+        Err(_) => "Error".into(),
+    };
 
     File {
         name: file_name.into(),
         path: parent_path.to_string().into(),
         r#type: file_type.into(),
-        size: "Calculando...".into(), // You might want to get actual file size here
+        size: size_str.into(),
         match_score: "".into(),
         profile: "General".into(),
         thumbnail, // Pass the generated thumbnail
+        suspicion_details: "".into(),
     }
 }
 

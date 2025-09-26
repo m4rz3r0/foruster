@@ -5,6 +5,7 @@ use futures_lite::stream::StreamExt;
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
+use crate::finding::SuspicionReason;
 
 // A comprehensive map of common file extensions to their expected file "Kind".
 // This is now used for BOTH content-mismatch and deceptive filename detection.
@@ -80,46 +81,36 @@ static EXT_TO_KIND_MAP: Lazy<HashMap<&'static str, Kind>> = Lazy::new(|| {
 /// **NEW**: Checks for deceptive filename patterns like "file.jpg.exe" or "archive.zip.txt".
 /// This detects attempts to hide a file's true nature from users who might have
 /// "hide known extensions" enabled.
-fn has_suspicious_extension_pattern(path: &Path) -> bool {
+fn has_suspicious_extension_pattern(path: &Path) -> Option<String> {
     let filename = match path.file_name().and_then(|s| s.to_str()) {
         Some(name) => name,
-        None => return false,
+        None => return None,
     };
-
     let parts: Vec<&str> = filename.split('.').collect();
-
-    // The pattern requires at least three parts: [name].[middle_ext].[final_ext]
     if parts.len() < 3 {
-        return false;
+        return None;
     }
-
-    // The potentially deceptive extension is the one just before the last one.
     let middle_ext = parts[parts.len() - 2].to_lowercase();
-
-    // If this "middle" extension is a known file type from our map, it's a suspicious pattern.
     if EXT_TO_KIND_MAP.contains_key(middle_ext.as_str()) {
         println!(
             "Suspicious extension pattern detected: {:?} (hidden extension '.{}')",
             path, middle_ext
         );
-        return true;
+        return Some(middle_ext);
     }
-
-    false
+    None
 }
 
 
 /// **REVISED**: Determines if a file is suspicious using a two-pronged approach.
-fn is_file_suspicious(path: &Path, format_result: &Result<FileFormat, std::io::Error>) -> bool {
-    // Check 1: Deceptive filename pattern (e.g., "photo.jpg.exe"). This is a strong, immediate flag.
-    if has_suspicious_extension_pattern(path) {
-        return true;
+fn is_file_suspicious(path: &Path, format_result: &Result<FileFormat, std::io::Error>) -> Option<SuspicionReason> {
+    if let Some(hidden_ext) = has_suspicious_extension_pattern(path) {
+        return Some(SuspicionReason::DeceptiveExtension { hidden_ext });
     }
 
-    // Check 2: Mismatch between file content and final extension.
     let detected_kind = match format_result {
         Ok(fmt) => fmt.kind(),
-        Err(_) => return false, // Can't read content, can't check for mismatch.
+        Err(_) => return None,
     };
 
     let expected_kind_opt = path
@@ -129,28 +120,27 @@ fn is_file_suspicious(path: &Path, format_result: &Result<FileFormat, std::io::E
 
     let expected_kind = match expected_kind_opt {
         Some(kind) => kind,
-        None => return false, // Extension is not in our map, so no expectation to mismatch against.
+        None => return None,
     };
 
     if detected_kind != *expected_kind {
-        // Exception for modern office documents (.docx, etc.) which are ZIP archives.
         let is_office_archive_exception = (*expected_kind == Kind::Document
             || *expected_kind == Kind::Spreadsheet
             || *expected_kind == Kind::Presentation)
             && detected_kind == Kind::Archive;
 
         if is_office_archive_exception {
-            return false;
+            return None;
         }
 
         println!(
             "Suspicious content mismatch detected: {:?}, extension implies {:?}, but content is {:?}",
             path, expected_kind, detected_kind
         );
-        return true;
+        return Some(SuspicionReason::ContentMismatch { expected: *expected_kind, actual: detected_kind });
     }
 
-    false
+    None
 }
 
 
@@ -248,7 +238,7 @@ impl Walker {
 
                         // Read the file format ONCE for both suspicious check and profile matching.
                         let format_result = FileFormat::from_file(&path);
-                        let is_suspicious = is_file_suspicious(&path, &format_result);
+                        let suspicion_reason = is_file_suspicious(&path, &format_result);
                         let format_opt = format_result.ok();
 
                         let matched_profiles: Vec<String> = if let Some(profiles) = profiles {
@@ -265,10 +255,10 @@ impl Walker {
                             path.to_string_lossy().into_owned(),
                             true,
                             matched_profiles,
-                            is_suspicious,
+                            suspicion_reason,
                         );
                     } else {
-                        batch.add_entry(path.to_string_lossy().into_owned(), false, Vec::new(), false);
+                        batch.add_entry(path.to_string_lossy().into_owned(), false, Vec::new(), None);
                     }
 
                     if batch.is_full() {
@@ -304,7 +294,7 @@ pub struct WalkEntry {
     pub path: String,
     pub is_file: bool,
     pub matched_profiles: Vec<String>,
-    pub is_suspicious: bool,
+    pub suspicion_reason: Option<SuspicionReason>,
 }
 
 impl WalkBatch {
@@ -316,12 +306,12 @@ impl WalkBatch {
         }
     }
 
-    pub fn add_entry(&mut self, path: String, is_file: bool, matched_profiles: Vec<String>, is_suspicious: bool) {
+    pub fn add_entry(&mut self, path: String, is_file: bool, matched_profiles: Vec<String>, suspicion_reason: Option<SuspicionReason>) {
         self.entries.push(WalkEntry {
             path,
             is_file,
             matched_profiles,
-            is_suspicious
+            suspicion_reason // changed from is_suspicious
         });
         self.total_processed += 1;
     }
@@ -352,11 +342,10 @@ impl WalkBatch {
     }
 
     pub fn suspicious_files_count(&self) -> usize {
-        self.entries.iter().filter(|e| e.is_suspicious).count()
+        self.entries.iter().filter(|e| e.suspicion_reason.is_some()).count()
     }
 
 
-    // Método optimizado de clonación que evita copiar datos innecesarios
     pub fn clone_optimized(&self) -> Self {
         Self {
             entries: self.entries.clone(),
