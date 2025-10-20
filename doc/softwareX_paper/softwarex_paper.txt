@@ -1,0 +1,280 @@
+Foruster: Live system data extraction
+Marcos Jesús Sequera Fernándeza , A. Author2b
+a
+
+b
+
+marcosjesus@unex.es
+Author2’s affiliation, address, email
+
+Abstract
+Foruster is a cross-platform desktop application, developed in Rust, for livesystem forensic analysis. Unlike traditional tools that require system shutdown, Foruster is designed to identify and catalog files of interest on active
+storage volumes. Its user interface, built with the Slint framework, guides the
+analyst through the selection of devices, the configuration of search profiles,
+and the real-time visualization of results. The software features heuristic
+detection of anomalies, such as deceptive file extensions, and ensures the
+integrity of findings through cryptographic hashing, optimizing the digital
+forensic investigation process.
+Keywords: live-system forensics, forensic software, data extraction, Rust,
+digital security, incident response
+Metadata
+1. Motivation and significance
+El análisis forense digital tradicional, basado en la adquisición de imágenes
+de sistemas apagados, presenta desafíos significativos como la pérdida de
+evidencia volátil y la complejidad para acceder a volúmenes cifrados. Foruster
+aborda este problema al proporcionar una herramienta para el análisis de
+sistemas de archivos en vivo. Su importancia radica en la capacidad de
+realizar un triaje rápido y no invasivo, permitiendo el acceso a datos en
+volúmenes cifrados desbloqueados (como BitLocker o LUKS) y preservando
+el estado operativo del sistema.
+El software contribuye al proceso de descubrimiento forense al facilitar el
+estudio de la evidencia volátil y optimizar la fase inicial de una investigación.
+En su uso práctico, el analista ejecuta la aplicación en el sistema objetivo,
+selecciona dispositivos y perfiles de búsqueda a través de una interfaz gráfica,
+y recibe resultados en tiempo real, incluyendo la detección de anomalías
+heurísticas.
+
+Nr. Code metadata description
+C1 Current code version
+C2 Permanent link to code/repository
+used for this code version
+C3 Permanent link to Reproducible
+Capsule
+C4 Legal Code License
+C5 Code versioning system used
+C6 Software code languages, tools, and
+services used
+C7 Compilation requirements, operating environments & dependencies
+C8 If available Link to developer documentation/manual
+C9 Support email for questions
+
+Metadata
+1.0.0
+https://github.com/m4rz3r0/
+foruster
+–
+GPLv3
+git
+Rust, Slint
+Rust 1.89
+marcosjesus@unex.es
+
+Table 1: Code metadata (mandatory)
+
+Foruster está implementado en Rust, apoyándose en tecnologías clave como
+el runtime asíncrono Tokio para el escaneo concurrente, el crate file-format
+para la validación de tipos de archivo, y el framework Slint para la interfaz
+de usuario. La interacción con el hardware se gestiona mediante la API de
+Win32 en Windows y los sistemas de archivos virtuales de Linux, mientras
+que la generación de reportes con hashes de integridad (MD5, SHA-256,
+BLAKE3) se realiza con genpdfi.
+2. Descripción del Software
+Foruster es una aplicación de escritorio multiplataforma, desarrollada en
+Rust, diseñada para el análisis forense de sistemas en vivo. A diferencia
+de las herramientas tradicionales que requieren apagar el sistema, Foruster
+está específicamente diseñado para identificar y catalogar archivos de interés
+en volúmenes de almacenamiento activos. Su interfaz de usuario se construye
+con el framework Slint, lo que resulta en una aplicación nativa que guía al
+analista a través del proceso de selección de dispositivos, configuración de
+perfiles y una visualización de resultados en tiempo real.
+2.1. Arquitectura Modular y Pila Tecnológica
+El diseño de Foruster se basa en una arquitectura modular implementada
+mediante un workspace de Rust, separando la funcionalidad en capas lógicas
+
+2
+
+a través de diferentes crates para optimizar la mantenibilidad y el rendimiento
+(ver Figura 1).
+En la base se encuentra el crate foruster-storage, que gestiona la complejidad de la interacción con el sistema operativo. Esta capa encapsula las diferencias entre plataformas para detectar y enumerar los dispositivos de almacenamiento. Para la interacción con el almacenamiento en Windows, Foruster
+utiliza directamente las APIs nativas de Win32 (a través del crate windows),
+lo que le permite consultar volúmenes lógicos (FindFirstVolumeW) y discos físicos mediante el envío de códigos de control de E/S (DeviceIoControl
+sobre rutas como \\.\PhysicalDriveX). En sistemas Linux, el crate interactúa con los sistemas de archivos virtuales /sys/block y /proc/self/mountinfo
+para construir el mapa de discos y particiones.
+La lógica de negocio se implementa en los crates analysis y profiling. El
+motor de análisis se ejecuta de forma concurrente sobre el runtime asíncrono
+Tokio, utilizando el crate async-walkdir para una exploración eficiente de
+los sistemas de archivos. Este motor es el responsable de aplicar las reglas
+de los "Perfiles" de búsqueda (definidos en profiling), que son colecciones
+de criterios basados en categorías de archivos, tipos MIME o extensiones
+específicas.
+Finalmente, la capa api actúa como un puente intermedio, transformando las
+estructuras de datos del backend en interfaces seguras y fáciles de consumir
+por la interfaz gráfica (desktop).
+
+Figure 1: Diagrama de la arquitectura de Foruster, mostrando sus capas modulares desde
+la interfaz de usuario hasta la interacción con el sistema operativo.
+
+3
+
+2.2. Funcionalidades de Análisis Forense en Vivo
+La capacidad de Foruster para operar en un sistema en vivo se articula a
+través de tres funcionalidades forenses clave:
+2.2.1. Acceso Transparente a Volúmenes Cifrados
+Foruster no implementa ninguna función de bypass de cifrado. Su eficacia
+radica en su capacidad de realizar el análisis sobre el sistema de archivos ya
+montado y descifrado por el sistema operativo anfitrión (OS). Al acceder a
+los datos a través de la capa de sistema de archivos en lugar de intentar leer
+el dispositivo de bloque directamente, puede extraer archivos de volúmenes
+cifrados con BitLocker, LUKS, o FileVault, siempre que el sistema esté activo y los volúmenes estén desbloqueados. Esta aproximación garantiza la
+preservación de la evidencia y la accesibilidad de los datos sin necesidad de
+las contraseñas del volumen.
+2.2.2. Identificación Heurística de Anomalías
+Más allá de la simple categorización por perfiles, el motor de Foruster (analysis::walker)
+implementa heurísticas para identificar archivos potencialmente maliciosos u
+ocultos. Esto se realiza mediante una doble comprobación:
+1. Validación de Tipo de Archivo: Utilizando el crate file-format,
+Foruster lee los primeros bytes de un archivo ("magic numbers") para
+determinar su tipo real. Un hallazgo es marcado como sospechoso si
+su contenido no coincide con el tipo implícito en su extensión (p.ej., un
+archivo con extensión .jpg que en realidad es un ejecutable).
+2. Detección de Extensiones Engañosas: El software analiza patrones
+de nombre como documento.pdf.exe para identificar intentos de ocultar la extensión funcional real a los usuarios que tienen configurada
+la opción "Ocultar extensiones para tipos de archivo conocidos" del
+sistema operativo.
+Estas heurísticas se exponen en la GUI como una pestaña dedicada a "Sospechosos", proporcionando al analista un filtro inmediato de alta prioridad.
+2.2.3. Integridad de los Hallazgos y Generación de Reportes
+La validez forense de los resultados se mantiene mediante la integración
+de un módulo de integridad. Foruster calcula y registra múltiples hashes
+criptográficos para cada archivo detectado, incluyendo MD5, SHA-256 y
+BLAKE3. Estos hashes se incorporan al informe final, generado en formato
+PDF a través del crate genpdfi. El reporte incluye la información de los
+discos analizados (modelo, serial, bus), las estadísticas de las coincidencias
+por perfil y un listado detallado de los archivos sospechosos junto con sus
+hashes, asegurando una cadena de custodia auditable de los hallazgos.
+4
+
+2.3. Admisibilidad Probatoria y Cumplimiento de la Cadena de Custodia
+La correcta extracción de evidencia digital basada en ficheros requiere un enfoque metodológico que garantice su integridad y autenticidad, un principio
+fundamental para su admisibilidad probatoria. La norma ISO/IEC 27037
+proporciona directrices clave en este ámbito. En escenarios de análisis en
+vivo ("trabajo en caliente"), la metodología debe minimizar la huella sobre
+el sistema, preservar los metadatos de los archivos y asegurar la trazabilidad
+mediante una cadena de custodia robusta. Foruster ha sido diseñado para
+operar dentro de este riguroso marco, estructurando sus funcionalidades en
+torno a las fases forenses de identificación, adquisición, preservación y presentación.
+2.3.1. Fase de Identificación y Adquisición
+Esta fase se centra en la localización y recolección de la evidencia potencial. Foruster aborda este punto permitiendo una selección reproducible del
+ámbito de análisis, donde el investigador define los dispositivos de almacenamiento y los perfiles de búsqueda. El motor de análisis (analysis::walker)
+opera sobre la capa del sistema de archivos, lo que minimiza la interacción
+directa con el hardware y reduce la huella en el sistema. Esta aproximación
+permite la adquisición de datos de volúmenes cifrados (BitLocker, LUKS) que
+se encuentren montados, un escenario común en sistemas activos. Además,
+Foruster implementa heurísticas para la identificación de anomalías, como la
+discrepancia entre el tipo de archivo real (verificado mediante "magic numbers" con el crate file-format) y su extensión, descubriendo así evidencia que
+podría haber sido ofuscada intencionadamente.
+2.3.2. Fase de Preservación y Aportación
+Para garantizar que la evidencia no sea alterada ni contaminada, la fase de
+preservación es crítica. Foruster asegura la integridad de cada archivo identificado mediante la generación de múltiples huellas criptográficas. Para cada
+fichero relevante, el software calcula sus hashes MD5, SHA-256 y BLAKE3.
+Este conjunto de hashes actúa como una firma digital única del estado del
+archivo en el momento exacto de la adquisición. Este proceso es fundamental
+para la aportación de la prueba, ya que establece una cadena de custodia auditable. Cualquier verificación posterior puede recalcular estos hashes para
+confirmar que la evidencia presentada es una copia exacta de la original.
+2.3.3. Fase de Presentación
+La presentación de la evidencia debe ser clara, verificable y responder a estándares reconocidos. Foruster cumple con esta fase de dos maneras. Primero,
+a través de su interfaz gráfica, que permite al analista una visualización y
+5
+
+filtrado en tiempo real de los hallazgos. Segundo, y de manera más formal,
+mediante la generación de un informe final en formato PDF a través del crate
+genpdfi. Este documento actúa como un manifiesto firmado de la extracción:
+incluye un registro detallado de las operaciones, la configuración del análisis,
+las características de los discos investigados y, de forma crucial, un listado
+de todos los archivos relevantes junto con sus hashes criptográficos. Este
+informe final constituye un artefacto transparente y verificable que sustenta
+la presentación de la evidencia en un posible contexto judicial.
+3. Illustrative examples
+Para demostrar las funciones principales de Foruster, consideremos un escenario de respuesta a incidentes en un entorno corporativo. Un analista forense
+necesita investigar la estación de trabajo de un empleado bajo sospecha de
+haber extraído información confidencial a un dispositivo de almacenamiento
+externo, todo ello sin interrumpir las operaciones del sistema.
+El analista ejecuta Foruster directamente en el sistema activo. La aplicación
+presenta inmediatamente una lista de los dispositivos de almacenamiento
+conectados, incluyendo el disco principal del sistema (C:\) y una unidad
+USB que se acaba de conectar. El analista selecciona ambos dispositivos
+para el análisis. A continuación, la interfaz le permite configurar los perfiles
+de búsqueda. Dado que la sospecha es la exfiltración de datos, elige los
+perfiles predefinidos de "Documentos" e "Imágenes", que están configurados
+para buscar tipos MIME y extensiones de archivo comunes asociados a estos
+formatos.
+Al iniciar el análisis, la interfaz muestra en tiempo real el progreso del escaneo, actualizando contadores de archivos analizados, coincidencias encontradas y, crucialmente, archivos sospechosos. Una vez finalizado el proceso,
+el analista navega a la pestaña de resultados "Sospechosos". Allí encuentra
+un archivo llamado informe_anual.jpg ubicado en la unidad USB. Foruster
+lo ha marcado como sospechoso porque, aunque su extensión es .jpg, la validación de su contenido mediante "magic numbers" (realizada por el crate
+file-format) ha determinado que en realidad es un archivo comprimido (application/zip). Este hallazgo es de alta prioridad, ya que sugiere un intento
+de ofuscar datos confidenciales.
+Finalmente, el analista utiliza la función de exportación para generar un informe forense en formato PDF. Este documento, creado por el crate genpdfi,
+no solo resume las estadísticas del análisis y los perfiles utilizados, sino que
+también incluye una sección detallada sobre los hallazgos sospechosos. En
+esta sección, se lista el archivo informe_anual.jpg, el motivo de la sospecha
+
+6
+
+(discrepancia entre extensión y contenido) y sus correspondientes hashes criptográficos (MD5, SHA-256 y BLAKE3), garantizando así una cadena de custodia auditable y preservando la integridad de la evidencia digital para su
+posterior análisis en profundidad.
+Para complementar esta descripción textual, se ha preparado un breve vídeo
+de demostración (Screencast 1) que muestra este mismo proceso en acción,
+desde la selección del dispositivo hasta la generación del informe final. El
+vídeo está disponible como material suplementario junto a este artículo.
+4. Impact
+El principal impacto de Foruster reside en su capacidad para cambiar el
+paradigma del análisis forense digital, desplazándolo desde la investigación
+post-mortem de sistemas apagados hacia un análisis dinámico en sistemas
+vivos. Esta capacidad no solo mejora la eficiencia de las investigaciones
+existentes, sino que también abre nuevas vías de investigación y modifica la
+práctica diaria de los analistas forenses y equipos de respuesta a incidentes.
+La disponibilidad de Foruster permite mejorar la búsqueda de respuestas
+a preguntas de investigación existentes sobre la volatilidad de la evidencia
+digital. Al operar en un sistema activo, el software permite capturar el estado
+de los archivos en un momento preciso, lo que facilita estudios comparativos
+entre la evidencia obtenida en vivo y la extraída de una imagen forense
+tradicional. Esto ayuda a cuantificar qué artefactos se pierden o alteran al
+apagar un sistema, un área de constante interés en la ciencia forense. Además,
+la herramienta agiliza la fase de triaje en una investigación, permitiendo a
+los analistas determinar rápidamente si un sistema justifica un análisis más
+profundo y la creación de una imagen completa, optimizando así el uso de
+tiempo y recursos.
+Asimismo, la existencia de Foruster plantea nuevas preguntas de investigación que pueden ser exploradas. Por ejemplo, ¿cuál es el impacto en el
+rendimiento de un sistema anfitrión mientras se ejecuta un análisis concurrente con Foruster y cómo puede minimizarse para evitar la alteración de la
+evidencia? O, ¿pueden desarrollarse heurísticas de detección de anomalías
+en tiempo real más sofisticadas, basadas no solo en metadatos sino también
+en el comportamiento de los archivos? El uso de Rust como lenguaje de
+desarrollo también abre una línea de investigación sobre cómo las garantías
+de seguridad de memoria influyen en la fiabilidad y la solidez forense de las
+herramientas de software.
+En términos de la práctica diaria, Foruster introduce un cambio fundamental en el flujo de trabajo de un analista. En lugar de que el primer paso
+sea desconectar el equipo, ahora es posible realizar un escaneo preliminar no
+7
+
+invasivo. Esta capacidad es especialmente transformadora cuando se trata
+de volúmenes cifrados, ya que Foruster opera sobre el sistema de archivos
+descifrado y montado, eludiendo la necesidad de procesos complejos de descifrado offline y permitiendo el acceso inmediato a los datos.
+Dado que Foruster es un proyecto de reciente creación, su uso aún no está
+extendido. Sin embargo, al ser una herramienta de código abierto y multiplataforma, alojada en un repositorio público de GitHub, está disponible
+para su adopción por parte de analistas forenses, investigadores académicos
+y profesionales de la ciberseguridad. La publicación de este artículo busca
+fomentar la creación de una comunidad de usuarios y contribuidores que impulse su difusión. Actualmente, no se conoce su uso en entornos comerciales
+ni ha dado lugar a la creación de empresas derivadas, pero su licencia de
+código abierto (GPLv3) permite su evaluación e integración en servicios de
+consultoría de seguridad o respuesta a incidentes.
+5. Conclusions
+Acknowledgements
+Esta iniciativa se realiza en el marco de los fondos del Plan de Recuperación,
+Transformación y Resiliencia, financiados por la Unión Europea (Next Generation) - Instituto Nacional de Ciberseguridad (INCIBE) en el proyecto
+C108/23 “Detección de Falsificación de Documentos de Identidad mediante
+Técnicas de Visión por Computador e Inteligencia Artificial”.
+References
+[1] Use this style of ordering. References in-text should also use a similar
+style.
+If the software repository you used supplied a DOI or another Persistent
+IDentifier (PID), please add a reference for your software here. For more
+guidance on software citation, please see our guide for authors or this article
+on the essentials of software citation by FORCE 11, of which Elsevier is a
+member.
+
+Reminder: Before you submit, please delete all the instructions in this document, including this paragraph.
+Thank you!
+
+8
+
+
