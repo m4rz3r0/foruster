@@ -15,7 +15,7 @@ pub struct AnalysisProgress {
     pub scanned_files: usize,
     pub analyzed_files: usize,
     pub matched_files: usize,
-    pub suspicious_files: usize, // New field
+    pub suspicious_files: usize,
     pub current_path: String,
     pub elapsed_time: Duration,
     pub estimated_remaining: Option<Duration>,
@@ -29,7 +29,7 @@ impl Default for AnalysisProgress {
             scanned_files: 0,
             analyzed_files: 0,
             matched_files: 0,
-            suspicious_files: 0, // New field
+            suspicious_files: 0,
             current_path: String::new(),
             elapsed_time: Duration::ZERO,
             estimated_remaining: None,
@@ -120,7 +120,7 @@ impl AnalysisAPI {
                                     progress_for_async,
                                     start_time_for_async,
                                 )
-                                    .await;
+                                .await;
                             }
                         });
                     }
@@ -139,6 +139,13 @@ impl AnalysisAPI {
             progress,
             start_time,
         }
+    }
+
+    pub fn get_all_matched_files(&self) -> Vec<std::path::PathBuf> {
+        self.engine
+            .lock()
+            .map(|engine| engine.get_all_matched_files())
+            .unwrap_or_default()
     }
 
     async fn run_analysis_with_progress(
@@ -175,18 +182,37 @@ impl AnalysisAPI {
                                 }
                             }
                             "file_scanned" => {
-                                data.get("scanned_files").and_then(|s| s.parse().ok()).map(|v| prog.scanned_files = v);
-                                data.get("analyzed_files").and_then(|s| s.parse().ok()).map(|v| prog.analyzed_files = v);
-                                data.get("matched_files").and_then(|s| s.parse().ok()).map(|v| prog.matched_files = v);
-                                data.get("suspicious_files").and_then(|s| s.parse().ok()).map(|v| prog.suspicious_files = v); // Update suspicious
-                                data.get("current_path").map(|v| prog.current_path = v.clone());
-                                data.get("total_estimated").and_then(|s| s.parse().ok()).map(|v| prog.total_files = v);
+                                data.get("scanned_files")
+                                    .and_then(|s| s.parse().ok())
+                                    .map(|v| prog.scanned_files = v);
+                                data.get("analyzed_files")
+                                    .and_then(|s| s.parse().ok())
+                                    .map(|v| prog.analyzed_files = v);
+                                data.get("matched_files")
+                                    .and_then(|s| s.parse().ok())
+                                    .map(|v| prog.matched_files = v);
+                                data.get("suspicious_files")
+                                    .and_then(|s| s.parse().ok())
+                                    .map(|v| prog.suspicious_files = v); // Update suspicious
+                                data.get("current_path")
+                                    .map(|v| prog.current_path = v.clone());
+                                data.get("total_estimated")
+                                    .and_then(|s| s.parse().ok())
+                                    .map(|v| prog.total_files = v);
                             }
                             "analysis_completed" => {
-                                data.get("total_files").and_then(|s| s.parse().ok()).map(|v| prog.total_files = v);
-                                data.get("analyzed_files").and_then(|s| s.parse().ok()).map(|v| prog.analyzed_files = v);
-                                data.get("matched_files").and_then(|s| s.parse().ok()).map(|v| prog.matched_files = v);
-                                data.get("suspicious_files").and_then(|s| s.parse().ok()).map(|v| prog.suspicious_files = v); // Update suspicious
+                                data.get("total_files")
+                                    .and_then(|s| s.parse().ok())
+                                    .map(|v| prog.total_files = v);
+                                data.get("analyzed_files")
+                                    .and_then(|s| s.parse().ok())
+                                    .map(|v| prog.analyzed_files = v);
+                                data.get("matched_files")
+                                    .and_then(|s| s.parse().ok())
+                                    .map(|v| prog.matched_files = v);
+                                data.get("suspicious_files")
+                                    .and_then(|s| s.parse().ok())
+                                    .map(|v| prog.suspicious_files = v); // Update suspicious
                                 prog.state = AnalysisState::Done;
                             }
                             _ => {}
@@ -194,7 +220,9 @@ impl AnalysisAPI {
 
                         if prog.total_files > 0 && prog.elapsed_time.as_secs() > 0 {
                             let progress_ratio = match prog.state {
-                                AnalysisState::Walking if prog.total_files > 0 => prog.analyzed_files as f64 / prog.total_files as f64,
+                                AnalysisState::Walking if prog.total_files > 0 => {
+                                    prog.analyzed_files as f64 / prog.total_files as f64
+                                }
                                 AnalysisState::Done => 1.0,
                                 _ => 0.0,
                             };
@@ -204,7 +232,8 @@ impl AnalysisAPI {
                                 let estimated_total_time = elapsed_secs / progress_ratio;
                                 let remaining_time = estimated_total_time - elapsed_secs;
                                 if remaining_time > 0.0 {
-                                    prog.estimated_remaining = Some(Duration::from_secs_f64(remaining_time));
+                                    prog.estimated_remaining =
+                                        Some(Duration::from_secs_f64(remaining_time));
                                 }
                             } else if progress_ratio >= 1.0 {
                                 prog.estimated_remaining = Some(Duration::ZERO);
@@ -238,19 +267,28 @@ impl AnalysisAPI {
     }
 
     pub fn get_progress(&self) -> Result<AnalysisProgress, String> {
-        self.progress.lock().map(|prog| prog.clone()).map_err(|e| e.to_string())
+        self.progress
+            .lock()
+            .map(|prog| prog.clone())
+            .map_err(|e| e.to_string())
     }
 
     pub fn is_running(&self) -> bool {
         if let Ok(progress) = self.progress.lock() {
-            matches!(progress.state, AnalysisState::Walking | AnalysisState::Analyzing)
+            matches!(
+                progress.state,
+                AnalysisState::Walking | AnalysisState::Analyzing
+            )
         } else {
             false
         }
     }
 
     pub fn get_findings(&self) -> Result<Vec<analysis::Finding>, String> {
-        self.engine.lock().map_err(|e| e.to_string())?.get_findings()
+        self.engine
+            .lock()
+            .map_err(|e| e.to_string())?
+            .get_findings()
     }
 
     pub fn get_suspicious_files(&self) -> Vec<(std::path::PathBuf, SuspicionReason)> {
@@ -297,7 +335,9 @@ impl AnalysisAPI {
     fn group_findings_by_profile(findings: &[analysis::Finding]) -> HashMap<String, usize> {
         let mut profile_counts = HashMap::new();
         for finding in findings {
-            *profile_counts.entry(finding.profile_name.clone()).or_insert(0) += 1;
+            *profile_counts
+                .entry(finding.profile_name.clone())
+                .or_insert(0) += 1;
         }
         profile_counts
     }
@@ -316,7 +356,11 @@ impl AnalysisAPI {
             .unwrap_or_default()
     }
 
-    pub fn search_files_in_profile(&self, profile_name: &str, search_term: &str) -> Vec<std::path::PathBuf> {
+    pub fn search_files_in_profile(
+        &self,
+        profile_name: &str,
+        search_term: &str,
+    ) -> Vec<std::path::PathBuf> {
         self.engine
             .lock()
             .map(|engine| engine.search_files_in_profile(profile_name, search_term))

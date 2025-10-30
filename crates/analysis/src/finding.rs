@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use app_core::FileEntry;
+use file_format::Kind;
 use std::collections::HashMap;
 use std::fmt;
 use std::path::PathBuf;
 use std::sync::{Arc, RwLock};
-use file_format::Kind;
 
 #[derive(Clone, Debug)]
 pub enum SuspicionReason {
@@ -16,10 +16,18 @@ impl fmt::Display for SuspicionReason {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             SuspicionReason::DeceptiveExtension { hidden_ext } => {
-                write!(f, "Extensión engañosa, parece ocultar un archivo '.{}'", hidden_ext)
+                write!(
+                    f,
+                    "Extensión engañosa, parece ocultar un archivo '.{}'",
+                    hidden_ext
+                )
             }
             SuspicionReason::ContentMismatch { expected, actual } => {
-                write!(f, "El contenido parece ser '{:?}' pero la extensión indica '{:?}'", actual, expected)
+                write!(
+                    f,
+                    "El contenido parece ser '{:?}' pero la extensión indica '{:?}'",
+                    actual, expected
+                )
             }
         }
     }

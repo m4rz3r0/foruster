@@ -30,6 +30,18 @@ impl Engine {
         *Arc::make_mut(&mut self.config) = Config::new(profiles, paths);
     }
 
+    pub fn get_all_matched_files(&self) -> Vec<PathBuf> {
+        if let Ok(files_by_profile) = self.finding.files_by_profile().read() {
+            let all_files: std::collections::HashSet<PathBuf> =
+                files_by_profile.values().flatten().cloned().collect();
+            let mut all_files: Vec<PathBuf> = all_files.into_iter().collect();
+            all_files.sort();
+            all_files
+        } else {
+            Vec::new()
+        }
+    }
+
     pub fn state(&self) -> Arc<RwLock<AnalysisState>> {
         self.state.clone()
     }
@@ -118,35 +130,31 @@ impl Engine {
                                 let batch_len = batch.entries.len();
                                 let batch_files = batch.files_count();
 
-                                // ** START OF REVISED LOGIC **
                                 let mut batch_matched_count = 0;
                                 let mut new_suspicious_files_in_batch: Vec<(PathBuf, SuspicionReason)> = Vec::new();
 
-                                // Process the batch to correlate matches and suspicious flags
-                                if let Ok(mut index) = files_by_profile.try_write() {
-                                    for entry in &batch.entries {
-                                        if entry.is_file && !entry.matched_profiles.is_empty() {
-                                            // This is a "coincidence" or match
+                                for entry in &batch.entries {
+                                    if entry.is_file {
+                                        let path = PathBuf::from(&entry.path);
+
+                                        if !entry.matched_profiles.is_empty() {
                                             batch_matched_count += 1;
-                                            let path = PathBuf::from(&entry.path);
-
-                                            // Add to profile index as before
-                                            for profile_name in &entry.matched_profiles {
-                                                index.entry(profile_name.clone())
-                                                    .or_default()
-                                                    .push(path.clone());
+                                            if let Ok(mut index) = files_by_profile.try_write() {
+                                                for profile_name in &entry.matched_profiles {
+                                                    index.entry(profile_name.clone())
+                                                        .or_default()
+                                                        .push(path.clone());
+                                                }
                                             }
+                                        }
 
-                                            // **CRITICAL CHANGE**: Only if it's a match, check if it's also suspicious.
-                                            if let Some(reason) = &entry.suspicion_reason {
-                                                new_suspicious_files_in_batch.push((path, reason.clone()));
-                                            }
+                                         if let Some(reason) = &entry.suspicion_reason {
+                                            new_suspicious_files_in_batch.push((path, reason.clone()));
                                         }
                                     }
                                 }
 
                                 let batch_suspicious_count = new_suspicious_files_in_batch.len();
-                                // ** END OF REVISED LOGIC **
 
                                 // Update atomic counters
                                 let current_scanned = scanned_count.fetch_add(batch_len, Ordering::Relaxed) + batch_len;
@@ -229,7 +237,8 @@ impl Engine {
         self.finding.set_analyzed_files_num(analyzed_files);
 
         if let Ok(index) = Arc::try_unwrap(files_by_profile_shared) {
-            self.finding.set_files_by_profile(index.into_inner().unwrap());
+            self.finding
+                .set_files_by_profile(index.into_inner().unwrap());
         }
 
         self.update_state(AnalysisState::Done)?;

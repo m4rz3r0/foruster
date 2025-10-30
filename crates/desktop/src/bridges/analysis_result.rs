@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use crate::ui::{
-    AnalysisResultBridge, File, MainWindow, PathManagementBridge, Profile, ProfileMenuBridge, FileDetailsBridge,
+    AnalysisResultBridge, File, FileDetailsBridge, MainWindow, PathManagementBridge, Profile,
+    ProfileMenuBridge,
 };
 use analysis::AnalysisState;
 use api::{AnalysisAPI, ProfileAPI, StorageAPI};
@@ -11,14 +12,14 @@ use std::ops::Deref;
 use std::path::Path;
 use std::rc::Rc;
 
+use crate::cache::thumbnail_cache;
+use crate::cache::thumbnail_cache::CachedThumbnail;
+use crate::pdf_report;
+use app_core::format_size;
 use image::ImageReader;
 use slint::Image as SlintImage;
 use slint::SharedPixelBuffer;
 use std::io::Cursor;
-use app_core::format_size;
-use crate::cache::thumbnail_cache;
-use crate::cache::thumbnail_cache::CachedThumbnail;
-use crate::pdf_report;
 
 fn generate_thumbnail(path: &Path) -> Option<SlintImage> {
     // 1. Check the cache for the raw, thread-safe data first.
@@ -150,7 +151,8 @@ pub fn setup(
     let storage_api_clone = storage_api.clone(); // <-- Clone storage_api
     bridge.on_export_report(move || {
         println!("Generating PDF report...");
-        match pdf_report::generate_pdf_report(analysis_api_clone.clone(), storage_api_clone.clone()) {
+        match pdf_report::generate_pdf_report(analysis_api_clone.clone(), storage_api_clone.clone())
+        {
             Ok(_) => println!("PDF report generated successfully."),
             Err(e) => eprintln!("Error generating PDF report: {}", e),
         }
@@ -287,13 +289,11 @@ pub fn setup(
                 };
                 bridge.set_analysis_state(state_text.into());
 
-                // Actualizar porcentajes
                 bridge.set_progress_percentage(progress.overall_percentage() as i32);
 
                 let error_files = progress.total_files.saturating_sub(progress.analyzed_files);
                 bridge.set_error_files(error_files.to_string().into());
 
-                // Actualizar lista de archivos cuando el análisis esté completo
                 if matches!(progress.state, AnalysisState::Done) {
                     update_file_results(&file_results_model_clone, &analysis_api_clone, &window.as_weak());
                     update_suspicious_files_results(&suspicious_files_model_clone, &analysis_api_clone, &window.as_weak());
@@ -317,19 +317,21 @@ pub fn setup(
     let details_bridge = window.global::<FileDetailsBridge>();
 
     let window_weak_details = window.as_weak();
-    window.global::<AnalysisResultBridge>().on_show_file_details(move |file| {
-        if let Some(window) = window_weak_details.upgrade() {
-            let bridge = window.global::<FileDetailsBridge>();
-            bridge.set_file_name(file.name.clone());
-            // Combine path and name for the full path
-            let full_path = std::path::Path::new(file.path.as_str()).join(file.name.as_str());
-            bridge.set_full_path(full_path.to_string_lossy().into_owned().into());
-            bridge.set_file_type(file.r#type.clone());
-            bridge.set_file_size(file.size.clone());
-            bridge.set_suspicion_details(file.suspicion_details.clone());
-            bridge.set_visible(true);
-        }
-    });
+    window
+        .global::<AnalysisResultBridge>()
+        .on_show_file_details(move |file| {
+            if let Some(window) = window_weak_details.upgrade() {
+                let bridge = window.global::<FileDetailsBridge>();
+                bridge.set_file_name(file.name.clone());
+                // Combine path and name for the full path
+                let full_path = std::path::Path::new(file.path.as_str()).join(file.name.as_str());
+                bridge.set_full_path(full_path.to_string_lossy().into_owned().into());
+                bridge.set_file_type(file.r#type.clone());
+                bridge.set_file_size(file.size.clone());
+                bridge.set_suspicion_details(file.suspicion_details.clone());
+                bridge.set_visible(true);
+            }
+        });
 
     details_bridge.on_open_containing_folder(move |path_str| {
         let path = Path::new(path_str.as_str());
@@ -396,7 +398,10 @@ fn update_suspicious_files_results(
 ) {
     println!("Actualizando lista de archivos sospechosos...");
     let suspicious_items = analysis_api.borrow().get_suspicious_files();
-    println!("Se encontraron {} archivos sospechosos.", suspicious_items.len());
+    println!(
+        "Se encontraron {} archivos sospechosos.",
+        suspicious_items.len()
+    );
 
     let suspicious_files: Vec<File> = suspicious_items
         .iter()
@@ -417,34 +422,20 @@ fn filter_files_by_profile(
     window_weak: &Weak<MainWindow>,
     all_filtered_files: &Rc<RefCell<Vec<File>>>,
 ) {
-    let mut filtered_files = vec![];
-    if profile_name == "Todos" {
-        let selected_profiles = get_selected_profiles(window_weak.clone());
-
-        for selected_profile in selected_profiles {
-            let filtered_paths = analysis_api
-                .borrow()
-                .deref()
-                .get_files_by_profile(&*selected_profile.label);
-
-            filtered_files.extend(filtered_paths
-                                      .iter()
-                                      .map(|p| create_file_from_path(p))
-                                      .collect::<Vec<File>>());
-        }
+    let filtered_paths = if profile_name == "Todos" {
+        analysis_api.borrow().get_all_matched_files()
     } else {
-        let filtered_paths = analysis_api
+        analysis_api
             .borrow()
             .deref()
-            .get_files_by_profile(profile_name);
+            .get_files_by_profile(profile_name)
+    };
 
-        filtered_files = filtered_paths
-            .iter()
-            .map(|p| create_file_from_path(p))
-            .collect::<Vec<File>>();
-    }
+    let filtered_files: Vec<File> = filtered_paths
+        .iter()
+        .map(|p| create_file_from_path(p))
+        .collect();
 
-    // Guardar TODOS los archivos filtrados (sin paginación)
     all_filtered_files.borrow_mut().clear();
     all_filtered_files.borrow_mut().extend(filtered_files);
 
@@ -456,7 +447,6 @@ fn filter_files_by_profile(
         bridge.set_current_page(1);
         update_pagination(&window.as_weak());
 
-        // Mostrar solo la primera página de los archivos filtrados
         update_page_results(&window.as_weak(), file_model, all_filtered_files);
     }
 
@@ -468,7 +458,6 @@ fn filter_files_by_profile(
 }
 
 fn create_file_from_path(path: &Path) -> File {
-    // Cache para extensiones comunes para evitar recálculos
     thread_local! {
         static EXTENSION_CACHE: RefCell<std::collections::HashMap<String, String>> = RefCell::new(std::collections::HashMap::new());
     }
