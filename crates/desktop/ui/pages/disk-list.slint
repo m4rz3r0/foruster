@@ -1,27 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { Button, VerticalBox, HorizontalBox, ScrollView, ListView } from "std-widgets.slint";
+import {
+    Button,
+    VerticalBox,
+    HorizontalBox,
+    ScrollView,
+    ListView,
+} from "std-widgets.slint";
 import { Styles } from "../styles.slint";
 import { DiskListBridge } from "../blocks/bridges.slint";
 
 export component DiskItem inherits Rectangle {
     height: icon.height + 40px;
     border-width: is_selected ? 2px : 1px;
-    border-color: is_selected
-        ? Styles.palette.primary-bg
-        : Styles.palette.element-border;
+    border-color: is_selected ? Styles.palette.primary-bg : Styles.palette.element-border;
     border-radius: 16px;
-    background: is_selected
-        ? Styles.palette.primary-bg
-        : ta.has-hover
-            ? Styles.palette.window-alter-bg
-            : Styles.palette.window-bg;
+    background: is_selected ? Styles.palette.primary-bg : ta.has-hover ? Styles.palette.window-alter-bg : Styles.palette.window-bg;
     drop-shadow-blur: is_selected ? 8px : 0px;
     drop-shadow-color: Styles.palette.primary-fg;
     drop-shadow-offset-x: 0px;
 
-    animate border-color, background, drop-shadow-blur {
-        duration: 200ms;
-    }
+    animate border-color, background, drop-shadow-blur { duration: 200ms; }
 
     callback toggle;
 
@@ -30,10 +28,10 @@ export component DiskItem inherits Rectangle {
         root.is_selected = !root.is_selected;
     }
 
-    in property <string> model: "No definido";
-    in property <string> size: "No definido";
-    in property <string> serial: "No definido";
-    in property <string> interface: "No definido";
+    in property <string> model: "Undefined";
+    in property <string> size: "Undefined";
+    in property <string> serial: "Undefined";
+    in property <string> interface: "Undefined";
     in property <int> partitions: 0;
     in property <int> mounted-partitions: 0;
 
@@ -73,22 +71,22 @@ export component DiskItem inherits Rectangle {
             }
 
             Text {
-                text: "Tipo: " + interface;
+                text: "Type: " + interface;
                 font-size: 16px;
             }
 
             Text {
-                text: "Tamaño: " + size;
+                text: "Size: " + size;
                 font-size: 16px;
             }
 
             Text {
-                text: "Número de serie: " + serial;
+                text: "Serial Number: " + serial;
                 font-size: 16px;
             }
 
             Text {
-                text: "Particiones: " + partitions + " (" + mounted-partitions + (mounted-partitions == 1 ? " analizable)" : " analizables)");
+                text: "Partitions: " + partitions + " (" + mounted-partitions + (mounted-partitions == 1 ? " analizable)" : " analizables)");
                 font-size: 16px;
             }
         }
@@ -118,37 +116,35 @@ export component DiskListPage {
 
         VerticalLayout {
             Text {
-                text: @tr("Análisis de discos");
+                text: @tr("Disk Analysis");
                 font-weight: Styles.weights.bold;
                 font-size: Styles.sizes.font * 1.5;
             }
 
             Text {
-                text: @tr("Seleccione los discos que desea analizar:");
+                text: @tr("Select the disks you want to analyze:");
                 color: Styles.palette.window-alter-fg;
             }
         }
-
 
         VerticalLayout {
             vertical-stretch: 1;
 
             ListView {
-                for disk[index] in DiskListBridge.disks:
-                    VerticalLayout {
-                        padding: Styles.sizes.p-md;
-                        DiskItem {
-                            model: disk.name;
-                            size: disk.size;
-                            serial: disk.serial;
-                            partitions: disk.partitions;
-                            mounted-partitions: disk.mounted-partitions;
-                            interface: disk.interface;
-                            is_selected: disk.selected;
+                for disk[index] in DiskListBridge.disks: VerticalLayout {
+                    padding: Styles.sizes.p-md;
+                    DiskItem {
+                        model: disk.name;
+                        size: disk.size;
+                        serial: disk.serial;
+                        partitions: disk.partitions;
+                        mounted-partitions: disk.mounted-partitions;
+                        interface: disk.interface;
+                        is_selected: disk.selected;
 
-                            toggle => {
-                                disk.selected = !disk.selected;
-                                update-button-enabled-status();
+                        toggle => {
+                            disk.selected = !disk.selected;
+                            update-button-enabled-status();
                         }
                     }
                 }
@@ -160,7 +156,7 @@ export component DiskListPage {
             alignment: center;
             analyzeButton := Button {
                 primary: true;
-                text: @tr("Analizar discos");
+                text: @tr("Analyze Disks");
                 enabled: false;
                 clicked => {
                     analyze-disks();

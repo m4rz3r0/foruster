@@ -1,5 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { VerticalBox, HorizontalBox, LineEdit, Button, ScrollView, ListView } from "std-widgets.slint";
+import {
+    VerticalBox,
+    HorizontalBox,
+    LineEdit,
+    Button,
+    ScrollView,
+    ListView,
+} from "std-widgets.slint";
 import { Styles } from "../styles.slint";
 import { PathManagementBridge } from "../blocks/bridges.slint";
 
@@ -36,7 +43,7 @@ component PathItem {
                 alignment: end;
 
                 Button {
-                    text: @tr("Editar");
+                    text: @tr("Modify");
                     width: 100px;
                     clicked => {
                         change-path(PathManagementBridge.browse-path())
@@ -44,14 +51,16 @@ component PathItem {
                 }
 
                 Button {
-                    text: @tr("Borrar");
+                    text: @tr("Delete");
                     width: 100px;
-                    clicked => { remove(); }
+                    clicked => {
+                        remove();
+                    }
                 }
             }
         }
 
-        if (redundant) : Rectangle {
+        if (redundant): Rectangle {
             background: Styles.palette.warn-bg;
             border-width: 1px;
             border-color: Styles.palette.element-border;
@@ -88,14 +97,14 @@ export component PathManagementPage {
             vertical-stretch: 0;
 
             Text {
-                text: @tr("Rutas a Analizar");
+                text: @tr("Path Analysis");
                 font-weight: Styles.weights.bold;
                 font-size: Styles.sizes.font * 1.5;
                 color: Styles.palette.window-fg;
             }
 
             Text {
-                text: @tr("Seleccione los directorios que serán analizados");
+                text: @tr("Select the directories to be analyzed");
                 font-size: Styles.sizes.font;
                 color: Styles.palette.window-alter-fg;
             }
@@ -104,13 +113,13 @@ export component PathManagementPage {
                 spacing: Styles.sizes.s-md;
 
                 path-text := LineEdit {
-                    placeholder-text: @tr("Ruta a analizar...");
+                    placeholder-text: @tr("Path to analyze...");
                     text <=> new-path;
                     enabled: false;
                 }
 
                 Button {
-                    text: @tr("Explorar...");
+                    text: @tr("Browse...");
                     clicked => {
                         path-text.text = PathManagementBridge.browse-path();
                     }
@@ -118,7 +127,7 @@ export component PathManagementPage {
                 }
 
                 Button {
-                    text: @tr("Añadir");
+                    text: @tr("Add");
                     clicked => {
                         if (new-path != "") {
                             PathManagementBridge.add-path(new-path);
@@ -138,7 +147,7 @@ export component PathManagementPage {
         }
 
         Text {
-            text: @tr("Rutas Actuales");
+            text: @tr("Current Paths");
             font-weight: 600;
             font-size: 16px;
             color: Styles.palette.window-fg;
@@ -147,7 +156,7 @@ export component PathManagementPage {
         VerticalLayout {
             vertical-stretch: 1;
             ListView {
-                for path_data[index] in PathManagementBridge.paths : VerticalLayout {
+                for path_data[index] in PathManagementBridge.paths: VerticalLayout {
                     padding: Styles.sizes.p-md;
 
                     PathItem {
@@ -173,18 +182,18 @@ export component PathManagementPage {
 
         VerticalLayout {
             vertical-stretch: 0;
-            if (PathManagementBridge.paths.length == 0) : Text {
-                text: @tr("Aún no hay rutas añadidas. Seleccione directorios para comenzar el análisis.");
+            if (PathManagementBridge.paths.length == 0): Text {
+                text: @tr("No paths added yet. Select directories to start analysis.");
                 color: Styles.palette.window-alter-fg;
             }
 
-            if (check-redundancies()) : Rectangle {
+            if (check-redundancies()): Rectangle {
                 background: Styles.palette.warn-bg;
                 border-radius: 4px;
 
                 HorizontalBox {
                     Text {
-                        text: @tr("Se han detectado ") + redundant-paths + @tr(" rutas redundantes. Revise las rutas añadidas.");
+                        text: @tr("Detected ") + redundant-paths + @tr(" redundant paths. Review added paths.");
                         color: Styles.palette.warn-fg;
                     }
                 }
@@ -198,7 +207,7 @@ export component PathManagementPage {
             HorizontalBox {
                 alignment: end;
                 Button {
-                    text: @tr("Analizar");
+                    text: @tr("Analyze");
                     primary: true;
                     enabled: PathManagementBridge.paths.length > 0 && !check-redundancies();
                     clicked => {

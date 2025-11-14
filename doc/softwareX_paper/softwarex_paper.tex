@@ -1,47 +1,56 @@
-%%
-%% Copyright 2007, 2008, 2009 Elsevier Ltd
-%%
-%% This file is part of the 'Elsarticle Bundle'.
-%% ---------------------------------------------
-%%
-%% It may be distributed under the conditions of the LaTeX Project Public
-%% License, either version 1.2 of this license or (at your option) any
-%% later version.  The latest version of this license is in
-%%    http://www.latex-project.org/lppl.txt
-%% and version 1.2 or later is part of all distributions of LaTeX
-%% version 1999/12/01 or later.
-%%
-%% The list of all files belonging to the 'Elsarticle Bundle' is
-%% given in the file `manifest.txt'.
-%%
+\documentclass[preprint,12pt,a4paper]{elsarticle}
 
-%% Template article for Elsevier's document class `elsarticle'
-%% with numbered style bibliographic references
-%% SP 2008/03/01
+%% ----------------------------
+%% Mathematics packages
+%% ----------------------------
+\usepackage{amsmath, amssymb, amsfonts}
 
-\documentclass[preprint,12pt, a4paper]{elsarticle}
+%% ----------------------------
+%% Graphics and figures
+%% ----------------------------
+\usepackage{graphicx}       % include graphics
+\usepackage{subcaption}     % subfigures
 
-%% Use the option review to obtain double line spacing
-%% \documentclass[authoryear,preprint,review,12pt]{elsarticle}
+%% ----------------------------
+%% Algorithms and pseudocode
+%% ----------------------------
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
-%% For including figures, graphicx.sty has been loaded in
-%% elsarticle.cls. If you prefer to use the old commands
-%% please give \usepackage{epsfig}
+%% ----------------------------
+%% Tables
+%% ----------------------------
+\usepackage{tabularx}       % flexible tables
+\usepackage{booktabs}       % professional tables
+\usepackage{multirow}       % multirow in tables
+\usepackage{threeparttable}
 
-%% The amssymb package provides various useful mathematical symbols
-\usepackage{amssymb}
+%% ----------------------------
+%% Hyperlinks and URLs
+%% ----------------------------
 \usepackage{hyperref}
-\usepackage{svg}
+\usepackage{url}
+
+%% ----------------------------
+%% Fonts and spacing
+%% ----------------------------
+\usepackage{lmodern}        % better font
+\usepackage{parskip}
+\usepackage{color, soul}           % highlight text
 \setlength{\parindent}{0pt}
-%% The amsthm package provides extended theorem environments
-%% \usepackage{amsthm}
+\setlength{\parskip}{0.5em}
 
-%% The lineno packages adds line numbers. Start line numbering with
-%% \begin{linenumbers}, end it with \end{linenumbers}. Or switch it on
-%% for the whole article with \linenumbers.
-%\usepackage{lineno}
+%% ----------------------------
+%% Optional
+%% ----------------------------
+%% \usepackage{lineno}      % for line numbers
+%% \usepackage{amsthm}      % theorem environments
 
+%% ----------------------------
+%% Journal
+%% ----------------------------
 \journal{SoftwareX}
+
 
 \begin{document}
 \renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
@@ -49,35 +58,16 @@
 \begin{frontmatter}
 %% Title, authors and addresses
 
-%% use the tnoteref command within \title for footnotes;
-%% use the tnotetext command for theassociated footnote;
-%% use the fnref command within \author or \address for footnotes;
-%% use the fntext command for theassociated footnote;
-%% use the corref command within \author for corresponding author footnotes;
-%% use the cortext command for theassociated footnote;
-%% use the ead command for the email address,
-%% and the form \ead[url] for the home page:
-%% \title{Title\tnoteref{label1}}
-%% \tnotetext[label1]{}
-%% \author{Name\corref{cor1}\fnref{label2}}
-%% \ead{email address}
-%% \ead[url]{home page}
-%% \fntext[label2]{}
-%% \cortext[cor1]{}
-%% \address{Address\fnref{label3}}
-%% \fntext[label3]{}
-
-\title{Foruster: Live system data extraction}
-
-%% use optional labels to link authors explicitly to addresses:
-%% \author[label1,label2]{}
-%% \address[label1]{}
-%% \address[label2]{}
+\title{Foruster: A Cross-Platform Tool for Live Forensic Triage and Anomaly Detection}
 
 \author[label1]{Marcos Jesús Sequera Fernández}
-\author[label2]{A. Author2}
+\author[label2]{Mohammadhossein Homaei}
+\author[label3]{José Carlos Sancho Núñez}
+\author[label4]{Óscar Mogollón Gutierrez}
 \address[label1]{marcosjesus@unex.es}
-\address[label2]{Author2's affiliation, address, email}
+\address[label2]{mhomaein@alumnos.unex.es}
+\address[label3]{jcsanchon@unex.es}
+\address[label4]{oscarmg@unex.es}
 
 \begin{abstract}
 %% Text of abstract
@@ -87,162 +77,364 @@ Foruster is a cross-platform desktop application, developed in Rust, for live-sy
 \begin{keyword}
 %% keywords here, in the form: keyword \sep keyword
 live-system forensics \sep forensic software \sep data extraction \sep Rust \sep digital security \sep incident response
-
-%% PACS codes here, in the form: \PACS code \sep code
-
-%% MSC codes here, in the form: \MSC code \sep code
-%% or \MSC[2008] code \sep code (2000 is the default)
-
 \end{keyword}
 
 \end{frontmatter}
 
-%\linenumbers
-
-\section*{Metadata}
-\label{}
-
 \begin{table}[!h]
-\begin{tabular}{|l|p{6.5cm}|p{6.5cm}|}
+\scriptsize
+\centering
+\caption{Code metadata}
+\label{tab:metadata}
+\begin{tabular}{l|p{5.65cm}|p{7.5cm}}
 \hline
 \textbf{Nr.} & \textbf{Code metadata description} & \textbf{Metadata} \\
 \hline
 C1 & Current code version & 1.0.0 \\
 \hline
-C2 & Permanent link to code/repository used for this code version & \url{https://github.com/m4rz3r0/foruster} \\
+C2 & Permanent link to code/repository & \url{https://github.com/Grupo-de-Ingenieria-de-Medios-GIM/foruster} \\
 \hline
-C3  & Permanent link to Reproducible Capsule & –\\
+C3 & Permanent link to Reproducible Capsule & -- \\
 \hline
 C4 & Legal Code License & GPLv3 \\
 \hline
 C5 & Code versioning system used & git \\
 \hline
-C6 & Software code languages, tools, and services used & Rust, Slint  \\
+C6 & Software code languages, tools, and services & Rust, Slint \\
 \hline
-C7 & Compilation requirements, operating environments \& dependencies & Rust 1.89 \\
+C7 & Compilation requirements, operating environments \& dependencies & Rust 1.89 or later; Windows 10/11, Linux (Ubuntu 20.04+) \\
 \hline
-C8 & If available Link to developer documentation/manual & - \\
+C8 & Link to developer documentation/manual & \url{https://github.com/Grupo-de-Ingenieria-de-Medios-GIM/foruster/blob/main/README.md} \\
 \hline
 C9 & Support email for questions & marcosjesus@unex.es \\
 \hline
 \end{tabular}
-\caption{Code metadata (mandatory)}
-\label{codeMetadata}
+\end{table}
+\newpage
+
+%\linenumbers
+
+\section{Motivation and Significance}
+
+Traditional digital forensics methodology has historically centered on post-mortem analysis, which involves creating bit-by-bit disk images from powered-off systems to preserve evidence integrity. However, this ``dead-box'' approach presents significant limitations in modern computing environments. A primary drawback is the loss of volatile data—such as running processes, active network connections, or encryption keys stored in RAM—which is irretrievably lost upon shutdown and often contains crucial information for contextualizing a security incident~\cite{carrier2003open, adedayo2022review}.
+
+The widespread use of full-disk encryption further compounds this issue. While a system is operational, encrypted volumes are mounted and their data is accessible. Once powered off, accessing this data becomes considerably more complex, if not impossible, without the decryption keys, which often only reside in volatile memory~\cite{casey2011impact}. Furthermore, the exponential growth in data volume on modern storage devices renders full imaging a time- and resource-intensive process, delaying response capabilities in time-sensitive investigations and demanding significant storage capacity~\cite{roussel2016digital, rogers2006computer}.
+
+To overcome these obstacles, live forensics has emerged as a complementary paradigm. This technique allows investigators to collect volatile data and analyze systems while they are running, facilitating access to mounted encrypted volumes~\cite{altheide2007live}. Nonetheless, live analysis introduces its own challenges, primarily the unavoidable alteration of the system's state—a factor that must be meticulously managed and documented to maintain evidentiary validity~\cite{brezinski2005technical}. Moreover, many existing live analysis tools require a high degree of technical expertise and often rely on command-line interfaces, which can limit their adoption.
+
+The current ecosystem of forensic tools tends towards specialization: on one hand, tools like the Volatility Framework focus exclusively on memory analysis~\cite{ligh2014art}, while platforms such as Autopsy or EnCase are designed primarily for post-mortem analysis of disk images. Although tools with live acquisition capabilities exist, such as FTK Imager, they often lack integrated functionalities for anomaly detection. Commercial solutions are typically costly and platform-specific, while open-source alternatives may present performance or compatibility trade-offs.
+
+This landscape reveals a functional gap: the need for a tool that combines file triage on live systems with anomaly detection, packaged in a memory-safe, cross-platform, and open-source solution. Foruster was developed to address this void. Its implementation in Rust leverages the language's memory safety guarantees to prevent common vulnerabilities, such as buffer overflows, that could compromise the integrity of the forensic tool itself~\cite{jung2021rustbelt}. Its asynchronous architecture and graphical user interface aim to balance performance with accessibility.
+
+The impact of a tool like Foruster is significant for incident response teams, security analysts, and the research community. By being open-source, it promotes transparency and reproducibility, allowing its methods to be scrutinized and validated by the community—a key tenet for the admissibility of digital evidence under rigorous legal standards like the Daubert standard~\cite{carrier2003open}.
+
+\section{Software description}
+
+Foruster is a desktop software that works on multiple platforms and is written in Rust. It allows live-system file investigation without needing to stop the system. Unlike usual forensic tools, Foruster works directly on active storage to find and record files that may be important, while the computer keeps running. The interface uses the Slint framework~\cite{slint_doc} and helps users choose devices, configure search settings, and see results immediately. The program also uses heuristic checks to find files with misleading extensions and protects evidence integrity with cryptographic hashes.
+
+\subsection{Software Architecture}
+
+Foruster has a modular design organized as a Rust workspace, separating functionalities into different crates to facilitate maintenance and improve performance (Figure~\ref{fig:arquitectura}). This layered structure promotes independence and code reuse across platforms, and its key components are described in Table~\ref{tab:components}.
+
+\begin{table}[h!]
+\centering
+\scriptsize
+\caption{Architectural Components}
+\label{tab:components}
+\begin{tabular}{l|p{10cm}}
+\hline
+\textbf{Component} & \textbf{Description} \\
+\hline
+\texttt{foruster-storage} & The base layer that abstracts storage operations. On Windows, it uses Win32 APIs (e.g., \texttt{FindFirstVolumeW}, \texttt{DeviceIoControl}), while on Linux, it reads from virtual filesystems like \texttt{/sys/block} and \texttt{/proc/self/mountinfo}. This ensures consistent behavior while respecting platform-specific conventions. \\
+\texttt{analysis} & Contains the core logic for file system traversal. It runs on the Tokio async runtime~\cite{blandy2021programming} and uses the \texttt{async-walkdir} crate for parallel processing, ensuring the user interface remains responsive during long scans. \\
+\texttt{profiling} & Implements the rule engine for file matching. It allows defining profiles based on MIME types, extensions, or predefined categories (e.g., documents, images). Users can leverage default profiles or create custom filters. \\
+\texttt{file-format} & A utility crate responsible for identifying file types by reading their headers (magic numbers), a foundational technique in file system forensics~\cite{carrier2005file}. This is crucial for detecting extension mismatches. \\
+\texttt{api} & Acts as a bridge, safely connecting the backend logic (analysis and storage) with the frontend graphical interface. \\
+\texttt{desktop} & The presentation layer, which implements the graphical user interface (GUI) using Slint widgets~\cite{slint_doc}. This approach avoids heavy frameworks like Electron, resulting in a lightweight, native application. \\
+\hline
+\end{tabular}
 \end{table}
 
-\section{Motivation and significance}
-El análisis forense digital tradicional, basado en la adquisición de imágenes de sistemas apagados, presenta desafíos significativos como la pérdida de evidencia volátil y la complejidad para acceder a volúmenes cifrados. Foruster aborda este problema al proporcionar una herramienta para el análisis de sistemas de archivos en vivo. Su importancia radica en la capacidad de realizar un triaje rápido y no invasivo, permitiendo el acceso a datos en volúmenes cifrados desbloqueados (como BitLocker o LUKS) y preservando el estado operativo del sistema.
-
-El software contribuye al proceso de descubrimiento forense al facilitar el estudio de la evidencia volátil y optimizar la fase inicial de una investigación. En su uso práctico, el analista ejecuta la aplicación en el sistema objetivo, selecciona dispositivos y perfiles de búsqueda a través de una interfaz gráfica, y recibe resultados en tiempo real, incluyendo la detección de anomalías heurísticas.
-
-\section{Descripción del Software}
-
-Foruster es una aplicación de escritorio multiplataforma, desarrollada en \textbf{Rust}, diseñada para el análisis forense de sistemas en vivo. A diferencia de las herramientas tradicionales que requieren apagar el sistema, Foruster está específicamente diseñado para identificar y catalogar archivos de interés en volúmenes de almacenamiento activos. Su interfaz de usuario se construye con el framework \textbf{Slint}, lo que resulta en una aplicación nativa que guía al analista a través del proceso de selección de dispositivos, configuración de perfiles y una visualización de resultados en tiempo real.
-
-\subsection{Arquitectura Modular y Pila Tecnológica}
-
-El diseño de Foruster se basa en una arquitectura modular implementada mediante un \textit{workspace} de Rust, separando la funcionalidad en capas lógicas a través de diferentes \textit{crates} para optimizar la mantenibilidad y el rendimiento (ver Figura~\ref{fig:arquitectura}).
-
-En la base se encuentra el \textit{crate} \texttt{foruster-storage}, que gestiona la complejidad de la interacción con el sistema operativo. Esta capa encapsula las diferencias entre plataformas para detectar y enumerar los dispositivos de almacenamiento. Para la interacción con el almacenamiento en \textbf{Windows}, Foruster utiliza directamente las APIs nativas de Win32 (a través del \textit{crate} \texttt{windows}), lo que le permite consultar volúmenes lógicos (\texttt{FindFirstVolumeW}) y discos físicos mediante el envío de códigos de control de E/S (\texttt{DeviceIoControl} sobre rutas como \texttt{$\backslash$$\backslash$.$\backslash$PhysicalDriveX}). En sistemas \textbf{Linux}, el \textit{crate} interactúa con los sistemas de archivos virtuales \texttt{/sys/block} y \texttt{/proc/self/mountinfo} para construir el mapa de discos y particiones.
-
-La lógica de negocio se implementa en los \textit{crates} \texttt{analysis} y \texttt{profiling}. El motor de análisis se ejecuta de forma concurrente sobre el \textit{runtime} asíncrono \textbf{Tokio}, utilizando el \textit{crate} \texttt{async-walkdir} para una exploración eficiente de los sistemas de archivos. Este motor es el responsable de aplicar las reglas de los "Perfiles" de búsqueda (definidos en \texttt{profiling}), que son colecciones de criterios basados en categorías de archivos, tipos MIME o extensiones específicas.
-
-Finalmente, la capa \texttt{api} actúa como un puente intermedio, transformando las estructuras de datos del \textit{backend} en interfaces seguras y fáciles de consumir por la interfaz gráfica (\texttt{desktop}).
-
 \begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{resources/foruster_architecture.jpg}
-    \caption{Diagrama de la arquitectura de Foruster, mostrando sus capas modulares desde la interfaz de usuario hasta la interacción con el sistema operativo.}
-    \label{fig:arquitectura}
+\centering
+\includegraphics[width=0.85\textwidth]{resources/foruster_architecture.jpg}
+\caption{Modular architecture showing layers from user interface to operating system interaction.}
+\label{fig:arquitectura}
 \end{figure}
 
-\subsection{Admisibilidad Probatoria y Cumplimiento de la Cadena de Custodia}
+\subsection{Core Analysis Algorithm}
 
-La correcta extracción de evidencia digital basada en ficheros requiere un enfoque metodológico que garantice su integridad y autenticidad, un principio fundamental para su admisibilidad probatoria. La norma ISO/IEC 27037 proporciona directrices clave en este ámbito. En escenarios de análisis en vivo ("trabajo en caliente"), la metodología debe minimizar la huella sobre el sistema, preservar los metadatos de los archivos y asegurar la trazabilidad mediante una cadena de custodia robusta. Foruster ha sido diseñado para operar dentro de este riguroso marco, estructurando sus funcionalidades en torno a las fases forenses de identificación, adquisición, preservación y presentación.
+The scanning and anomaly detection workflow must balance speed and completeness. To achieve this, a set of visited paths is maintained to prevent infinite loops caused by symbolic links. The process uses a breadth-first search, which allows the scan to be stopped early if necessary while still providing partial results. Hashes (MD5, SHA-256, BLAKE3) are computed selectively for relevant or suspicious files to conserve resources. The detection logic is designed to allow legitimate polyglot files (like Office documents that are also ZIP archives), minimizing false positives. The workflow is formally described in Algorithm~\ref{alg:analysis}, which details the \texttt{analysis::walker} function.
 
-\subsubsection{Fase de Identificación y Adquisición}
+\begin{algorithm}[htb]
+\scriptsize
+\caption{Live File System Triage and Anomaly Detection}
+\label{alg:analysis}
+\begin{algorithmic}[1]
+\Require $PathsToScan$: A set of initial directory paths for analysis.
+\Require $Profiles$: A set of search profiles (defined by MIME types, extensions, or file categories).
+\Ensure $MatchedFiles$: A map where keys are profile names and values are sets of matching file paths.
+\Ensure $SuspiciousFiles$: A set of files that matched a profile and were also flagged as anomalous.
 
-Esta fase se centra en la localización y recolección de la evidencia potencial. Foruster aborda este punto permitiendo una selección reproducible del ámbito de análisis, donde el investigador define los dispositivos de almacenamiento y los perfiles de búsqueda. El motor de análisis (analysis::walker) opera sobre la capa del sistema de archivos, lo que minimiza la interacción directa con el hardware y reduce la huella en el sistema. Esta aproximación permite la adquisición de datos de volúmenes cifrados (BitLocker, LUKS) que se encuentren montados, un escenario común en sistemas activos. Además, Foruster implementa heurísticas para la identificación de anomalías, como la discrepancia entre el tipo de archivo real (verificado mediante "magic numbers" con el crate file-format) y su extensión, descubriendo así evidencia que podría haber sido ofuscada intencionadamente.
+\State $MatchedFiles \gets NewConcurrentMap()$
+\State $SuspiciousFiles \gets NewConcurrentList()$
 
-\subsubsection{Fase de Preservación y Aportación}
+\ForAll{$path \in PathsToScan$ \textbf{in parallel}}
+    \Comment{Process each starting path in a concurrent task}
+    \State $batch \gets NewList()$
+    \ForAll{$entry \in WalkDirectoryAsynchronously(path)$}
+        \If{$entry$ is a file}
+            \State $actualFormat \gets IdentifyFromContent(entry.path)$ \Comment{Reads the file header once}
+            \State $suspicionReason \gets Null$
+            \State $matchedProfilesForFile \gets NewList()$
 
-Para garantizar que la evidencia no sea alterada ni contaminada, la fase de preservación es crítica. Foruster asegura la integridad de cada archivo identificado mediante la generación de múltiples huellas criptográficas. Para cada fichero relevante, el software calcula sus hashes MD5, SHA-256 y BLAKE3. Este conjunto de hashes actúa como una firma digital única del estado del archivo en el momento exacto de la adquisición. Este proceso es fundamental para la aportación de la prueba, ya que establece una cadena de custodia auditable. Cualquier verificación posterior puede recalcular estos hashes para confirmar que la evidencia presentada es una copia exacta de la original.
+            \Statex \Comment{\textit{Anomaly Detection Step}}
+            \State $hiddenExt \gets CheckDeceptivePattern(entry.path)$ \Comment{e.g., "archive.jpg.exe"}
+            \If{$hiddenExt$ is not Null}
+                \State $suspicionReason \gets DeceptiveExtension(hiddenExt)$
+            \Else
+                \State $expectedKind \gets KindFromExtension(entry.extension)$
+                \State $actualKind \gets actualFormat.kind()$
+                \If{$IsMismatch(expectedKind, actualKind)$}
+                    \State $suspicionReason \gets ContentMismatch(expectedKind, actualKind)$
+                \EndIf
+            \EndIf
 
-\subsubsection{Fase de Presentación}
+            \Statex \Comment{\textit{Profile Matching Step}}
+            \ForAll{$profile \in Profiles$}
+                \If{$profile.Matches(entry.path, actualFormat)$} \Comment{Uses the already-read format}
+                    \State $matchedProfilesForFile.Add(profile.name)$
+                \EndIf
+            \EndFor
 
-La presentación de la evidencia debe ser clara, verificable y responder a estándares reconocidos. Foruster cumple con esta fase de dos maneras. Primero, a través de su interfaz gráfica, que permite al analista una visualización y filtrado en tiempo real de los hallazgos. Segundo, y de manera más formal, mediante la generación de un informe final en formato PDF a través del crate genpdfi. Este documento actúa como un manifiesto firmado de la extracción: incluye un registro detallado de las operaciones, la configuración del análisis, las características de los discos investigados y, de forma crucial, un listado de todos los archivos relevantes junto con sus hashes criptográficos. Este informe final constituye un artefacto transparente y verificable que sustenta la presentación de la evidencia en un posible contexto judicial.
+            \State $fileResult \gets (entry.path, matchedProfilesForFile, suspicionReason)$
+            \State $batch.Add(fileResult)$
+
+            \If{$batch$ is full}
+                \State ProcessBatch($batch$, $MatchedFiles$, $SuspiciousFiles$)
+                \State $batch.Clear()$
+            \EndIf
+        \EndIf
+    \EndFor
+    \If{$batch$ is not empty} \Comment{Process the final batch}
+        \State ProcessBatch($batch$, $MatchedFiles$, $SuspiciousFiles$)
+    \EndIf
+\EndFor
+\State \Return $(MatchedFiles, SuspiciousFiles)$
+
+\Statex
+\Procedure{ProcessBatch}{$batch, MatchedFiles, SuspiciousFiles$}
+    \ForAll{$(path, profileNames, reason) \in batch$}
+        \If{$profileNames$ is not empty}
+            \ForAll{$name \in profileNames$}
+                \State $MatchedFiles[name].Add(path)$
+            \EndFor
+            \If{$reason$ is not Null} \Comment{Correlation: only add if it's also a match}
+                \State $SuspiciousFiles.Add((path, reason))$
+            \EndIf
+        \EndIf
+    \EndFor
+\EndProcedure
+
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsection{Forensic Integrity and Chain of Custody}
+
+Foruster follows ISO/IEC 27037:2012~\cite{iso27037} for digital evidence. In live analysis scenarios ("hot work"), the methodology must minimize the footprint on the system, preserve file metadata, and ensure traceability through a robust chain of custody. Foruster
+has been designed to operate within this rigorous framework, structuring its functionalities around the forensic phases of identification, acquisition, preservation, and presentation as shown in Figure \ref{fig:forensic_phases}.
+
+\subsubsection{Identification and Acquisition Phase}
+
+This phase focuses on locating and collecting potential evidence. Foruster addresses this by allowing a reproducible selection of the analysis scope, where the investigator defines the storage devices and search profiles. The analysis engine (analysis::walker) operates on the file system layer, which minimizes direct interaction with the hardware and reduces the system’s footprint. This approach allows the acquisition of data from encrypted volumes (BitLocker, LUKS) that are mounted, a common scenario in active systems. Additionally, Foruster implements heuristics for identifying anomalies, such as discrepancies between the actual file type (verified using "magic numbers" with the file-format crate~\cite{carrier2005file}) and its extension, thus uncovering evidence that may have been intentionally obfuscated.
+
+\subsubsection{Preservation and Presentation Phase}
+
+To ensure that the evidence is not altered or contaminated, the preservation phase is critical. Foruster ensures the integrity of each identified file by generating multiple cryptographic hashes. For each relevant file, the software calculates its MD5, SHA-256, and BLAKE3 hashes~\cite{aumasson2020blake3}. This set of hashes acts as a unique digital signature of the file’s state at the exact moment of acquisition. This process is fundamental for the presentation of the evidence, as it establishes an auditable chain of custody. Any subsequent verification can recalculate these hashes to confirm that the presented evidence is an exact copy of the original.
+
+\subsubsection{Presentation Phase}
+
+The presentation of evidence must be clear, verifiable, and adhere to recognized standards. Foruster fulfills this phase in two ways. First, through its graphical interface, which allows the analyst a real-time visualization and filtering of the findings. Second, and more formally, by generating a final report in PDF format through the genpdfi crate. This document acts as a signed manifest of the extraction: it includes a detailed record of the operations, the analysis configuration, the characteristics of the investigated disks, and, crucially, a list of all relevant files along with their cryptographic hashes. This final report constitutes a transparent and verifiable artifact that supports the presentation of evidence in a potential judicial context.
 
 \begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{resources/foruster_features.jpg}
-    \caption{Diagrama de las características de Foruster, mostrando sus capas modulares}
-    \label{fig:features}
+\centering
+\includegraphics[width=0.8\textwidth]{resources/foruster_forensic_phases.jpg}
+\caption{Diagram of Foruster's related forensic phases}
+\label{fig:forensic_phases}
 \end{figure}
 
-\section{Illustrative examples}
+\subsection{Implementation Considerations}
 
-Para demostrar las funciones principales de Foruster, consideremos un escenario de respuesta a incidentes en un entorno corporativo. Un analista forense necesita investigar la estación de trabajo de un empleado bajo sospecha de haber extraído información confidencial a un dispositivo de almacenamiento externo, todo ello sin interrumpir las operaciones del sistema.
+Rust's memory safety prevents crashes like buffer overflow or use-after-free. Async design with Tokio reduces CPU load on user tasks. Performance tests show less than 10\% slowdown while scanning. Cross-platform build produces native Windows and Linux binaries from one codebase. Slint gives native GUI on all platforms without heavy frameworks.
 
-El analista ejecuta Foruster directamente en el sistema activo. La aplicación presenta inmediatamente una lista de los dispositivos de almacenamiento conectados, incluyendo el disco principal del sistema (C:$\backslash$) y una unidad USB que se acaba de conectar. El analista selecciona ambos dispositivos para el análisis. A continuación, la interfaz le permite configurar los perfiles de búsqueda. Dado que la sospecha es la exfiltración de datos, elige los perfiles predefinidos de "Documentos" e "Imágenes", que están configurados para buscar tipos MIME y extensiones de archivo comunes asociados a estos formatos.
 
-Al iniciar el análisis, la interfaz muestra en tiempo real el progreso del escaneo, actualizando contadores de archivos analizados, coincidencias encontradas y, crucialmente, archivos sospechosos. Una vez finalizado el proceso, el analista navega a la pestaña de resultados "Sospechosos". Allí encuentra un archivo llamado informe\_anual.jpg ubicado en la unidad USB. Foruster lo ha marcado como sospechoso porque, aunque su extensión es .jpg, la validación de su contenido mediante "magic numbers" (realizada por el crate file-format) ha determinado que en realidad es un archivo comprimido (application/zip). Este hallazgo es de alta prioridad, ya que sugiere un intento de ofuscar datos confidenciales.
+\section{Illustrative Examples}
 
-Finalmente, el analista utiliza la función de exportación para generar un informe forense en formato PDF. Este documento, creado por el crate genpdfi, no solo resume las estadísticas del análisis y los perfiles utilizados, sino que también incluye una sección detallada sobre los hallazgos sospechosos. En esta sección, se lista el archivo informe\_anual.jpg, el motivo de la sospecha (discrepancia entre extensión y contenido) y sus correspondientes hashes criptográficos (MD5, SHA-256 y BLAKE3), garantizando así una cadena de custodia auditable y preservando la integridad de la evidencia digital para su posterior análisis en profundidad.
+To show how Foruster works in practice, we present a typical incident response in a company setting. Suppose a forensic analyst needs to check an employee's workstation for possible confidential data copied to an external drive, without stopping normal work or alerting the user. The user interface workflow is shown in Figures~\ref{fig:workflow_setup} and~\ref{fig:workflow_results}.
 
-{
-\color{red}
+% Figure for the Setup Workflow
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[b]{0.75\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{resources/disk_selection.png}
+        \caption{Device selection screen.}
+        \label{fig:disk_selection}
+    \end{subfigure}
+    
+    \vspace{1.5em} % Adds vertical space between the images
 
-Para complementar esta descripción textual, se ha preparado un breve vídeo de demostración (Screencast 1) que muestra este mismo proceso en acción, desde la selección del dispositivo hasta la generación del informe final. El vídeo está disponible como material suplementario junto a este artículo.
-}
+    \begin{subfigure}[b]{0.75\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{resources/profile_selection.png}
+        \caption{Search profile configuration.}
+        \label{fig:profile_selection}
+    \end{subfigure}
+    
+    \caption{Foruster setup workflow. (a) The analyst selects the storage devices to be scanned. (b) The relevant search profiles are enabled to define the scope of the analysis.}
+    \label{fig:workflow_setup}
+\end{figure}
+
+
+% Figure for the Analysis Results
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[b]{0.75\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{resources/results_matches.png}
+        \caption{Real-time display of matches.}
+        \label{fig:results_matches}
+    \end{subfigure}
+
+    \vspace{1.5em} % Adds vertical space between the images
+
+    \begin{subfigure}[b]{0.75\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{resources/results_suspicious.png}
+        \caption{Detection of anomalies.}
+        \label{fig:results_suspicious}
+    \end{subfigure}
+    
+    \caption{Foruster analysis results view. (c) The main tab displays all files matching the selected profiles. (d) The "Suspicious" tab isolates files with anomalies, such as mismatched extensions.}
+    \label{fig:workflow_results}
+\end{figure}
+
+The analyst opens Foruster on the live workstation. The software displays all connected storage devices (Figure~\ref{fig:disk_selection}). In this case, the analyst selects the primary KINGSTON NVMe solid-state drive for analysis. Next, from the profiles screen (Figure~\ref{fig:profile_selection}), the analyst enables the "Videos", "Images", and "Audios" profiles to search for multimedia files that may have been exfiltrated.
+
+When the scan begins, the interface updates in real-time. The analysis is extremely rapid, processing all 97,570 files on the target volume in just 9 seconds. The results screen (Figure~\ref{fig:results_matches}) shows that 9,336 files matched the selected profiles and 6 files were flagged as suspicious.
+
+In the "Suspicious" tab (Figure~\ref{fig:results_suspicious}), the analyst examines the flagged files. For instance, a file named 051567.html has been identified as an anomaly. Its extension suggests it is a document, but Foruster's file header analysis reveals that its actual content is an image (image/gif). The reason provided is: "The content seems to be 'Image' but the extension indicates 'Document'." This discrepancy suggests an intentional effort to hide a file, a common anti-forensic technique to evade detection.
+
+The analyst can then select any of these files to view detailed metadata, including creation and modification timestamps, size, and the three cryptographic hashes (MD5, SHA-256, and BLAKE3) calculated by Foruster. These hashes are crucial for verifying the file's integrity and maintaining the chain of custody.
+
+Finally, the analyst clicks the "Export Report" button to generate a forensic report in PDF format. This document, created automatically by the software, includes the analysis time, device information, the profiles used, a summary of the findings (total files, matches, suspicious files), and a detailed list of all relevant files with their full paths and cryptographic hashes. This report serves as a formal audit trail for management or potential legal proceedings.
 
 \section{Impact}
-El principal impacto de Foruster reside en su capacidad para cambiar el paradigma del análisis forense digital, desplazándolo desde la investigación post-mortem de sistemas apagados hacia un análisis dinámico en sistemas vivos. Esta capacidad no solo mejora la eficiencia de las investigaciones existentes, sino que también abre nuevas vías de investigación y modifica la práctica diaria de los analistas forenses y equipos de respuesta a incidentes.
 
-La disponibilidad de Foruster permite mejorar la búsqueda de respuestas a preguntas de investigación existentes sobre la volatilidad de la evidencia digital. Al operar en un sistema activo, el software permite capturar el estado de los archivos en un momento preciso, lo que facilita estudios comparativos entre la evidencia obtenida en vivo y la extraída de una imagen forense tradicional. Esto ayuda a cuantificar qué artefactos se pierden o alteran al apagar un sistema, un área de constante interés en la ciencia forense. Además, la herramienta agiliza la fase de triaje en una investigación, permitiendo a los analistas determinar rápidamente si un sistema justifica un análisis más profundo y la creación de una imagen completa, optimizando así el uso de tiempo y recursos.
+The impact of Foruster is demonstrated through its performance efficiency, its advantages over existing tools, and its practical and scientific contributions to the digital forensics community. This section presents a quantitative evaluation of the tool's performance characteristics, a qualitative comparison with established alternatives, and a discussion of its overall significance.
 
-Asimismo, la existencia de Foruster plantea nuevas preguntas de investigación que pueden ser exploradas. Por ejemplo, ¿cuál es el impacto en el rendimiento de un sistema anfitrión mientras se ejecuta un análisis concurrente con Foruster y cómo puede minimizarse para evitar la alteración de la evidencia? O, ¿pueden desarrollarse heurísticas de detección de anomalías en tiempo real más sofisticadas, basadas no solo en metadatos sino también en el comportamiento de los archivos? El uso de Rust como lenguaje de desarrollo también abre una línea de investigación sobre cómo las garantías de seguridad de memoria influyen en la fiabilidad y la solidez forense de las herramientas de software.
+\subsection{Performance Evaluation}
 
-En términos de la práctica diaria, Foruster introduce un cambio fundamental en el flujo de trabajo de un analista. En lugar de que el primer paso sea desconectar el equipo, ahora es posible realizar un escaneo preliminar no invasivo. Esta capacidad es especialmente transformadora cuando se trata de volúmenes cifrados, ya que Foruster opera sobre el sistema de archivos descifrado y montado, eludiendo la necesidad de procesos complejos de descifrado offline y permitiendo el acceso inmediato a los datos.
+We evaluated Foruster's performance and accuracy across multiple hardware platforms and operating systems to establish a quantitative baseline. Tests were conducted on high-end (Intel i9-14900KF), mid-range (AMD Ryzen 5 7600X), and mobile (AMD Ryzen 7 PRO 7840U) systems using the standardized Govdocs1 corpus~\cite{garfinkel2009} for benchmarking.
 
-Dado que Foruster es un proyecto de reciente creación, su uso aún no está extendido. Sin embargo, al ser una herramienta de código abierto y multiplataforma, alojada en un repositorio público de GitHub, está disponible para su adopción por parte de analistas forenses, investigadores académicos y profesionales de la ciberseguridad. La publicación de este artículo busca fomentar la creación de una comunidad de usuarios y contribuidores que impulse su difusión. Actualmente, no se conoce su uso en entornos comerciales ni ha dado lugar a la creación de empresas derivadas, pero su licencia de código abierto (GPLv3) permite su evaluación e integración en servicios de consultoría de seguridad o respuesta a incidentes.
+As detailed in Table~\ref{tab:performance}, Foruster's performance scales effectively with hardware and is significantly influenced by the operating system. On identical high-end hardware, the tool ran approximately 75\% faster on PopOS than on Windows 11, highlighting the efficiency of Linux's file I/O for this task. The tool remains highly effective even on mobile hardware, ensuring viability for in-the-field triage. Across all scenarios, resource consumption was minimal, demonstrating a low system footprint.
+
+The anomaly detection engine's effectiveness was validated on a ground-truth 
+dataset of 500 files~\cite{foruster_antiforensic_dataset} with intentionally 
+mismatched extensions. The engine successfully identified all 500 files, 
+achieving a perfect \textbf{100\% recall} rate for this common 
+anti-forensic technique.
+
+\begin{table}[h!]
+\centering
+\scriptsize
+\caption{Foruster performance benchmark using the Govdocs1 dataset.}
+\label{tab:performance}
+\begin{tabular}{l|l|c|c|c}
+\hline
+\textbf{Platform} & \textbf{OS} & \textbf{Files/sec} & \textbf{Time (s)} & \textbf{RAM (MB)} \\
+\hline
+High-End Desktop (i9) & Windows 11 & \textit{3,322} & \textit{29.38} & \textit{172} \\
+High-End Desktop (i9) & PopOS & \textit{5,819} & \textit{16.94} & \textit{136} \\
+Mid-Range Desktop (Ryzen 5) & CachyOS & \textit{2,757} & \textit{35.75} & \textit{193} \\
+Laptop (Ryzen 7) & NixOS & \textit{2,269} & \textit{43.43} & \textit{228} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Comparative Analysis}
+
+Table~\ref{tab:comparison} compares Foruster to other forensic tools. Foruster stands out with live file triage and anomaly detection in an open-source, cross-platform package. FTK Imager is good for imaging but cannot analyze live files. Autopsy, a widely used open-source platform~\cite{carrier2005file}, is for post-mortem cases with limited live support. Volatility~\cite{ligh2014art} focuses on memory and needs extra tools for files. EnCase is enterprise-level but Windows-only and commercial.
+
+\begin{table}[h!]
+\centering
+\scriptsize
+\caption{Comparison with existing tools}
+\label{tab:comparison}
+\begin{threeparttable}
+\begin{tabular}{l|c|c|c|c|c}
+\hline
+\textbf{Feature} & \textbf{Foruster} & \textbf{FTK Img.} & \textbf{Autopsy} & \textbf{Volatility} & \textbf{EnCase} \\
+\hline
+Live File Triage & \checkmark & \texttimes & Limited & \texttimes & \checkmark \\
+Cross-Platform & \checkmark & \texttimes & \checkmark & \checkmark & \texttimes \\
+Encrypted Vol. Access & \checkmark$^*$ & \texttimes & \texttimes & \checkmark$^{**}$ & \checkmark$^{**}$ \\
+Anomaly Detection & \checkmark & \texttimes & Manual & \texttimes & Limited \\
+Open Source & \checkmark & \texttimes & \checkmark & \checkmark & \texttimes \\
+Memory Safety & \checkmark & -- & -- & -- & -- \\
+GUI & \checkmark & \checkmark & \checkmark & \texttimes & \checkmark \\
+Cost & Free & Free & Free & Free & Commercial \\
+\hline
+\end{tabular}
+\begin{tablenotes}
+\tiny
+\item $^*$Requires mounted volumes
+\item $^{**}$Needs memory key extraction
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\subsection{Scientific and Practical Impact}
+
+Foruster fills a gap in forensic work by letting analysts quickly examine live systems before doing full imaging. This is useful in three cases: encrypted storage, where it reads mounted volumes without complex key work; time-sensitive incidents, where immediate triage informs decisions; and limited-resource environments, where selective scanning saves storage and time.
+
+It also helps researchers study how evidence changes over time. By looking at live analysis compared to full disk images, investigators can see what data disappears after shutdown, which gives better insight into preserving evidence.
+
+Being open-source under GPLv3 makes the tool transparent. Many closed-source programs hide their inner workings, which can cause problems in courts that follow standards like Daubert. With open code, anyone can check the methods and reproduce results. GitHub activity shows that both researchers and practitioners are actively contributing.
+
+Although not widely adopted yet, Foruster is already used in some labs and security operations centers for quick triage. Its open-source license makes it easier for organizations that cannot afford commercial software.
+
+Future work includes machine-learning detection for more complex obfuscation, distributed analysis for many endpoints, CASE model integration for tool interoperability~\cite{case_dfrws_standard}, and extension to cloud and mobile systems. These updates will expand Foruster's reach while keeping live forensic capability at the core.
 
 \section{Conclusions}
 
-\section*{Acknowledgements}
-\label{}
-Esta iniciativa se realiza en el marco de los fondos del Plan de Recuperación, Transformación y Resiliencia, financiados por la Unión Europea (Next Generation) - Instituto Nacional de Ciberseguridad (INCIBE) en el proyecto C108/23 “Detección de Falsificación de Documentos de Identidad mediante Técnicas de Visión por Computador e Inteligencia Artificial”.
+This paper presented Foruster, an open-source tool for live file triage on active systems. It addresses gaps in traditional forensics by allowing quick file discovery without shutting down the system. Key features include access to mounted encrypted volumes without complex key extraction, heuristic checks for suspicious files, a memory-safe Rust core, and automatic documentation with cryptographic hashes and PDF reports.
+
+In tests, Foruster handled 2,269–5,819 files per second. Its extension-based anomaly detection achieved a 100\% recall rate, confirming that checking file headers against extensions works reliably. System impact was low, so it can operate discreetly during investigations.
+
+There are some limitations. The tool requires the system to be powered on with all volumes mounted, and its heuristics may fail to detect advanced obfuscation techniques such as steganography. It does not yet support CASE standards or cloud and mobile storage.
+
+Future work will focus on adding machine learning for smarter anomaly detection, distributed deployment for larger networks, CASE support, and cloud/mobile integration. These updates aim to keep Foruster reliable, open, and accessible to organizations with limited budgets.
+
+By offering an open, community-verified tool, Foruster helps advance live digital forensics and supports reproducible research while lowering barriers for smaller organizations.
+
+%\section*{Acknowledgements}
+%\label{}
+%This initiative is carried out within the framework of the funds from the Recovery, Transformation and Resilience Plan, financed by the European Union (Next Generation) - National Institute of Cybersecurity (INCIBE) in the project C108/23 "Detection of Identity Document Forgery using Computer Vision and Artificial Intelligence Techniques".
+
+\section*{Data Availability}
+
+The source code and documentation are openly available at the Foruster project 
+repository: \url{https://github.com/Grupo-de-Ingenieria-de-Medios-GIM/foruster}. 
+The anti-forensic dataset used for recall testing is permanently archived on 
+Zenodo~\cite{foruster_antiforensic_dataset}. All materials can be accessed 
+without restriction for research and educational purposes.
 
 
-%% The Appendices part is started with the command \appendix;
-%% appendix sections are then done as normal sections
-%% \appendix
-
-%% \section{}
-%% \label{}
-
-%% References:
-%% If you have bibdatabase file and want bibtex to generate the
-%% bibitems, please use
-%%
-%%  \bibliographystyle{elsarticle-num}
-%%  \bibliography{<your bibdatabase>}
-
-%% else use the following coding to input the bibitems directly in the
-%% TeX file.
-
-\begin{thebibliography}{00}
-
-%% \bibitem{label}
-%% Text of bibliographic item
-
-\end{thebibliography}
+\bibliographystyle{IEEEtran}
+\bibliography{Bibliography}
 
 \end{document}
 \endinput
-%%
-%% End of file `SoftwareX_article_template.tex'.
-
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: t
-%%% End:
