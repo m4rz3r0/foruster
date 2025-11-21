@@ -303,8 +303,18 @@ impl Walker {
                         self.files.push(path.clone());
                         self.analyzed_files += 1;
 
-                        let format_result = FileFormat::from_file(&path);
-                        let suspicion_reason = is_file_suspicious(&path, &format_result);
+                        let path_clone = path.clone();
+                        let analysis_result = tokio::task::spawn_blocking(move || {
+                            let format_result = FileFormat::from_file(&path_clone);
+                            let suspicion = is_file_suspicious(&path_clone, &format_result);
+                            (format_result, suspicion)
+                        })
+                        .await
+                        .unwrap_or_else(|e| {
+                            (Err(std::io::Error::new(std::io::ErrorKind::Other, e)), None)
+                        });
+
+                        let (format_result, suspicion_reason) = analysis_result;
                         let format_opt = format_result.ok();
 
                         let matched_profiles: Vec<String> = if let Some(profiles) = profiles {
