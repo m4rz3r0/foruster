@@ -38,7 +38,7 @@ fn safe_layout_cast(buffer: &[u8]) -> Option<&DRIVE_LAYOUT_INFORMATION_EX> {
 
     // Verify buffer align
     let align = align_of::<DRIVE_LAYOUT_INFORMATION_EX>();
-    if (buffer.as_ptr() as usize) % align != 0 {
+    if !(buffer.as_ptr() as usize).is_multiple_of(align) {
         return None;
     }
 

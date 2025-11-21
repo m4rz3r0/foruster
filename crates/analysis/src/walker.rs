@@ -144,20 +144,13 @@ static EXT_TO_KIND_MAP: Lazy<HashMap<&'static str, Kind>> = Lazy::new(|| {
 /// This detects attempts to hide a file's true nature from users who might have
 /// "hide known extensions" enabled.
 fn has_suspicious_extension_pattern(path: &Path) -> Option<String> {
-    let filename = match path.file_name().and_then(|s| s.to_str()) {
-        Some(name) => name,
-        None => return None,
-    };
+    let filename = path.file_name().and_then(|s| s.to_str())?;
     let parts: Vec<&str> = filename.split('.').collect();
     if parts.len() < 3 {
         return None;
     }
     let middle_ext = parts[parts.len() - 2].to_lowercase();
     if EXT_TO_KIND_MAP.contains_key(middle_ext.as_str()) {
-        println!(
-            "Suspicious extension pattern detected: {:?} (hidden extension '.{}')",
-            path, middle_ext
-        );
         return Some(middle_ext);
     }
     None
@@ -167,7 +160,6 @@ fn is_file_suspicious(
     path: &Path,
     format_result: &Result<FileFormat, std::io::Error>,
 ) -> Option<SuspicionReason> {
-    println!("Checking file: {:?}", path);
     if let Some(hidden_ext) = has_suspicious_extension_pattern(path) {
         return Some(SuspicionReason::DeceptiveExtension { hidden_ext });
     }
@@ -179,8 +171,6 @@ fn is_file_suspicious(
 
     let detected_kind = format.kind();
 
-    println!("Detected kind: {:?}", detected_kind);
-
     let expected_kind = match path
         .extension()
         .and_then(|s| s.to_str())
@@ -189,8 +179,6 @@ fn is_file_suspicious(
         Some(kind) => *kind,
         None => return None,
     };
-
-    println!("Expected kind: {:?}", expected_kind);
 
     if detected_kind != expected_kind {
         let is_office_archive_exception = matches!(
@@ -207,10 +195,6 @@ fn is_file_suspicious(
             return None;
         }
 
-        println!(
-            "Suspicious content mismatch detected: {:?}, extension implies {:?}, but content is {:?}",
-            path, expected_kind, detected_kind
-        );
         return Some(SuspicionReason::ContentMismatch {
             expected: expected_kind,
             actual: detected_kind,
@@ -311,7 +295,7 @@ impl Walker {
                         })
                         .await
                         .unwrap_or_else(|e| {
-                            (Err(std::io::Error::new(std::io::ErrorKind::Other, e)), None)
+                            (Err(std::io::Error::other(e)), None)
                         });
 
                         let (format_result, suspicion_reason) = analysis_result;

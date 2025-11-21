@@ -163,11 +163,10 @@ impl Engine {
                                 let current_suspicious = suspicious_count.fetch_add(batch_suspicious_count, Ordering::Relaxed) + batch_suspicious_count;
 
                                 // Add the newly found suspicious files to the main list
-                                if batch_suspicious_count > 0 {
-                                    if let Ok(mut suspicious_list) = suspicious_files.try_write() {
+                                if batch_suspicious_count > 0
+                                    && let Ok(mut suspicious_list) = suspicious_files.try_write() {
                                         suspicious_list.extend(new_suspicious_files_in_batch);
                                     }
-                                }
 
                                 if batch.total_processed > total_files_estimated.load(Ordering::Relaxed) {
                                     total_files_estimated.store(batch.total_processed, Ordering::Relaxed);

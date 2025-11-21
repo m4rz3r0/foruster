@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use once_cell::sync::Lazy;
-use slint::{Image as SlintImage, Rgba8Pixel, SharedPixelBuffer};
+use slint::{Rgba8Pixel, SharedPixelBuffer};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::RwLock;

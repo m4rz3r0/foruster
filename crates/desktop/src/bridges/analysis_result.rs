@@ -150,11 +150,10 @@ pub fn setup(
     let analysis_api_clone = analysis_api.clone();
     let storage_api_clone = storage_api.clone(); // <-- Clone storage_api
     bridge.on_export_report(move || {
-        println!("Generating PDF report...");
-        match pdf_report::generate_pdf_report(analysis_api_clone.clone(), storage_api_clone.clone())
+        if let Err(e) =
+            pdf_report::generate_pdf_report(analysis_api_clone.clone(), storage_api_clone.clone())
         {
-            Ok(_) => println!("PDF report generated successfully."),
-            Err(e) => eprintln!("Error generating PDF report: {}", e),
+            eprintln!("Error generating PDF report: {}", e);
         }
     });
 
@@ -200,7 +199,7 @@ pub fn setup(
     let window_weak = window.as_weak();
     bridge.on_go_back(move || {
         if let Some(_window) = window_weak.upgrade() {
-            println!("Navegando hacia atrás...");
+            // TODO: Implement back navigation logic
         }
     });
 
@@ -270,48 +269,44 @@ pub fn setup(
     let suspicious_files_model_clone = suspicious_files_model.clone();
     bridge.on_update_progress(move || {
         if let Some(window) = window_weak.upgrade()
-            && let Ok(progress) = analysis_api_clone.borrow().deref().get_progress() {
-                let bridge = window.global::<AnalysisResultBridge>();
+            && let Ok(progress) = analysis_api_clone.borrow().deref().get_progress()
+        {
+            let bridge = window.global::<AnalysisResultBridge>();
 
-                // Actualizar contadores
-                bridge.set_analyzed_files(progress.analyzed_files.to_string().into());
-                bridge.set_total_files(progress.total_files.to_string().into());
-                bridge.set_matched_files(progress.matched_files.to_string().into());
-                bridge.set_suspicious_files(progress.suspicious_files.to_string().into());
-                bridge.set_analysis_time(format_duration(progress.elapsed_time).into());
+            // Actualizar contadores
+            bridge.set_analyzed_files(progress.analyzed_files.to_string().into());
+            bridge.set_total_files(progress.total_files.to_string().into());
+            bridge.set_matched_files(progress.matched_files.to_string().into());
+            bridge.set_suspicious_files(progress.suspicious_files.to_string().into());
+            bridge.set_analysis_time(format_duration(progress.elapsed_time).into());
 
-                // Actualizar estado
-                let state_text = match progress.state {
-                    AnalysisState::Idle => "Inactivo",
-                    AnalysisState::Walking => "Escaneando archivos...",
-                    AnalysisState::Analyzing => "Analizando archivos...",
-                    AnalysisState::Done => "Análisis completado",
-                };
-                bridge.set_analysis_state(state_text.into());
+            // Actualizar estado
+            let state_text = match progress.state {
+                AnalysisState::Idle => "Inactivo",
+                AnalysisState::Walking => "Escaneando archivos...",
+                AnalysisState::Analyzing => "Analizando archivos...",
+                AnalysisState::Done => "Análisis completado",
+            };
+            bridge.set_analysis_state(state_text.into());
 
-                bridge.set_progress_percentage(progress.overall_percentage() as i32);
+            bridge.set_progress_percentage(progress.overall_percentage() as i32);
 
-                let error_files = progress.total_files.saturating_sub(progress.analyzed_files);
-                bridge.set_error_files(error_files.to_string().into());
+            let error_files = progress.total_files.saturating_sub(progress.analyzed_files);
+            bridge.set_error_files(error_files.to_string().into());
 
-                if matches!(progress.state, AnalysisState::Done) {
-                    update_file_results(&file_results_model_clone, &analysis_api_clone, &window.as_weak());
-                    update_suspicious_files_results(&suspicious_files_model_clone, &analysis_api_clone, &window.as_weak());
-                }
-
-                // Debug logging (solo para eventos importantes)
-                if progress.analyzed_files % 1000 == 0 || matches!(progress.state, AnalysisState::Done) {
-                    println!(
-                        "Progreso: total={} analizados={} coincidencias={} errores={} tiempo={} estado={:?}",
-                        progress.total_files,
-                        progress.analyzed_files,
-                        progress.matched_files,
-                        error_files,
-                        format_duration(progress.elapsed_time),
-                        progress.state
-                    );
-                }
+            if matches!(progress.state, AnalysisState::Done) {
+                update_file_results(
+                    &file_results_model_clone,
+                    &analysis_api_clone,
+                    &window.as_weak(),
+                );
+                update_suspicious_files_results(
+                    &suspicious_files_model_clone,
+                    &analysis_api_clone,
+                    &window.as_weak(),
+                );
             }
+        }
     });
 
     let details_bridge = window.global::<FileDetailsBridge>();
@@ -396,12 +391,7 @@ fn update_suspicious_files_results(
     analysis_api: &Rc<RefCell<AnalysisAPI>>,
     _window_weak: &Weak<MainWindow>,
 ) {
-    println!("Actualizando lista de archivos sospechosos...");
     let suspicious_items = analysis_api.borrow().get_suspicious_files();
-    println!(
-        "Se encontraron {} archivos sospechosos.",
-        suspicious_items.len()
-    );
 
     let suspicious_files: Vec<File> = suspicious_items
         .iter()
@@ -449,12 +439,6 @@ fn filter_files_by_profile(
 
         update_page_results(&window.as_weak(), file_model, all_filtered_files);
     }
-
-    println!(
-        "Filtrado: {} archivos para el perfil '{}'",
-        all_filtered_files.borrow().len(),
-        profile_name
-    );
 }
 
 fn create_file_from_path(path: &Path) -> File {
@@ -538,8 +522,6 @@ fn search_files(
         return;
     }
 
-    println!("Buscando archivos: '{}'", search_term);
-
     let search_results = analysis_api
         .borrow()
         .deref()
@@ -565,12 +547,6 @@ fn search_files(
         // Mostrar solo la primera página de los resultados de búsqueda
         update_page_results(&window.as_weak(), file_model, all_filtered_files);
     }
-
-    println!(
-        "Búsqueda: '{}' - {} resultados",
-        search_term,
-        all_filtered_files.borrow().len()
-    );
 }
 
 fn save_analysis_state(progress: &api::AnalysisProgress) {
@@ -592,13 +568,9 @@ fn save_analysis_state(progress: &api::AnalysisProgress) {
             chrono::Utc::now().format("%Y%m%d_%H%M%S")
         ))
         .save_file()
-    {
-        if let Err(e) = std::fs::write(&path, serde_json::to_string_pretty(&state_data).unwrap()) {
+        && let Err(e) = std::fs::write(&path, serde_json::to_string_pretty(&state_data).unwrap()) {
             eprintln!("Error guardando estado: {}", e);
-        } else {
-            println!("Estado guardado en: {:?}", path);
         }
-    }
 }
 
 fn update_file_results(
@@ -613,12 +585,6 @@ fn update_file_results(
         window_weak,
         &Rc::new(RefCell::new(Vec::<File>::new())),
     );
-
-    let stats = analysis_api.borrow().deref().get_profile_statistics();
-    println!("Estadísticas de perfiles:");
-    for (profile, count) in stats {
-        println!("  {}: {} archivos", profile, count);
-    }
 }
 
 fn update_pagination(window_weak: &Weak<MainWindow>) {
@@ -674,15 +640,6 @@ fn update_page_results(
 
         // Actualizar la paginación
         update_pagination(&window.as_weak());
-
-        println!(
-            "Mostrando página {} de {}: elementos {} a {} de {} totales",
-            current_page,
-            bridge.get_total_pages(),
-            start_index + 1,
-            end_index,
-            total_files
-        );
     }
 }
 

@@ -478,7 +478,6 @@ pub fn generate_pdf_report(
     let suspicious_files = analysis.get_suspicious_files();
 
     // 3. Build Report
-    println!("Initializing PDF Report...");
     let mut report = ForensicReport::new()?;
 
     report.render_title();
@@ -490,7 +489,6 @@ pub fn generate_pdf_report(
 
     // 4. Save
     report.save(path)?;
-    println!("PDF report generated successfully.");
 
     Ok(())
 }

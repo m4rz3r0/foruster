@@ -36,7 +36,7 @@ unsafe extern "system" fn notification_callback(
     action: CM_NOTIFY_ACTION,
     _event_data: *const CM_NOTIFY_EVENT_DATA,
     _flags: u32,
-) -> u32 {
+) -> u32 { unsafe {
     let ctx = &*(context as *const CallbackContext);
     let event = match action {
         CM_NOTIFY_ACTION_DEVICEINTERFACEARRIVAL => Some(DeviceEvent::Added),
@@ -49,7 +49,7 @@ unsafe extern "system" fn notification_callback(
     } else {
         1
     }
-}
+}}
 
 impl Default for DeviceEventListener {
     fn default() -> Self {
@@ -95,11 +95,10 @@ impl DeviceEventListener {
     pub fn poll_event(&mut self) -> Option<DeviceEvent> {
         while let Ok(event) = self.event_receiver.try_recv() {
             let now = Instant::now();
-            if let Some(&last_time) = self.recent_events.get(&event) {
-                if now.duration_since(last_time) < self.debounce_duration {
+            if let Some(&last_time) = self.recent_events.get(&event)
+                && now.duration_since(last_time) < self.debounce_duration {
                     continue;
                 }
-            }
             self.recent_events.insert(event, now);
             return Some(event);
         }

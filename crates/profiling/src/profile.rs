@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use crate::profile_style::{IconSource, ProfileStyle};
-use file_format::{FileFormat, Kind};
+use file_format::FileFormat;
 use std::path::Path;
 
 #[derive(Debug, Clone, PartialEq)]
