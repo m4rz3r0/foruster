@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+[package]
+name = "storage"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.99"
+num_enum = "0.7.4"
+
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.62.0", features = [
+    "Win32_Foundation",
+    "Win32_Storage_FileSystem",
+    "Win32_Storage_Nvme",
+    "Win32_Security",
+    "Win32_System_IO",
+    "Win32_System_Ioctl",
+    "Win32_Devices_DeviceAndDriverInstallation"
+] }

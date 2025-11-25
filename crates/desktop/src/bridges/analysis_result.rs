@@ -14,9 +14,9 @@ use std::rc::Rc;
 
 use crate::cache::thumbnail_cache;
 use crate::cache::thumbnail_cache::CachedThumbnail;
-use crate::pdf_report;
 use app_core::format_size;
 use image::ImageReader;
+use reporting::pdf_report;
 use slint::Image as SlintImage;
 use slint::SharedPixelBuffer;
 use std::io::Cursor;
@@ -568,9 +568,10 @@ fn save_analysis_state(progress: &api::AnalysisProgress) {
             chrono::Utc::now().format("%Y%m%d_%H%M%S")
         ))
         .save_file()
-        && let Err(e) = std::fs::write(&path, serde_json::to_string_pretty(&state_data).unwrap()) {
-            eprintln!("Error guardando estado: {}", e);
-        }
+        && let Err(e) = std::fs::write(&path, serde_json::to_string_pretty(&state_data).unwrap())
+    {
+        eprintln!("Error guardando estado: {}", e);
+    }
 }
 
 fn update_file_results(

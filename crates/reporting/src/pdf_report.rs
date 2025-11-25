@@ -9,11 +9,10 @@ use std::rc::Rc;
 
 use api::{AnalysisAPI, AnalysisSummary, StorageAPI};
 use genpdfi::{
-    Context, Document, Element, PaperSize, Position, RenderResult, SimplePageDecorator,
     elements as E,
     elements::IntoBoxedElement,
     fonts::{FontData, FontFamily as GenFontFamily},
-    style as S,
+    style as S, Context, Document, Element, PaperSize, Position, RenderResult, SimplePageDecorator,
 };
 use md5::{Digest, Md5};
 use sha2::Sha256;
@@ -186,10 +185,10 @@ pub struct ForensicReport {
 impl ForensicReport {
     pub fn new() -> Result<Self, Box<dyn std::error::Error>> {
         // Load embedded fonts
-        let font_regular = include_bytes!("../ui/assets/fonts/Roboto-Regular.ttf");
-        let font_bold = include_bytes!("../ui/assets/fonts/Roboto-Bold.ttf");
-        let font_italic = include_bytes!("../ui/assets/fonts/Roboto-Italic.ttf");
-        let font_bold_italic = include_bytes!("../ui/assets/fonts/Roboto-BoldItalic.ttf");
+        let font_regular = include_bytes!("../fonts/Roboto-Regular.ttf");
+        let font_bold = include_bytes!("../fonts/Roboto-Bold.ttf");
+        let font_italic = include_bytes!("../fonts/Roboto-Italic.ttf");
+        let font_bold_italic = include_bytes!("../fonts/Roboto-BoldItalic.ttf");
 
         let font_family = GenFontFamily {
             regular: FontData::new(font_regular.to_vec(), None)?,

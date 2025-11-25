@@ -8,8 +8,7 @@ rust-version.workspace = true
 
 [dependencies]
 app_core = { path = "../core" }
-# foruster-storage = { git = "ssh://git@git.disroot.org/m4rz3r0/foruster-storage.git" }
-foruster-storage = { path = "../foruster-storage" }
+storage = { path = "../storage" }
 profiling = { path = "../profiling" }
 analysis = { path = "../analysis" }
 tokio = { version =  "1.47.1", features = ["full"]  }

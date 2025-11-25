@@ -3,7 +3,7 @@ mod analysis_api;
 mod profile_api;
 mod storage_api;
 
-pub use foruster_storage::core::Disk;
+pub use storage::core::Disk;
 
 pub use analysis_api::{AnalysisAPI, AnalysisProgress, AnalysisSummary};
 pub use profile_api::ProfileAPI;

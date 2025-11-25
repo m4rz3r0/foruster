@@ -3,10 +3,10 @@ use std::cell::RefCell;
 use std::path::PathBuf;
 use std::rc::Rc;
 #[cfg(windows)]
-use foruster_storage::platform::DeviceEventListener;
-use foruster_storage::platform::storage_devices;
+use storage::platform::DeviceEventListener;
+use storage::platform::storage_devices;
 
-pub use foruster_storage::core::Disk;
+pub use storage::core::Disk;
 
 pub struct StorageAPI {
     #[cfg(windows)]
