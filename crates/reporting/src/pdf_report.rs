@@ -14,8 +14,8 @@ use genpdfi::{
     fonts::{FontData, FontFamily as GenFontFamily},
     style as S, Context, Document, Element, PaperSize, Position, RenderResult, SimplePageDecorator,
 };
-use md5::{Digest, Md5};
-use sha2::Sha256;
+use md5::{Digest as Md5Digest, Md5};
+use sha2::{Digest as Sha256Digest, Sha256};
 use unicode_segmentation::UnicodeSegmentation;
 
 // ============================================================================
@@ -141,13 +141,13 @@ fn calculate_hashes(path: &Path) -> io::Result<FileHashes> {
         if count == 0 {
             break;
         }
-        md5_hasher.update(&buffer[..count]);
+        md5_hasher.input(&buffer[..count]);
         sha256_hasher.update(&buffer[..count]);
         blake3_hasher.update(&buffer[..count]);
     }
 
     Ok(FileHashes {
-        md5: hex::encode(md5_hasher.finalize()),
+        md5: hex::encode(md5_hasher.result()),
         sha256: hex::encode(sha256_hasher.finalize()),
         blake3: blake3_hasher.finalize().to_hex().to_string(),
     })

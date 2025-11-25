@@ -14,3 +14,5 @@ md-5 = "0.8.0"
 sha2 = "0.10.9"
 unicode-segmentation = "1.12.0"
 chrono = "0.4.42"
+app_core = { version = "0.1.0", path = "../core" }
+rfd = "0.16.0"
