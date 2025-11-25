@@ -1324,25 +1324,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "desktop"
-version = "0.1.0"
-dependencies = [
- "analysis",
- "api",
- "app_core",
- "chrono",
- "image",
- "once_cell",
- "opener",
- "profiling 0.1.0",
- "reporting",
- "rfd 0.15.4",
- "serde_json",
- "slint",
- "slint-build",
-]
-
-[[package]]
 name = "digest"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1861,6 +1842,25 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e13624c2627564efccf4934284bdd98cbaa14e79b0b5a141218e507b3a823456"
 dependencies = [
  "percent-encoding",
+]
+
+[[package]]
+name = "foruster-desktop"
+version = "0.1.0"
+dependencies = [
+ "analysis",
+ "api",
+ "app_core",
+ "chrono",
+ "image",
+ "once_cell",
+ "opener",
+ "profiling 0.1.0",
+ "reporting",
+ "rfd 0.15.4",
+ "serde_json",
+ "slint",
+ "slint-build",
 ]
 
 [[package]]

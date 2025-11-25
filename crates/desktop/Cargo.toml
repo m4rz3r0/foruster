@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 [package]
-name = "desktop"
+name = "foruster-desktop"
 edition.workspace = true
 version.workspace = true
 
