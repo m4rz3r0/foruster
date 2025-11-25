@@ -28,10 +28,11 @@ export component DiskItem inherits Rectangle {
         root.is_selected = !root.is_selected;
     }
 
-    in property <string> model: "Undefined";
-    in property <string> size: "Undefined";
-    in property <string> serial: "Undefined";
-    in property <string> interface: "Undefined";
+    in property <string> model: @tr("No definido");
+    in property <string> size: @tr("No definido");
+    in property <string> serial: @tr("No definido");
+    in property <string> interface: @tr("No definido");
+    in property <string> type: @tr("No definido");
     in property <int> partitions: 0;
     in property <int> mounted-partitions: 0;
 
@@ -71,22 +72,22 @@ export component DiskItem inherits Rectangle {
             }
 
             Text {
-                text: "Type: " + interface;
+                text: @tr("Tipo: {}", interface);
                 font-size: 16px;
             }
 
             Text {
-                text: "Size: " + size;
+                text: @tr("Tamaño: {}", size);
                 font-size: 16px;
             }
 
             Text {
-                text: "Serial Number: " + serial;
+                text: @tr("Número de serie: {}", serial);
                 font-size: 16px;
             }
 
             Text {
-                text: "Partitions: " + partitions + " (" + mounted-partitions + (mounted-partitions == 1 ? " analizable)" : " analizables)");
+                text: @tr("Particiones: {0} ({n} analizable)" | "Particiones: {0} ({n} analizables)" % mounted_partitions, partitions);
                 font-size: 16px;
             }
         }
@@ -116,13 +117,13 @@ export component DiskListPage {
 
         VerticalLayout {
             Text {
-                text: @tr("Disk Analysis");
+                text: @tr("Análisis de discos");
                 font-weight: Styles.weights.bold;
                 font-size: Styles.sizes.font * 1.5;
             }
 
             Text {
-                text: @tr("Select the disks you want to analyze:");
+                text: @tr("Seleccione los discos que desea analizar:");
                 color: Styles.palette.window-alter-fg;
             }
         }
