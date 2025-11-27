@@ -1,16 +1,17 @@
-
 msgid ""
 msgstr ""
 "Project-Id-Version: foruster_translations 1.0\n"
 "POT-Creation-Date: 2025-11-25 12:43+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2025-11-27 12:44+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Portuguese (Portugal) <https://hosted.weblate.org/projects/"
+"foruster/desktop/pt_PT/>\n"
+"Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.15-dev\n"
 
 #: pages\analysis-result.slint:67
 msgctxt "FileDetailsModal"
@@ -189,7 +190,6 @@ msgctxt "DiskItem"
 msgid "Particiones: {0} ({n} analizable)"
 msgid_plural "Particiones: {0} ({n} analizables)"
 msgstr[0] ""
-msgstr[1] ""
 
 #: pages\disk-list.slint:120
 msgctxt "DiskListPage"
@@ -275,4 +275,3 @@ msgstr ""
 msgctxt "ProfileListPage"
 msgid "Analizar"
 msgstr ""
-
