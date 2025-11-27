@@ -43,7 +43,7 @@ component PathItem {
                 alignment: end;
 
                 Button {
-                    text: @tr("Modify");
+                    text: @tr("Modificar");
                     width: 100px;
                     clicked => {
                         change-path(PathManagementBridge.browse-path())
@@ -51,7 +51,7 @@ component PathItem {
                 }
 
                 Button {
-                    text: @tr("Delete");
+                    text: @tr("Eliminar");
                     width: 100px;
                     clicked => {
                         remove();
@@ -97,14 +97,14 @@ export component PathManagementPage {
             vertical-stretch: 0;
 
             Text {
-                text: @tr("Path Analysis");
+                text: @tr("Análisis de Rutas");
                 font-weight: Styles.weights.bold;
                 font-size: Styles.sizes.font * 1.5;
                 color: Styles.palette.window-fg;
             }
 
             Text {
-                text: @tr("Select the directories to be analyzed");
+                text: @tr("Selecciona los directorios a analizar");
                 font-size: Styles.sizes.font;
                 color: Styles.palette.window-alter-fg;
             }
@@ -113,13 +113,13 @@ export component PathManagementPage {
                 spacing: Styles.sizes.s-md;
 
                 path-text := LineEdit {
-                    placeholder-text: @tr("Path to analyze...");
+                    placeholder-text: @tr("Ruta a analizar...");
                     text <=> new-path;
                     enabled: false;
                 }
 
                 Button {
-                    text: @tr("Browse...");
+                    text: @tr("Examinar...");
                     clicked => {
                         path-text.text = PathManagementBridge.browse-path();
                     }
@@ -127,7 +127,7 @@ export component PathManagementPage {
                 }
 
                 Button {
-                    text: @tr("Add");
+                    text: @tr("Agregar");
                     clicked => {
                         if (new-path != "") {
                             PathManagementBridge.add-path(new-path);
@@ -147,7 +147,7 @@ export component PathManagementPage {
         }
 
         Text {
-            text: @tr("Current Paths");
+            text: @tr("Rutas actuales");
             font-weight: 600;
             font-size: 16px;
             color: Styles.palette.window-fg;
@@ -193,7 +193,7 @@ export component PathManagementPage {
 
                 HorizontalBox {
                     Text {
-                        text: @tr("Detected ") + redundant-paths + @tr(" redundant paths. Review added paths.");
+                        text: @tr("Detectadas {} rutas redundantes. Revisa las rutas agregadas.", redundant-paths);
                         color: Styles.palette.warn-fg;
                     }
                 }
@@ -207,7 +207,7 @@ export component PathManagementPage {
             HorizontalBox {
                 alignment: end;
                 Button {
-                    text: @tr("Analyze");
+                    text: @tr("Analizar");
                     primary: true;
                     enabled: PathManagementBridge.paths.length > 0 && !check-redundancies();
                     clicked => {

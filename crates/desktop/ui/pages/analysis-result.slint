@@ -64,7 +64,7 @@ component FileDetailsModal inherits Rectangle {
                 spacing: Styles.sizes.s-md;
                 Row {
                     Text {
-                        text: "Path:";
+                        text: @tr("Ruta: ");
                         font-weight: 600;
                     }
 
@@ -76,7 +76,7 @@ component FileDetailsModal inherits Rectangle {
 
                 Row {
                     Text {
-                        text: "Type:";
+                        text: @tr("Tipo:");
                         font-weight: 600;
                     }
 
@@ -87,7 +87,7 @@ component FileDetailsModal inherits Rectangle {
 
                 Row {
                     Text {
-                        text: "Size:";
+                        text: @tr("Tamaño:");
                         font-weight: 600;
                     }
 
@@ -98,7 +98,7 @@ component FileDetailsModal inherits Rectangle {
 
                 Row {
                     Text {
-                        text: "Alert:";
+                        text: @tr("Alerta:");
                         font-weight: 600;
                         color: Styles.palette.warn-fg;
                     }
@@ -118,14 +118,14 @@ component FileDetailsModal inherits Rectangle {
             HorizontalLayout {
                 alignment: space-between;
                 Button {
-                    text: "Open Folder";
+                    text: @tr("Abrir Carpeta");
                     clicked => {
                         FileDetailsBridge.open_containing_folder(FileDetailsBridge.full_path);
                     }
                 }
 
                 Button {
-                    text: "Close";
+                    text: @tr("Cerrar");
                     primary: true;
                     clicked => {
                         close();
@@ -151,7 +151,7 @@ component PaginationControls inherits Rectangle {
 
         // Información de elementos
         Text {
-            text: "Showing " + ((root.current-page - 1) * root.items-per-page + 1) + " - " + min(root.current-page * root.items-per-page, root.total-items) + " of " + root.total-items + " elements";
+            text: @tr("Mostrando {} - {} de {} elementos", ((root.current-page - 1) * root.items-per-page + 1), min(root.current-page * root.items-per-page, root.total-items), root.total-items);
             color: Styles.palette.window-fg;
             font-size: Styles.sizes.font - 1px;
             vertical-alignment: center;
@@ -288,7 +288,6 @@ component AnalysisResultItem inherits Rectangle {
             height: 64px;
             background: Styles.palette.layer-1;
             border-radius: Styles.sizes.r-sm;
-                // You could put a generic icon here
                 Image {
                 source: @image-url("../assets/profile_icons/image.svg");
                 colorize: Styles.palette.disabled-fg;
@@ -338,20 +337,20 @@ component AnalysisResultItem inherits Rectangle {
                 spacing: Styles.sizes.s-md;
 
                 Text {
-                    text: "Tipo: " + root.file-type;
+                    text: @tr("Tipo: {}", root.file-type);
                     color: Styles.palette.window-fg;
                     font-size: Styles.sizes.font - 2px;
                 }
 
                 Text {
-                    text: "Tamaño: " + root.file-size;
+                    text: @tr("Tamaño: {}", root.file-size);
                     color: Styles.palette.window-fg;
                     font-size: Styles.sizes.font - 2px;
                 }
             }
 
             if (root.suspicion-details != ""): Text {
-                text: "Motivo: " + root.suspicion-details;
+                text: @tr("Motivo: {}", root.suspicion-details);
                 color: Styles.palette.warn-fg;
                 font-size: Styles.sizes.font - 3px;
             }
@@ -391,7 +390,7 @@ component AnalysisStats inherits Rectangle {
 
                 VerticalLayout {
                     Text {
-                        text: "Total Files";
+                        text: @tr("Archivos totales");
                         color: Styles.palette.window-fg;
                         font-size: Styles.sizes.font - 2px;
                         horizontal-alignment: center;
@@ -413,7 +412,7 @@ component AnalysisStats inherits Rectangle {
 
                 VerticalLayout {
                     Text {
-                        text: "Scanned Files";
+                        text: @tr("Archivos escaneados");
                         color: Styles.palette.window-fg;
                         font-size: Styles.sizes.font - 2px;
                         horizontal-alignment: center;
@@ -435,7 +434,7 @@ component AnalysisStats inherits Rectangle {
 
                 VerticalLayout {
                     Text {
-                        text: "Matched Files";
+                        text: @tr("Coincidencias");
                         color: Styles.palette.window-fg;
                         font-size: Styles.sizes.font - 2px;
                         horizontal-alignment: center;
@@ -457,7 +456,7 @@ component AnalysisStats inherits Rectangle {
 
                 VerticalLayout {
                     Text {
-                        text: "Suspicious Files";
+                        text: @tr("Sospechosos");
                         color: Styles.palette.window-fg;
                         font-size: Styles.sizes.font - 2px;
                         horizontal-alignment: center;
@@ -479,7 +478,7 @@ component AnalysisStats inherits Rectangle {
 
                 VerticalLayout {
                     Text {
-                        text: "Analysis Time";
+                        text: @tr("Tiempo de análisis");
                         color: Styles.palette.window-fg;
                         font-size: Styles.sizes.font - 2px;
                         horizontal-alignment: center;
@@ -506,7 +505,7 @@ export component AnalysisResultPage {
         spacing: Styles.sizes.s-lg;
 
         Text {
-            text: "Analysis Results";
+            text: @tr("Resultados del análisis");
             font-size: Styles.sizes.font + 8px;
             font-weight: 700;
             color: Styles.palette.primary-fg;
@@ -524,7 +523,7 @@ export component AnalysisResultPage {
             spacing: Styles.sizes.s-md;
 
             Button {
-                text: "Export Report";
+                text: @tr("Exportar Informe");
                 primary: true;
                 icon: @image-url("../assets/icon.png");
                 clicked => {
@@ -535,7 +534,7 @@ export component AnalysisResultPage {
 
         TabWidget {
             Tab {
-                title: "Matches (" + AnalysisResultBridge.matched-files + ")";
+                title: @tr("Coincidencias ({})", AnalysisResultBridge.matched-files);
 
                 VerticalLayout {
                     spacing: Styles.sizes.s-md;
@@ -555,7 +554,7 @@ export component AnalysisResultPage {
                         }
 
                         LineEdit {
-                            placeholder-text: "Buscar archivos...";
+                            placeholder-text: @tr("Buscar archivos...");
                             width: 300px;
                             edited => {
                                 search-text = self.text;
@@ -596,7 +595,9 @@ export component AnalysisResultPage {
                                 height: 100px;
 
                                 Text {
-                                    text: AnalysisResultBridge.active-profile-filter == "All" ? "No files to show" : "No files for profile: " + AnalysisResultBridge.active-profile-filter;
+                                    text: AnalysisResultBridge.active-profile-filter == "Todos"
+                                            ? @tr("No hay archivos para mostrar")
+                                            : @tr("No hay archivos para mostrar para el perfil: {}", AnalysisResultBridge.active-profile-filter);
                                     color: Styles.palette.window-fg;
                                     font-size: Styles.sizes.font;
                                     horizontal-alignment: center;
@@ -617,7 +618,7 @@ export component AnalysisResultPage {
             }
 
             Tab {
-                title: "Suspicious Files (" + AnalysisResultBridge.suspicious-files + ")";
+                title: @tr("Archivos sospechosos ({})", AnalysisResultBridge.suspicious-files);
 
                 VerticalLayout {
                     spacing: Styles.sizes.s-md;
@@ -640,7 +641,7 @@ export component AnalysisResultPage {
                             if (AnalysisResultBridge.suspicious-file-results.length <= 0): Rectangle {
                                 height: 100px;
                                 Text {
-                                    text: "No suspicious files found";
+                                    text: @tr("No hay archivos sospechosos encontrados");
                                     color: Styles.palette.window-fg;
                                     font-size: Styles.sizes.font;
                                     horizontal-alignment: center;
@@ -653,13 +654,13 @@ export component AnalysisResultPage {
             }
 
             /*Tab {
-                title: "Gráficos";
+                title: @tr("Gráficos");
 
                 VerticalLayout {
                     alignment: center;
 
                     Text {
-                        text: "Gráficos de análisis";
+                        text: @tr("Gráficos de análisis");
                         font-size: Styles.sizes.font + 2px;
                         horizontal-alignment: center;
                     }
@@ -672,7 +673,7 @@ export component AnalysisResultPage {
                         border-radius: Styles.sizes.r-md;
 
                         Text {
-                            text: "Área para visualización de gráficos";
+                            text: @tr("Área para visualización de gráficos");
                             horizontal-alignment: center;
                             vertical-alignment: center;
                         }
@@ -681,7 +682,7 @@ export component AnalysisResultPage {
             }*/
 
             Tab {
-                title: "Detalles";
+                title: @tr("Detalles");
 
                 GridLayout {
                     padding: Styles.sizes.p-md;
@@ -689,12 +690,12 @@ export component AnalysisResultPage {
 
                     Row {
                         Text {
-                            text: "Nombre del análisis:";
+                            text: @tr("Nombre del análisis:");
                             font-weight: 700;
                         }
 
                         Text {
-                            text: AnalysisResultBridge.analysis-name != "" ? AnalysisResultBridge.analysis-name : "Análisis completo - Disco C";
+                            text: AnalysisResultBridge.analysis-name != "" ? AnalysisResultBridge.analysis-name : @tr("Análisis completo - Disco C");
                         }
                     }
 
@@ -711,7 +712,7 @@ export component AnalysisResultPage {
 
                     Row {
                         Text {
-                            text: "Perfil utilizado:";
+                            text: @tr("Perfil utilizado:");
                             font-weight: 700;
                         }
 
@@ -722,12 +723,12 @@ export component AnalysisResultPage {
 
                     Row {
                         Text {
-                            text: "Descripción:";
+                            text: @tr("Descripción:");
                             font-weight: 700;
                         }
 
                         Text {
-                            text: AnalysisResultBridge.description != "" ? AnalysisResultBridge.description : "Análisis completo del disco C buscando archivos que coincidan con el perfil seleccionado.";
+                            text: AnalysisResultBridge.description != "" ? AnalysisResultBridge.description : @tr("Análisis completo del disco C buscando archivos que coincidan con el perfil seleccionado.");
                         }
                     }
                 }
@@ -746,7 +747,7 @@ export component AnalysisResultPage {
             }*/
 
             Button {
-                text: "Guardar análisis";
+                text: @tr("Guardar análisis");
                 primary: true;
                 clicked => {
                     AnalysisResultBridge.save-analysis();
