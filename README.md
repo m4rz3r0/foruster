@@ -91,7 +91,7 @@ cargo run --release
 
 ## 🌍 Internationalization
 
-Foruster is an open-source project and we welcome contributions to translate it into more languages. The project is currently translated using **Weblate**.
+Foruster is an open-source project and we welcome contributions to translate it into more languages. The project is currently translated using **Weblate[!](https://hosted.weblate.org/projects/foruster/)**.
 
 Current languages include:
 *   🇬🇧 English (en_GB) - *In Progress*
