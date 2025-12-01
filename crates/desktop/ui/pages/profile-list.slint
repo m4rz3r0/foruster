@@ -268,18 +268,10 @@ export component ProfileListPage {
                 VerticalLayout {
                     alignment: center;
                     Text {
-                        text: analyzeButton.enabled ? @tr("ANALIZAR") : @tr("SELECCIONA");
+                        text: analyzeButton.enabled ? @tr("INICIAR\nANÁLISIS") : @tr("SELECCIONA");
                         font-weight: 900;
                         font-size: Styles.sizes.font * 1.1;
                         color: analyzeButton.enabled ? Colors.white : Styles.palette.disabled-fg;
-                        horizontal-alignment: center;
-                    }
-
-                    if analyzeButton.enabled: Text {
-                        text: @tr("INICIAR");
-                        font-size: Styles.sizes.font * 0.7;
-                        font-weight: 600;
-                        color: Colors.white.with-alpha(0.8);
                         horizontal-alignment: center;
                     }
                 }
