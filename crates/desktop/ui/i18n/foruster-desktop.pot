@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2025-12-01 10:22+0000\n"
+"POT-Creation-Date: 2025-12-01 11:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -11,6 +11,124 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: \n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ui/pages/disk-list.slint:31 ui/pages/disk-list.slint:32 ui/pages/disk-list.slint:33 ui/pages/disk-list.slint:34 ui/pages/disk-list.slint:35
+msgctxt "DiskItem"
+msgid "No definido"
+msgstr ""
+
+#: ui/pages/disk-list.slint:75
+msgctxt "DiskItem"
+msgid "Tipo de disco: {}"
+msgstr ""
+
+#: ui/pages/disk-list.slint:80
+msgctxt "DiskItem"
+msgid "Tamaño: {}"
+msgstr ""
+
+#: ui/pages/disk-list.slint:85
+msgctxt "DiskItem"
+msgid "Número de serie: {}"
+msgstr ""
+
+#: ui/pages/disk-list.slint:90
+msgctxt "DiskItem"
+msgid "Particiones: {0} ({n} analizable)"
+msgid_plural "Particiones: {0} ({n} analizables)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ui/pages/disk-list.slint:120
+msgctxt "DiskListPage"
+msgid "Selección de discos"
+msgstr ""
+
+#: ui/pages/disk-list.slint:126
+msgctxt "DiskListPage"
+msgid "Seleccione los discos que desea analizar:"
+msgstr ""
+
+#: ui/pages/disk-list.slint:160
+msgctxt "DiskListPage"
+msgid "Continuar"
+msgstr ""
+
+#: ui/pages/path-management.slint:46
+msgctxt "PathItem"
+msgid "Modificar"
+msgstr ""
+
+#: ui/pages/path-management.slint:54
+msgctxt "PathItem"
+msgid "Eliminar"
+msgstr ""
+
+#: ui/pages/path-management.slint:100
+msgctxt "PathManagementPage"
+msgid "Selección de Rutas"
+msgstr ""
+
+#: ui/pages/path-management.slint:107
+msgctxt "PathManagementPage"
+msgid "Selecciona los directorios a analizar"
+msgstr ""
+
+#: ui/pages/path-management.slint:116
+msgctxt "PathManagementPage"
+msgid "Ruta a analizar…"
+msgstr ""
+
+#: ui/pages/path-management.slint:122
+msgctxt "PathManagementPage"
+msgid "Examinar…"
+msgstr ""
+
+#: ui/pages/path-management.slint:130
+msgctxt "PathManagementPage"
+msgid "Agregar"
+msgstr ""
+
+#: ui/pages/path-management.slint:150
+msgctxt "PathManagementPage"
+msgid "Rutas seleccionadas"
+msgstr ""
+
+#: ui/pages/path-management.slint:186
+msgctxt "PathManagementPage"
+msgid ""
+"Aún no hay rutas agregadas. Agrega algún directorio para iniciar el análisis."
+msgstr ""
+
+#: ui/pages/path-management.slint:196
+msgctxt "PathManagementPage"
+msgid "Detectadas {} rutas redundantes. Revisa las rutas agregadas."
+msgstr ""
+
+#: ui/pages/path-management.slint:210
+msgctxt "PathManagementPage"
+msgid "Continuar"
+msgstr ""
+
+#: ui/pages/profile-list.slint:187
+msgctxt "ProfileListPage"
+msgid "Perfiles de análisis"
+msgstr ""
+
+#: ui/pages/profile-list.slint:194
+msgctxt "ProfileListPage"
+msgid "Selecciona los tipos de archivos que deseas investigar."
+msgstr ""
+
+#: ui/pages/profile-list.slint:271
+msgctxt "ProfileListPage"
+msgid "INICIAR\nANÁLISIS"
+msgstr ""
+
+#: ui/pages/profile-list.slint:271
+msgctxt "ProfileListPage"
+msgid "SELECCIONA"
+msgstr ""
 
 #: ui/pages/analysis-result.slint:67
 msgctxt "FileDetailsModal"
@@ -145,123 +263,5 @@ msgstr ""
 #: ui/pages/analysis-result.slint:710
 msgctxt "AnalysisResultPage"
 msgid "Descripción:"
-msgstr ""
-
-#: ui/pages/disk-list.slint:31 ui/pages/disk-list.slint:32 ui/pages/disk-list.slint:33 ui/pages/disk-list.slint:34 ui/pages/disk-list.slint:35
-msgctxt "DiskItem"
-msgid "No definido"
-msgstr ""
-
-#: ui/pages/disk-list.slint:75
-msgctxt "DiskItem"
-msgid "Tipo de disco: {}"
-msgstr ""
-
-#: ui/pages/disk-list.slint:80
-msgctxt "DiskItem"
-msgid "Tamaño: {}"
-msgstr ""
-
-#: ui/pages/disk-list.slint:85
-msgctxt "DiskItem"
-msgid "Número de serie: {}"
-msgstr ""
-
-#: ui/pages/disk-list.slint:90
-msgctxt "DiskItem"
-msgid "Particiones: {0} ({n} analizable)"
-msgid_plural "Particiones: {0} ({n} analizables)"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ui/pages/disk-list.slint:120
-msgctxt "DiskListPage"
-msgid "Selección de discos"
-msgstr ""
-
-#: ui/pages/disk-list.slint:126
-msgctxt "DiskListPage"
-msgid "Seleccione los discos que desea analizar:"
-msgstr ""
-
-#: ui/pages/disk-list.slint:160
-msgctxt "DiskListPage"
-msgid "Continuar"
-msgstr ""
-
-#: ui/pages/path-management.slint:46
-msgctxt "PathItem"
-msgid "Modificar"
-msgstr ""
-
-#: ui/pages/path-management.slint:54
-msgctxt "PathItem"
-msgid "Eliminar"
-msgstr ""
-
-#: ui/pages/path-management.slint:100
-msgctxt "PathManagementPage"
-msgid "Selección de Rutas"
-msgstr ""
-
-#: ui/pages/path-management.slint:107
-msgctxt "PathManagementPage"
-msgid "Selecciona los directorios a analizar"
-msgstr ""
-
-#: ui/pages/path-management.slint:116
-msgctxt "PathManagementPage"
-msgid "Ruta a analizar…"
-msgstr ""
-
-#: ui/pages/path-management.slint:122
-msgctxt "PathManagementPage"
-msgid "Examinar…"
-msgstr ""
-
-#: ui/pages/path-management.slint:130
-msgctxt "PathManagementPage"
-msgid "Agregar"
-msgstr ""
-
-#: ui/pages/path-management.slint:150
-msgctxt "PathManagementPage"
-msgid "Rutas seleccionadas"
-msgstr ""
-
-#: ui/pages/path-management.slint:186
-msgctxt "PathManagementPage"
-msgid ""
-"Aún no hay rutas agregadas. Agrega algún directorio para iniciar el análisis."
-msgstr ""
-
-#: ui/pages/path-management.slint:196
-msgctxt "PathManagementPage"
-msgid "Detectadas {} rutas redundantes. Revisa las rutas agregadas."
-msgstr ""
-
-#: ui/pages/path-management.slint:210
-msgctxt "PathManagementPage"
-msgid "Continuar"
-msgstr ""
-
-#: ui/pages/profile-list.slint:187
-msgctxt "ProfileListPage"
-msgid "Perfiles de análisis"
-msgstr ""
-
-#: ui/pages/profile-list.slint:194
-msgctxt "ProfileListPage"
-msgid "Selecciona los tipos de archivos que deseas investigar."
-msgstr ""
-
-#: ui/pages/profile-list.slint:271
-msgctxt "ProfileListPage"
-msgid "INICIAR\nANÁLISIS"
-msgstr ""
-
-#: ui/pages/profile-list.slint:271
-msgctxt "ProfileListPage"
-msgid "SELECCIONA"
 msgstr ""
 
