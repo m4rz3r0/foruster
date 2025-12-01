@@ -64,7 +64,7 @@ component FileDetailsModal inherits Rectangle {
                 spacing: Styles.sizes.s-md;
                 Row {
                     Text {
-                        text: @tr("Ruta: ");
+                        text: @tr("Ruta:");
                         font-weight: 600;
                     }
 
@@ -76,7 +76,7 @@ component FileDetailsModal inherits Rectangle {
 
                 Row {
                     Text {
-                        text: @tr("Tipo:");
+                        text: @tr("Tipo de fichero:");
                         font-weight: 600;
                     }
 
@@ -93,20 +93,6 @@ component FileDetailsModal inherits Rectangle {
 
                     Text {
                         text: FileDetailsBridge.file_size;
-                    }
-                }
-
-                Row {
-                    Text {
-                        text: @tr("Alerta:");
-                        font-weight: 600;
-                        color: Styles.palette.warn-fg;
-                    }
-
-                    Text {
-                        text: FileDetailsBridge.suspicion_details;
-                        color: Styles.palette.warn-fg;
-                        wrap: word-wrap;
                     }
                 }
             }
@@ -288,7 +274,7 @@ component AnalysisResultItem inherits Rectangle {
             height: 64px;
             background: Styles.palette.layer-1;
             border-radius: Styles.sizes.r-sm;
-                Image {
+            Image {
                 source: @image-url("../assets/profile_icons/image.svg");
                 colorize: Styles.palette.disabled-fg;
                 width: 32px;
@@ -314,7 +300,7 @@ component AnalysisResultItem inherits Rectangle {
                 }
 
                 if (root.suspicion-details != ""): Image {
-                    source: @image-url("../assets/profile_icons/app.svg"); // Replace with a warning icon
+                    source: @image-url("../assets/profile_icons/app.svg"); // TODO: Replace with a warning icon
                     colorize: Styles.palette.warn-fg;
                     width: 16px;
                     height: 16px;
@@ -337,7 +323,7 @@ component AnalysisResultItem inherits Rectangle {
                 spacing: Styles.sizes.s-md;
 
                 Text {
-                    text: @tr("Tipo: {}", root.file-type);
+                    text: @tr("Tipo de fichero: {}", root.file-type);
                     color: Styles.palette.window-fg;
                     font-size: Styles.sizes.font - 2px;
                 }
@@ -390,7 +376,7 @@ component AnalysisStats inherits Rectangle {
 
                 VerticalLayout {
                     Text {
-                        text: @tr("Archivos totales");
+                        text: @tr("Ficheros totales");
                         color: Styles.palette.window-fg;
                         font-size: Styles.sizes.font - 2px;
                         horizontal-alignment: center;
@@ -412,7 +398,7 @@ component AnalysisStats inherits Rectangle {
 
                 VerticalLayout {
                     Text {
-                        text: @tr("Archivos escaneados");
+                        text: @tr("Ficheros escaneados");
                         color: Styles.palette.window-fg;
                         font-size: Styles.sizes.font - 2px;
                         horizontal-alignment: center;
@@ -456,7 +442,7 @@ component AnalysisStats inherits Rectangle {
 
                 VerticalLayout {
                     Text {
-                        text: @tr("Sospechosos");
+                        text: @tr("Ficheros sospechosos");
                         color: Styles.palette.window-fg;
                         font-size: Styles.sizes.font - 2px;
                         horizontal-alignment: center;
@@ -523,7 +509,7 @@ export component AnalysisResultPage {
             spacing: Styles.sizes.s-md;
 
             Button {
-                text: @tr("Exportar Informe");
+                text: @tr("Exportar informe");
                 primary: true;
                 icon: @image-url("../assets/icon.png");
                 clicked => {
@@ -554,7 +540,7 @@ export component AnalysisResultPage {
                         }
 
                         LineEdit {
-                            placeholder-text: @tr("Buscar archivos...");
+                            placeholder-text: @tr("Buscar ficheros…");
                             width: 300px;
                             edited => {
                                 search-text = self.text;
@@ -595,9 +581,7 @@ export component AnalysisResultPage {
                                 height: 100px;
 
                                 Text {
-                                    text: AnalysisResultBridge.active-profile-filter == "Todos"
-                                            ? @tr("No hay archivos para mostrar")
-                                            : @tr("No hay archivos para mostrar para el perfil: {}", AnalysisResultBridge.active-profile-filter);
+                                    text: AnalysisResultBridge.active-profile-filter == "Todos" ? @tr("No hay ficheros para mostrar") : @tr("No hay ficheros para mostrar para el perfil: {}", AnalysisResultBridge.active-profile-filter);
                                     color: Styles.palette.window-fg;
                                     font-size: Styles.sizes.font;
                                     horizontal-alignment: center;
@@ -618,7 +602,7 @@ export component AnalysisResultPage {
             }
 
             Tab {
-                title: @tr("Archivos sospechosos ({})", AnalysisResultBridge.suspicious-files);
+                title: @tr("Ficheros sospechosos ({})", AnalysisResultBridge.suspicious-files);
 
                 VerticalLayout {
                     spacing: Styles.sizes.s-md;
@@ -641,7 +625,7 @@ export component AnalysisResultPage {
                             if (AnalysisResultBridge.suspicious-file-results.length <= 0): Rectangle {
                                 height: 100px;
                                 Text {
-                                    text: @tr("No hay archivos sospechosos encontrados");
+                                    text: @tr("No hay ficheros sospechosos encontrados");
                                     color: Styles.palette.window-fg;
                                     font-size: Styles.sizes.font;
                                     horizontal-alignment: center;
@@ -695,24 +679,24 @@ export component AnalysisResultPage {
                         }
 
                         Text {
-                            text: AnalysisResultBridge.analysis-name != "" ? AnalysisResultBridge.analysis-name : @tr("Análisis completo - Disco C");
+                            text: AnalysisResultBridge.analysis-name;
                         }
                     }
 
                     Row {
                         Text {
-                            text: "Fecha:";
+                            text: @tr("Fecha:");
                             font-weight: 700;
                         }
 
                         Text {
-                            text: AnalysisResultBridge.analysis-date != "" ? AnalysisResultBridge.analysis-date : "2025-07-01 14:30";
+                            text: AnalysisResultBridge.analysis-date;
                         }
                     }
 
                     Row {
                         Text {
-                            text: @tr("Perfil utilizado:");
+                            text: @tr("Perfiles utilizados:");
                             font-weight: 700;
                         }
 
@@ -728,29 +712,9 @@ export component AnalysisResultPage {
                         }
 
                         Text {
-                            text: AnalysisResultBridge.description != "" ? AnalysisResultBridge.description : @tr("Análisis completo del disco C buscando archivos que coincidan con el perfil seleccionado.");
+                            text: AnalysisResultBridge.description;
                         }
                     }
-                }
-            }
-        }
-
-        HorizontalLayout {
-            alignment: end;
-            spacing: Styles.sizes.s-md;
-
-            /*Button {
-                text: "Volver";
-                clicked => {
-                    AnalysisResultBridge.go-back();
-                }
-            }*/
-
-            Button {
-                text: @tr("Guardar análisis");
-                primary: true;
-                clicked => {
-                    AnalysisResultBridge.save-analysis();
                 }
             }
         }

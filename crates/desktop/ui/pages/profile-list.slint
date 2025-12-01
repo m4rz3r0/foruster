@@ -3,125 +3,168 @@ import { VerticalBox } from "std-widgets.slint";
 import { Styles } from "../styles.slint";
 import { ProfileMenuBridge } from "../blocks/bridges.slint";
 
-component CircularMenuprofile {
+/// A single slice of the chart using Normalized Coordinates (ViewBox).
+component CircularProfileItem inherits Rectangle {
+    // -------------------------------------------------------------------------
+    // Properties
+    // -------------------------------------------------------------------------
     in property <string> title;
     in property <image> icon;
-    in property <brush> background-color;
-    in property <float> start-angle;
-    in property <float> end-angle;
+    in property <color> base-color;
+    in-out property <bool> selected;
 
-    // External properties for container dimensions to avoid using parent directly
-    in property <length> container-width;
-    in property <length> container-height;
+    in property <angle> start-angle;
+    in property <angle> sweep-angle;
 
-    // Make radii relative to container size
-    property <length> container-size: min(container-width, container-height);
-    property <length> inner-radius: container-size * 0.20;
-    property <length> outer-radius: container-size * 0.40;
+    callback clicked <=> touch.clicked;
 
-    // Center coordinates based on container dimensions
-    property <length> center-x: 0;
-    property <length> center-y: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
 
-    // Calculate midpoint angle for placing content
-    property <float> mid-angle: (start-angle + end-angle) / 2;
-    property <length> mid-radius: (inner-radius + outer-radius) / 2;
+    // -------------------------------------------------------------------------
+    // Geometry
+    // -------------------------------------------------------------------------
 
-    // Content position (icon and text)
-    property <length> content-x: center-x + cos(mid-angle * 1deg) * mid-radius;
-    property <length> content-y: center-y + sin(mid-angle * 1deg) * mid-radius;
+    // Angles
+    private property <angle> end-angle: root.start-angle + root.sweep-angle;
+    private property <angle> mid-angle: root.start-angle + (root.sweep-angle / 2);
 
-    // Scale factors for responsive elements
-    property <float> scale-factor: container-size / 800px;
-    property <length> icon-size: max(24px, 48px * scale-factor);
-    property <length> font-size: max(14px, 16px * scale-factor);
-    property <length> touch-area-size: max(60px, 150px * scale-factor);
+    // ViewBox Coordinates (200x200)
+    private property <float> p2-x: 100 + 98 * cos(root.start-angle);
+    private property <float> p2-y: 100 + 98 * sin(root.start-angle);
+    private property <float> p3-x: 100 + 98 * cos(root.end-angle);
+    private property <float> p3-y: 100 + 98 * sin(root.end-angle);
 
-    in-out property <bool> selected: false;
+    // Content Position (Absolute Layout)
+    // 1. Math Center: (0.45 inner + 0.95 outer) / 2 = 0.70
+    // We use 0.70 to place items exactly in the visual middle of the band.
+    private property <length> content-r: (min(root.width, root.height) / 2) * 0.70;
 
-    callback toggle();
+    private property <length> content-x: root.width / 2 + root.content-r * cos(root.mid-angle);
+    private property <length> content-y: root.height / 2 + root.content-r * sin(root.mid-angle);
 
-    toggle() => {
-        root.selected = !root.selected;
-    }
+    // -------------------------------------------------------------------------
+    // Visuals
+    // -------------------------------------------------------------------------
 
-    ta := TouchArea {
-        x: content-x - self.width / 2;
-        y: content-y - self.height / 2;
-        width: touch-area-size;
-        height: touch-area-size;
-
-        visible: true;
-
-        clicked => {
-            root.toggle();
-        }
-    }
-
-    p := Path {
-        fill: selected ? background-color : ta.has-hover ? background-color.transparentize(33%) : Colors.transparent;
-        stroke: #2d2d30;
-        stroke-width: max(1px, 5px * scale-factor);
+    // 1. Slice Shape
+    slice-shape := Path {
+        width: 100%;
+        height: 100%;
+        viewbox-x: 0;
+        viewbox-y: 0;
+        viewbox-width: 200;
+        viewbox-height: 200;
 
         MoveTo {
-            x: (center-x / 1px) + cos(start-angle * 1deg) * (inner-radius / 1px);
-            y: (center-y / 1px) + sin(start-angle * 1deg) * (inner-radius / 1px);
+            x: 100;
+            y: 100;
         }
 
         LineTo {
-            x: (center-x / 1px) + cos(start-angle * 1deg) * (outer-radius / 1px);
-            y: (center-y / 1px) + sin(start-angle * 1deg) * (outer-radius / 1px);
+            x: root.p2-x;
+            y: root.p2-y;
         }
 
         ArcTo {
-            radius-x: outer-radius / 1px;
-            radius-y: outer-radius / 1px;
-            x: (center-x / 1px) + cos(end-angle * 1deg) * (outer-radius / 1px);
-            y: (center-y / 1px) + sin(end-angle * 1deg) * (outer-radius / 1px);
-            large-arc: end-angle - start-angle > 180;
+            x: root.p3-x;
+            y: root.p3-y;
+            radius-x: 98;
+            radius-y: 98;
             sweep: true;
-        }
-
-        LineTo {
-            x: (center-x / 1px) + cos(end-angle * 1deg) * (inner-radius / 1px);
-            y: (center-y / 1px) + sin(end-angle * 1deg) * (inner-radius / 1px);
-        }
-
-        ArcTo {
-            radius-x: inner-radius / 1px;
-            radius-y: inner-radius / 1px;
-            x: (center-x / 1px) + cos(start-angle * 1deg) * (inner-radius / 1px);
-            y: (center-y / 1px) + sin(start-angle * 1deg) * (inner-radius / 1px);
-            large-arc: end-angle - start-angle > 180;
-            sweep: false;
+            large-arc: root.sweep-angle > 180deg;
         }
 
         Close { }
 
-        animate fill { duration: 200ms; }
+        fill: root.base-color;
+        stroke: Styles.palette.window-bg;
+        stroke-width: 2px;
+
+        animate fill {
+            duration: 200ms;
+            easing: ease-in-out;
+        }
     }
 
-    VerticalBox { }
-    // Icon
-    Image {
-        source: icon;
-        width: icon-size;
-        height: icon-size;
-        x: content-x - self.width / 2;
-        y: content-y - self.height / 2 - (10px * scale-factor);
-        colorize: white;
+    // 2. Content Overlay
+    // Dynamic width based on text length causes jitter/offset in polar layouts.
+    content-box := Rectangle {
+        // Calculate a safe width based on the arc length approx.
+        // 130px fits nicely for 6-8 slices on typical screens.
+        width: 130px;
+        height: 80px; // Enough for icon + text
+
+        // Perfectly centered on the calculated polar coordinate
+        x: root.content-x - self.width / 2;
+        y: root.content-y - self.height / 2;
+
+        background: transparent;
+
+        VerticalLayout {
+            alignment: center; // This handles the internal centering
+            spacing: 4px;
+
+            // Icon Wrapper
+            // Use a Rectangle to reserve space and avoid layout shifts during animation
+            Rectangle {
+                height: 40px;
+                background: transparent;
+
+                Image {
+                    source: root.icon;
+                    colorize: Colors.white;
+                    image-fit: contain;
+
+                    // Center explicitly within the wrapper
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+
+                    // Selection Animation
+                    property <length> size: root.selected ? 38px : 30px;
+                    width: self.size;
+                    height: self.size;
+
+                    animate width, height {
+                        duration: 200ms;
+                        easing: ease-out-back;
+                    }
+                }
+            }
+
+            Text {
+                text: root.title;
+                color: Colors.white;
+                font-size: Styles.sizes.font;
+                font-weight: 700;
+                horizontal-alignment: center;
+                wrap: word-wrap; // Safety if text is too long
+            }
+        }
     }
 
-    // Title
-    Text {
-        text: title;
-        color: white;
-        font-size: font-size;
-        font-weight: 700;
-        horizontal-alignment: center;
-        y: content-y + (30px * scale-factor);
-        x: content-x - self.width / 2;
+    // 3. Hit Area
+    touch := TouchArea {
+        x: root.content-x - 45px;
+        y: root.content-y - 45px;
+        width: 90px;
+        height: 90px;
+        mouse-cursor: pointer;
     }
+
+    states [
+        active-selected when root.selected: {
+            slice-shape.fill: root.base-color.brighter(0.2);
+            slice-shape.stroke-width: 4px;
+        }
+        hover when touch.has-hover && !root.selected: {
+            slice-shape.fill: root.base-color.darker(0.1);
+        }
+        inactive when !root.selected: {
+            slice-shape.fill: root.base-color.with-alpha(0.85);
+        }
+    ]
 }
 
 export component ProfileListPage {
@@ -131,123 +174,118 @@ export component ProfileListPage {
         analyzeButton.enabled = ProfileMenuBridge.count-selected-profiles() > 0;
     }
 
-    VerticalBox {
-        padding: 20px;
-        spacing: 10px;
+    property <angle> sector-angle: 360deg / max(1, ProfileMenuBridge.profiles.length);
 
+    VerticalBox {
+        padding: Styles.sizes.p-xl;
+        spacing: Styles.sizes.s-lg;
+
+        // Title Header
         VerticalLayout {
             vertical-stretch: 0;
-
             Text {
-                text: @tr("Perfiles");
+                text: @tr("Perfiles de análisis");
                 font-weight: Styles.weights.bold;
                 font-size: Styles.sizes.font * 1.5;
+                color: Styles.palette.primary-fg;
             }
 
             Text {
-                text: @tr("Seleccione los perfiles que serán analizados");
+                text: @tr("Selecciona los tipos de archivos que deseas investigar.");
                 color: Styles.palette.window-alter-fg;
+                font-size: Styles.sizes.font;
             }
         }
 
-        Rectangle {
+        // Main Chart Area
+        chart-area := Rectangle {
             vertical-stretch: 1;
 
-            for profile[i] in ProfileMenuBridge.profiles: CircularMenuprofile {
-                property <float> profile-angle: 360 / ProfileMenuBridge.profiles.length;
-
-                // Pass container dimensions to each profile
-                container-width: root.width;
-                container-height: root.height;
-
+            // Pie Slices
+            for profile[i] in ProfileMenuBridge.profiles: CircularProfileItem {
                 title: profile.label;
                 icon: ProfileMenuBridge.icon_source_to_icon(profile.icon-source);
-                background-color: profile.bg-color;
-                selected: profile.selected;
-                start-angle: i * profile-angle;
-                end-angle: (i + 1) * profile-angle;
+                base-color: profile.bg-color;
 
-                toggle => {
+                start-angle: (i * root.sector-angle) - 90deg;
+                sweep-angle: root.sector-angle;
+
+                selected: profile.selected;
+
+                clicked => {
                     profile.selected = !profile.selected;
                     update-button-enabled-status();
                 }
             }
 
+            // Central "Hole" Mask (Donut Effect)
+            Rectangle {
+                width: min(parent.width, parent.height) * 0.45;
+                height: self.width;
+                x: (parent.width - self.width) / 2;
+                y: (parent.height - self.height) / 2;
+                border-radius: self.width / 2;
+                background: Styles.palette.window-bg;
+            }
+
+            // Central Button
             analyzeButton := Rectangle {
-                property <length> container-size: min(parent.width, parent.height);
-                property <length> button-diameter: container-size * 0.35;
-                property <float> scale-factor: container-size / 800px;
-                property <length> font-size: max(Styles.sizes.font, Styles.sizes.font * scale-factor * 2);
+                property <length> base-diameter: min(parent.width, parent.height) * 0.35;
+                property <float> scale-factor: 1.0;
+
+                width: self.base-diameter * self.scale-factor;
+                height: self.base-diameter * self.scale-factor;
+
+                x: (parent.width - self.width) / 2;
+                y: (parent.height - self.height) / 2;
+
+                border-radius: self.width / 2;
 
                 property <bool> enabled: false;
-                visible: true;
-                width: button-diameter;
-                height: button-diameter;
-                border-radius: button-diameter / 2;
-                border-width: 2px;
 
-                x: (parent.width - self.width) / 2 + 1px;
-                y: (parent.height - self.height) / 2 + 1px;
+                background: analyzeButton.enabled ? Styles.palette.primary-bg : Styles.palette.window-alter-bg;
+                border-width: 4px;
+                border-color: Styles.palette.window-bg;
 
-                states [
-                    disabled when !enabled: {
-                        background: Styles.palette.window-alter-bg;
-                        border-color: Styles.palette.element-border;
-                        drop-shadow-blur: 0px;
-                        drop-shadow-offset-y: 0px;
-                    }
-                    enabled when enabled && !touch-area.has-hover && !touch-area.pressed: {
-                        background: Styles.palette.primary-bg;
-                        border-color: Styles.palette.primary-bg;
-                        drop-shadow-blur: 4px;
-                        drop-shadow-color: Styles.palette.primary-bg.transparentize(60%);
-                        drop-shadow-offset-y: 2px;
-                    }
-                    hovered when enabled && touch-area.has-hover && !touch-area.pressed: {
-                        background: Styles.palette.primary-bg.darker(15%);
-                        border-color: Styles.palette.primary-bg.darker(15%);
-                        drop-shadow-blur: 8px;
-                        drop-shadow-color: Styles.palette.primary-bg.transparentize(40%);
-                        drop-shadow-offset-y: 4px;
-                    }
-                    pressed when enabled && touch-area.pressed: {
-                        background: Styles.palette.primary-bg.darker(25%);
-                        border-color: Styles.palette.primary-bg.darker(35%);
-                        drop-shadow-blur: 2px;
-                        drop-shadow-color: Styles.palette.primary-bg.transparentize(70%);
-                        drop-shadow-offset-y: 1px;
-                    }
-                ]
-                animate background, border-color, drop-shadow-blur, drop-shadow-offset-y {
+                drop-shadow-blur: 15px;
+                drop-shadow-color: analyzeButton.enabled ? Styles.palette.primary-bg.with-alpha(0.4) : transparent;
+                drop-shadow-offset-y: 5px;
+
+                animate background, width, height {
                     duration: 200ms;
-                    easing: cubic-bezier(0.25, 0.1, 0.25, 1.0);
+                    easing: ease-in-out;
                 }
+
                 touch-area := TouchArea {
-                    width: 100%;
-                    height: 100%;
+                    mouse-cursor: analyzeButton.enabled ? pointer : default;
                     clicked => {
-                        if (enabled) {
+                        if (analyzeButton.enabled) {
                             start-profile-analysis();
                         }
                     }
                 }
 
-                analyzeButtonText := Text {
-                    text: @tr("Analizar");
-                    font-size: font-size;
-                    font-weight: 600;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                    visible: true;
-                    states [
-                        disabled when !enabled: {
-                            color: Styles.palette.window-alter-fg;
-                        }
-                        enabled when enabled: {
-                            color: #ffffff;
-                        }
-                    ]
+                VerticalLayout {
+                    alignment: center;
+                    Text {
+                        text: analyzeButton.enabled ? @tr("INICIAR\nANÁLISIS") : @tr("SELECCIONA");
+                        font-weight: 900;
+                        font-size: Styles.sizes.font * 1.1;
+                        color: analyzeButton.enabled ? Colors.white : Styles.palette.disabled-fg;
+                        horizontal-alignment: center;
+                    }
                 }
+
+                states [
+                    hover when touch-area.has-hover && analyzeButton.enabled: {
+                        scale-factor: 1.05;
+                        background: Styles.palette.primary-bg.brighter(0.1);
+                    }
+                    pressed when touch-area.pressed && analyzeButton.enabled: {
+                        scale-factor: 0.95;
+                        background: Styles.palette.primary-bg.darker(0.1);
+                    }
+                ]
             }
         }
     }

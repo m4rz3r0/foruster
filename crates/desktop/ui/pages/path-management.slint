@@ -97,7 +97,7 @@ export component PathManagementPage {
             vertical-stretch: 0;
 
             Text {
-                text: @tr("Análisis de Rutas");
+                text: @tr("Selección de Rutas");
                 font-weight: Styles.weights.bold;
                 font-size: Styles.sizes.font * 1.5;
                 color: Styles.palette.window-fg;
@@ -113,13 +113,13 @@ export component PathManagementPage {
                 spacing: Styles.sizes.s-md;
 
                 path-text := LineEdit {
-                    placeholder-text: @tr("Ruta a analizar...");
+                    placeholder-text: @tr("Ruta a analizar…");
                     text <=> new-path;
                     enabled: false;
                 }
 
                 Button {
-                    text: @tr("Examinar...");
+                    text: @tr("Examinar…");
                     clicked => {
                         path-text.text = PathManagementBridge.browse-path();
                     }
@@ -147,7 +147,7 @@ export component PathManagementPage {
         }
 
         Text {
-            text: @tr("Rutas actuales");
+            text: @tr("Rutas seleccionadas");
             font-weight: 600;
             font-size: 16px;
             color: Styles.palette.window-fg;
@@ -183,7 +183,7 @@ export component PathManagementPage {
         VerticalLayout {
             vertical-stretch: 0;
             if (PathManagementBridge.paths.length == 0): Text {
-                text: @tr("No paths added yet. Select directories to start analysis.");
+                text: @tr("Aún no hay rutas agregadas. Agrega algún directorio para iniciar el análisis.");
                 color: Styles.palette.window-alter-fg;
             }
 
@@ -207,7 +207,7 @@ export component PathManagementPage {
             HorizontalBox {
                 alignment: end;
                 Button {
-                    text: @tr("Analizar");
+                    text: @tr("Continuar");
                     primary: true;
                     enabled: PathManagementBridge.paths.length > 0 && !check-redundancies();
                     clicked => {

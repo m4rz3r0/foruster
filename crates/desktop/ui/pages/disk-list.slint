@@ -72,7 +72,7 @@ export component DiskItem inherits Rectangle {
             }
 
             Text {
-                text: @tr("Tipo: {}", interface);
+                text: @tr("Tipo de disco: {}", interface);
                 font-size: 16px;
             }
 
@@ -117,7 +117,7 @@ export component DiskListPage {
 
         VerticalLayout {
             Text {
-                text: @tr("Análisis de discos");
+                text: @tr("Selección de discos");
                 font-weight: Styles.weights.bold;
                 font-size: Styles.sizes.font * 1.5;
             }
@@ -157,7 +157,7 @@ export component DiskListPage {
             alignment: center;
             analyzeButton := Button {
                 primary: true;
-                text: @tr("Analizar discos");
+                text: @tr("Continuar");
                 enabled: false;
                 clicked => {
                     analyze-disks();
