@@ -2,264 +2,268 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2025-12-01 11:13+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2025-12-01 11:53+0000\n"
+"Last-Translator: M4RZ3R0 <m4rz3r0.development@gmail.com>\n"
+"Language-Team: English (United States) <https://hosted.weblate.org/projects/"
+"foruster/desktop/en_US/>\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.15-dev\n"
 
 #: ui/pages/disk-list.slint:31 ui/pages/disk-list.slint:32 ui/pages/disk-list.slint:33 ui/pages/disk-list.slint:34 ui/pages/disk-list.slint:35
 msgctxt "DiskItem"
 msgid "No definido"
-msgstr ""
+msgstr "Not defined"
 
 #: ui/pages/disk-list.slint:75
 msgctxt "DiskItem"
 msgid "Tipo de disco: {}"
-msgstr ""
+msgstr "Disk type: {}"
 
 #: ui/pages/disk-list.slint:80
 msgctxt "DiskItem"
 msgid "Tamaño: {}"
-msgstr ""
+msgstr "Size: {}"
 
 #: ui/pages/disk-list.slint:85
 msgctxt "DiskItem"
 msgid "Número de serie: {}"
-msgstr ""
+msgstr "Serial number: {}"
 
 #: ui/pages/disk-list.slint:90
 msgctxt "DiskItem"
 msgid "Particiones: {0} ({n} analizable)"
 msgid_plural "Particiones: {0} ({n} analizables)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Partitions: {0} ({n} analyzable)"
+msgstr[1] "Partitions: {0} ({n} analyzable)"
 
 #: ui/pages/disk-list.slint:120
 msgctxt "DiskListPage"
 msgid "Selección de discos"
-msgstr ""
+msgstr "Disk selection"
 
 #: ui/pages/disk-list.slint:126
 msgctxt "DiskListPage"
 msgid "Seleccione los discos que desea analizar:"
-msgstr ""
+msgstr "Select the disks you want to analyze:"
 
 #: ui/pages/disk-list.slint:160
 msgctxt "DiskListPage"
 msgid "Continuar"
-msgstr ""
+msgstr "Next"
 
 #: ui/pages/path-management.slint:46
 msgctxt "PathItem"
 msgid "Modificar"
-msgstr ""
+msgstr "Edit"
 
 #: ui/pages/path-management.slint:54
 msgctxt "PathItem"
 msgid "Eliminar"
-msgstr ""
+msgstr "Delete"
 
 #: ui/pages/path-management.slint:100
 msgctxt "PathManagementPage"
 msgid "Selección de Rutas"
-msgstr ""
+msgstr "Path selection"
 
 #: ui/pages/path-management.slint:107
 msgctxt "PathManagementPage"
 msgid "Selecciona los directorios a analizar"
-msgstr ""
+msgstr "Select the directories to analyze"
 
 #: ui/pages/path-management.slint:116
 msgctxt "PathManagementPage"
 msgid "Ruta a analizar…"
-msgstr ""
+msgstr "Path to be analyzed…"
 
 #: ui/pages/path-management.slint:122
 msgctxt "PathManagementPage"
 msgid "Examinar…"
-msgstr ""
+msgstr "Browse…"
 
 #: ui/pages/path-management.slint:130
 msgctxt "PathManagementPage"
 msgid "Agregar"
-msgstr ""
+msgstr "Add"
 
 #: ui/pages/path-management.slint:150
 msgctxt "PathManagementPage"
 msgid "Rutas seleccionadas"
-msgstr ""
+msgstr "Selected paths"
 
 #: ui/pages/path-management.slint:186
 msgctxt "PathManagementPage"
 msgid ""
 "Aún no hay rutas agregadas. Agrega algún directorio para iniciar el análisis."
-msgstr ""
+msgstr "No paths have been added yet. Add a directory to start the analysis."
 
 #: ui/pages/path-management.slint:196
 msgctxt "PathManagementPage"
 msgid "Detectadas {} rutas redundantes. Revisa las rutas agregadas."
-msgstr ""
+msgstr "{} redundant routes detected. Review the added paths."
 
 #: ui/pages/path-management.slint:210
 msgctxt "PathManagementPage"
 msgid "Continuar"
-msgstr ""
+msgstr "Next"
 
 #: ui/pages/profile-list.slint:187
 msgctxt "ProfileListPage"
 msgid "Perfiles de análisis"
-msgstr ""
+msgstr "Analysis profiles"
 
 #: ui/pages/profile-list.slint:194
 msgctxt "ProfileListPage"
 msgid "Selecciona los tipos de archivos que deseas investigar."
-msgstr ""
+msgstr "Select the file types you want to investigate."
 
 #: ui/pages/profile-list.slint:271
 msgctxt "ProfileListPage"
 msgid "INICIAR\nANÁLISIS"
 msgstr ""
+"START\n"
+"ANALYSIS"
 
 #: ui/pages/profile-list.slint:271
 msgctxt "ProfileListPage"
 msgid "SELECCIONA"
-msgstr ""
+msgstr "SELECT"
 
 #: ui/pages/analysis-result.slint:67
 msgctxt "FileDetailsModal"
 msgid "Ruta:"
-msgstr ""
+msgstr "Path:"
 
 #: ui/pages/analysis-result.slint:79
 msgctxt "FileDetailsModal"
 msgid "Tipo de fichero:"
-msgstr ""
+msgstr "File type:"
 
 #: ui/pages/analysis-result.slint:90
 msgctxt "FileDetailsModal"
 msgid "Tamaño:"
-msgstr ""
+msgstr "Size:"
 
 #: ui/pages/analysis-result.slint:107
 msgctxt "FileDetailsModal"
 msgid "Abrir Carpeta"
-msgstr ""
+msgstr "Open folder"
 
 #: ui/pages/analysis-result.slint:114
 msgctxt "FileDetailsModal"
 msgid "Cerrar"
-msgstr ""
+msgstr "Close"
 
 #: ui/pages/analysis-result.slint:140
 msgctxt "PaginationControls"
 msgid "Mostrando {} - {} de {} elementos"
-msgstr ""
+msgstr "Showing {} - {} of {} elements"
 
 #: ui/pages/analysis-result.slint:326
 msgctxt "AnalysisResultItem"
 msgid "Tipo de fichero: {}"
-msgstr ""
+msgstr "File type: {}"
 
 #: ui/pages/analysis-result.slint:332
 msgctxt "AnalysisResultItem"
 msgid "Tamaño: {}"
-msgstr ""
+msgstr "Size: {}"
 
 #: ui/pages/analysis-result.slint:339
 msgctxt "AnalysisResultItem"
 msgid "Motivo: {}"
-msgstr ""
+msgstr "Reason: {}"
 
 #: ui/pages/analysis-result.slint:379
 msgctxt "AnalysisStats"
 msgid "Ficheros totales"
-msgstr ""
+msgstr "Total files"
 
 #: ui/pages/analysis-result.slint:401
 msgctxt "AnalysisStats"
 msgid "Ficheros escaneados"
-msgstr ""
+msgstr "Scanned files"
 
 #: ui/pages/analysis-result.slint:423
 msgctxt "AnalysisStats"
 msgid "Coincidencias"
-msgstr ""
+msgstr "Matches"
 
 #: ui/pages/analysis-result.slint:445
 msgctxt "AnalysisStats"
 msgid "Ficheros sospechosos"
-msgstr ""
+msgstr "Suspicious files"
 
 #: ui/pages/analysis-result.slint:467
 msgctxt "AnalysisStats"
 msgid "Tiempo de análisis"
-msgstr ""
+msgstr "Analysis time"
 
 #: ui/pages/analysis-result.slint:494
 msgctxt "AnalysisResultPage"
 msgid "Resultados del análisis"
-msgstr ""
+msgstr "Analysis results"
 
 #: ui/pages/analysis-result.slint:512
 msgctxt "AnalysisResultPage"
 msgid "Exportar informe"
-msgstr ""
+msgstr "Export report"
 
 #: ui/pages/analysis-result.slint:523
 msgctxt "AnalysisResultPage"
 msgid "Coincidencias ({})"
-msgstr ""
+msgstr "Matches ({})"
 
 #: ui/pages/analysis-result.slint:543
 msgctxt "AnalysisResultPage"
 msgid "Buscar ficheros…"
-msgstr ""
+msgstr "Search for files…"
 
 #: ui/pages/analysis-result.slint:584
 msgctxt "AnalysisResultPage"
 msgid "No hay ficheros para mostrar"
-msgstr ""
+msgstr "There are no files to display"
 
 #: ui/pages/analysis-result.slint:584
 msgctxt "AnalysisResultPage"
 msgid "No hay ficheros para mostrar para el perfil: {}"
-msgstr ""
+msgstr "There are no files to display for the profile: {}"
 
 #: ui/pages/analysis-result.slint:605
 msgctxt "AnalysisResultPage"
 msgid "Ficheros sospechosos ({})"
-msgstr ""
+msgstr "Suspicious files ({})"
 
 #: ui/pages/analysis-result.slint:628
 msgctxt "AnalysisResultPage"
 msgid "No hay ficheros sospechosos encontrados"
-msgstr ""
+msgstr "No suspicious files found"
 
 #: ui/pages/analysis-result.slint:669
 msgctxt "AnalysisResultPage"
 msgid "Detalles"
-msgstr ""
+msgstr "Details"
 
 #: ui/pages/analysis-result.slint:677
 msgctxt "AnalysisResultPage"
 msgid "Nombre del análisis:"
-msgstr ""
+msgstr "Analysis name:"
 
 #: ui/pages/analysis-result.slint:688
 msgctxt "AnalysisResultPage"
 msgid "Fecha:"
-msgstr ""
+msgstr "Date:"
 
 #: ui/pages/analysis-result.slint:699
 msgctxt "AnalysisResultPage"
 msgid "Perfiles utilizados:"
-msgstr ""
+msgstr "Profiles used:"
 
 #: ui/pages/analysis-result.slint:710
 msgctxt "AnalysisResultPage"
 msgid "Descripción:"
-msgstr ""
+msgstr "Description:"
