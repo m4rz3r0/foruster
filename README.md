@@ -96,7 +96,7 @@ Foruster is an open-source project and we welcome contributions to translate it 
 Current languages include:
 *   🇬🇧 English (en_US) - *Done*
 *   🇪🇸 Spanish (es_ES) - *Base Language*
-*   🇫🇷 French (fr_FR) - *In Progress*
+*   🇫🇷 French (fr_FR) - *Done*
 *   🇵🇹 Portuguese (pt_PT) - *In Progress*
 
 (Base template available in `foruster-desktop.po`)
