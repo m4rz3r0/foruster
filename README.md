@@ -80,6 +80,15 @@ By downloading and using Foruster, you acknowledge that you have read, understoo
 
 Foruster is distributed under a proprietary End User License Agreement (EULA). See [LICENSE](./LICENSE) for full terms. Reverse engineering, decompilation, disassembly, and modification of the binaries are strictly prohibited.
 
+**License tiers:**
+
+| Use case | License required | Cost |
+|---|---|---|
+| Personal use / Academic research | Personal & Academic License | Free |
+| Professional, institutional, governmental, or commercial use | Commercial License | Paid |
+
+To obtain a Commercial License or enquire about volume and institutional pricing, contact [**licensing@foruster.io**](mailto:licensing@foruster.io).
+
 ---
 
 ## Contributing & Bug Reports
