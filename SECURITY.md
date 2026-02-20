@@ -25,11 +25,13 @@ Because Foruster is used in digital forensic investigations and legal proceeding
 
 ### How to Report
 
-Please send a detailed vulnerability report via email to:
+Please use GitHub's **private security advisory** feature to submit your report confidentially:
 
-**security [at] foruster [dot] io**
+1. Go to the [Security tab](https://github.com/m4rz3r0/foruster/security) of this repository.
+2. Click **"Report a vulnerability"**.
+3. Fill in the form with as much detail as possible.
 
-_(Replace [at] with @ and [dot] with . when composing the email.)_
+This channel is visible only to you and the repository maintainers, ensuring that sensitive information is never exposed publicly before a fix is available.
 
 Your report should include, where applicable:
 
