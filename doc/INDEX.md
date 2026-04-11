@@ -1,5 +1,7 @@
 # Foruster — public documentation index
 
+**Languages:** [Documentation hub (EN/ES)](README.md) · [Índice en español](es/INDICE.md)
+
 This page lists **documentation published next to public binaries**. It is not a map of the full private source tree.
 
 ## Plugins and SDK

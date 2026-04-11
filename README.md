@@ -10,6 +10,8 @@
 
 ---
 
+**Languages:** [English](#documentation) · [Español](README.es.md)
+
 This repository is the **public documentation and release channel** for **Foruster**. **Application source code is not published here.** Canonical development happens on a private forge; this space is limited to docs that are safe to share and binaries attached to [Releases](https://github.com/m4rz3r0/foruster/releases).
 
 ## Documentation
