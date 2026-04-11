@@ -1,93 +1,38 @@
-# Foruster — Digital Evidence Extraction & Analysis
-
-[![Latest Release](https://img.shields.io/github/v/release/m4rz3r0/foruster?label=Release&style=flat-square)](https://github.com/m4rz3r0/foruster/releases/latest)
-[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-blue?style=flat-square)](#installation)
-[![License](https://img.shields.io/badge/License-Proprietary%20EULA-red?style=flat-square)](./LICENSE)
-
----
-
-## Introduction
-
-**Foruster** is a cross-platform desktop application for the extraction and analysis of digital evidence, designed to be used in the context of legal proceedings and judicial investigations. It provides investigators, forensic analysts, and legal professionals with a reliable, reproducible, and auditable workflow for acquiring and examining digital artifacts from computing systems.
-
-Foruster is the evolution of a project previously published in the **SoftwareX** journal. The original work established the scientific and methodological foundation of the tool; this release represents a major advancement in its capabilities, usability, and cross-platform support.
-
-> **Target Audience:** Digital forensics practitioners, law enforcement agencies, legal professionals, and academic researchers operating under applicable legal frameworks.
+<div align="center">
+  <h1>Foruster</h1>
+  <p align="center"><strong>Live forensic triage and anomaly detection</strong></p>
+  <p align="center">
+    <a href="https://slint.dev">
+      <img alt="#MadeWithSlint" src="https://raw.githubusercontent.com/slint-ui/slint/master/logo/MadeWithSlint-logo-light.svg" height="48">
+    </a>
+  </p>
+</div>
 
 ---
 
-## Installation
+This repository is the **public documentation and release channel** for **Foruster**. **Application source code is not published here.** Canonical development happens on a private forge; this space is limited to docs that are safe to share and binaries attached to [Releases](https://github.com/m4rz3r0/foruster/releases).
 
-No installation is required. Foruster is distributed as a self-contained binary.
+## Documentation
 
-1. Navigate to the [**Releases**](https://github.com/m4rz3r0/foruster/releases) tab of this repository.
-2. Download the binary appropriate for your operating system:
-   - `foruster-<version>-windows-x64.exe` — for Windows (64-bit)
-   - `foruster-<version>-linux-x64` — for Linux (64-bit)
-3. Make the binary executable (Linux only):
-   ```bash
-   chmod +x foruster-<version>-linux-x64
-   ```
-4. Run the application:
-   ```bash
-   # Linux
-   ./foruster-<version>-linux-x64
+| Topic | Document |
+|------|----------|
+| Index | [doc/INDEX.md](doc/INDEX.md) |
+| WASM plugin SDK (host API, ABI) | [doc/PLUGIN_SDK.md](doc/PLUGIN_SDK.md) |
+| Plugin authoring tutorial | [doc/PLUGIN_DEVELOPMENT_GUIDE.md](doc/PLUGIN_DEVELOPMENT_GUIDE.md) |
+| Forensic / portable behaviour | [doc/FORENSIC_POLICY.md](doc/FORENSIC_POLICY.md) |
+| Static builds | [doc/STATIC_BUILDS.md](doc/STATIC_BUILDS.md) |
+| Hash sets (NSRL-style) | [doc/HASH_SETS.md](doc/HASH_SETS.md) |
+| Installer | [doc/INSTALLER.md](doc/INSTALLER.md) |
+| Verify WASM plugins | [doc/PLUGIN_BUILD_VERIFY.md](doc/PLUGIN_BUILD_VERIFY.md) |
 
-   # Windows (PowerShell or Command Prompt)
-   .\foruster-<version>-windows-x64.exe
-   ```
+These files are **redacted for public distribution**: they omit internal repository layout, host implementation paths, and internal-only workflows. Some links may still point at paths that exist only in a full SDK or partner drop (for example under `examples/`).
 
----
+## Product
 
-## Integrity & Chain of Custody
+Foruster is a cross-platform desktop application for **live-system forensic analysis**: scanning active storage, profile-based search, cryptographic hashes, PDF reporting, and a **WebAssembly** extension model with a host-side sandbox.
 
-Every release includes a `SHA256SUMS` file alongside the distributed binaries. This file contains the SHA-256 cryptographic hashes of all release artifacts.
-
-Verifying the integrity of the downloaded binary is **strongly recommended** before use in any investigative or legal context, as it guarantees:
-
-- The binary has not been tampered with or corrupted during download.
-- The file originates from an official Foruster release.
-- The chain of custody for the software itself is preserved.
-
-**Verification (Linux):**
-```bash
-sha256sum --check SHA256SUMS
-```
-
-**Verification (Windows — PowerShell):**
-```powershell
-Get-FileHash .\foruster-<version>-windows-x64.exe -Algorithm SHA256
-```
-Compare the output against the corresponding entry in the `SHA256SUMS` file provided in the release.
-
-Additionally, release binaries are **digitally signed**. Refer to [SECURITY.md](./SECURITY.md) for details on signature verification.
-
----
-
-## Disclaimer
-
-> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. THE FORUSTER TEAM MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
->
-> THE USER IS SOLELY RESPONSIBLE FOR ENSURING THAT THE USE OF THIS TOOL COMPLIES WITH ALL APPLICABLE LOCAL, NATIONAL, AND INTERNATIONAL LAWS AND REGULATIONS, INCLUDING BUT NOT LIMITED TO LAWS GOVERNING DIGITAL INVESTIGATIONS, PRIVACY, DATA PROTECTION, AND THE ADMISSIBILITY OF DIGITAL EVIDENCE IN LEGAL PROCEEDINGS.
->
-> THE FORUSTER TEAM SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES ARISING FROM THE USE OR MISUSE OF THIS SOFTWARE.
-
-By downloading and using Foruster, you acknowledge that you have read, understood, and agree to the terms set forth in the [LICENSE](./LICENSE) agreement.
-
----
+The UI is built with [Slint](https://slint.dev/) (see attribution above).
 
 ## License
 
-Foruster is currently distributed free of charge under a proprietary End User License Agreement (EULA). See [LICENSE](./LICENSE) for full terms. Reverse engineering, decompilation, disassembly, and modification of the binaries are strictly prohibited.
-
-The Foruster Team reserves the right to introduce commercial licensing requirements for professional or institutional use in future versions of the Software.
-
----
-
-## Contributing & Bug Reports
-
-Since the source code is closed, we do not accept Pull Requests. However, we actively welcome detailed issue reports and feature suggestions. See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidance.
-
-## Security
-
-To report a security vulnerability, please **do not** open a public issue. Follow the private disclosure process described in [SECURITY.md](./SECURITY.md).
+**Foruster** is **proprietary, closed-source software** as distributed to licensees or customers. Documentation in this repository is published for reference; third-party components remain under their respective licenses. Do not infer from this README alone how any particular binary build is licensed; check the notice shipped with that build.
