@@ -65,12 +65,6 @@ Tras la instalación, ejecute Foruster desde esa carpeta en el kit de examen; ca
 
 Si aún no existe `hashsets-config.json`, Foruster puede sembrar una muestra **mínima** **solo** bajo `data/hashsets/` junto al ejecutable (misma regla portátil). Desactive con `FORUSTER_NO_DEFAULT_HASHSETS=1`.
 
-### Verificación rápida
-
-1. Confirme en **Ajustes** que las búsquedas por hash están activas y las rutas bajo su `data/hashsets/` portátil (USB).
-2. Cree un archivo vacío en una carpeta escaneada: `touch …/nsrl-empty-test`
-3. Ejecute el análisis; la cabecera de resultados **Hash DB** debe contar al menos un acierto **conocido bueno** para ese archivo.
-
 ### Descarga manual (alternativa al instalador)
 
 ```bash

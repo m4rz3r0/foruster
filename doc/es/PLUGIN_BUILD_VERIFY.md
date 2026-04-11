@@ -1,6 +1,6 @@
 # Compilar y verificar plugins WASM
 
-Esta lista de comprobación complementa [PLUGIN_DEVELOPMENT_GUIDE.md](PLUGIN_DEVELOPMENT_GUIDE.md) y [PLUGIN_SDK.md](PLUGIN_SDK.md). Explica cómo compilar el espacio de trabajo, generar **plugins WASM** de ejemplo (módulos que amplían la aplicación sin recompilar el núcleo) y ejecutar las pruebas asociadas, sin rutas dependientes de la máquina. La **extensibilidad por plugins** forma parte de la arquitectura modular descrita en el *Trabajo Fin de Máster* (2026).
+Este documento complementa [PLUGIN_DEVELOPMENT_GUIDE.md](PLUGIN_DEVELOPMENT_GUIDE.md) y [PLUGIN_SDK.md](PLUGIN_SDK.md). Explica cómo compilar el espacio de trabajo, generar **plugins WASM** de ejemplo (módulos que amplían la aplicación sin recompilar el núcleo) y ejecutar las pruebas asociadas, sin rutas dependientes de la máquina. La **extensibilidad por plugins** forma parte de la arquitectura modular descrita en el *Trabajo Fin de Máster* (2026).
 
 **Idioma:** [English →](../en/PLUGIN_BUILD_VERIFY.md)
 
@@ -48,7 +48,7 @@ cargo build --target wasm32-wasip1 --release
 
 Copie el `.wasm` resultante junto al binario de Foruster o en `plugins/` como se describe en [PLUGIN_DEVELOPMENT_GUIDE.md](PLUGIN_DEVELOPMENT_GUIDE.md).
 
-## 3. Inspeccionar el módulo (opcional)
+## 3. Inspeccionar el módulo
 
 Con [WABT](https://github.com/WebAssembly/wabt) (`wasm-objdump`):
 

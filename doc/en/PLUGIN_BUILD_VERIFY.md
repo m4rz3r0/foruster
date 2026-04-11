@@ -1,6 +1,6 @@
 # Building and verifying WASM plugins
 
-This checklist complements [PLUGIN_DEVELOPMENT_GUIDE.md](PLUGIN_DEVELOPMENT_GUIDE.md) and [PLUGIN_SDK.md](PLUGIN_SDK.md). It describes how to build the workspace, compile sample extensions, and run plugin-related tests without machine-specific paths.
+This document complements [PLUGIN_DEVELOPMENT_GUIDE.md](PLUGIN_DEVELOPMENT_GUIDE.md) and [PLUGIN_SDK.md](PLUGIN_SDK.md). It describes how to build the workspace, compile sample extensions, and run plugin-related tests without machine-specific paths.
 
 ## Prerequisites
 
@@ -46,7 +46,7 @@ cargo build --target wasm32-wasip1 --release
 
 Copy the resulting `.wasm` next to the Foruster binary or into `plugins/` as described in [PLUGIN_DEVELOPMENT_GUIDE.md](PLUGIN_DEVELOPMENT_GUIDE.md).
 
-## 3. Inspect the module (optional)
+## 3. Inspect the module
 
 With [WABT](https://github.com/WebAssembly/wabt) (`wasm-objdump`):
 

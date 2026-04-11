@@ -66,13 +66,6 @@ Las operaciones son **lectura (R)** o **escritura (W)**. El «riesgo» es el imp
 - **Windows** no expone un equivalente directo a `O_NOATIME` en la biblioteca estándar. El comportamiento de último acceso depende de la **política NTFS** (p. ej. las actualizaciones de último acceso pueden desactivarse en todo el sistema por rendimiento). Abrir archivos para lectura puede actualizar metadatos según la configuración del SO.
 - **Recomendación:** ejecute la herramienta desde un **medio portátil** con `FORUSTER_FORENSIC_MODE` activo, documente la **versión del SO anfitrión** y el **sistema de archivos**, y considere la preservación de marcas de tiempo como **mejor esfuerzo** en Windows salvo controladores especializados o bloqueadores de escritura a nivel de volumen.
 
-## Lista de comprobación de aceptación (opcional)
-
-- [ ] El binario y `data/` residen en **almacenamiento extraíble o dedicado al caso**; `FORUSTER_PORTABLE_ROOT` fijado si el diseño no es estándar.
-- [ ] `FORUSTER_FORENSIC_MODE` habilitado en los exámenes donde no deba modificarse el perfil anfitrión.
-- [ ] Las exportaciones van a **medios externos** o **designados**, no a carpetas en volúmenes de evidencia analizados (salvo que la política lo permita).
-- [ ] Instalador y descargas solo en **equipo de preparación**, no en el sistema objeto del análisis.
-
 ## Documentación relacionada
 
 - [STATIC_BUILDS.md](STATIC_BUILDS.md) — compilaciones estáticas / musl y dependencias en tiempo de ejecución.

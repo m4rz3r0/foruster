@@ -64,13 +64,6 @@ Operations are **read (R)** or **write (W)**. “Risk” is impact on the **anal
 - **Windows** does not expose a direct `O_NOATIME` equivalent in the standard library. Last-access time behaviour depends on **NTFS policy** (e.g. last access updates may be disabled system-wide on recent Windows versions for performance). Opening files for read may still update metadata depending on OS settings.
 - **Recommendation:** Run the tool from a **portable medium** with `FORUSTER_FORENSIC_MODE` set, document the **host OS version** and **filesystem**, and treat timestamp preservation as **best-effort** on Windows unless using specialised drivers or hardware write blockers at the volume level.
 
-## Acceptance checklist (optional)
-
-- [ ] Binary and `data/` live on **removable or case-dedicated** storage; `FORUSTER_PORTABLE_ROOT` set if layout is non-standard.
-- [ ] `FORUSTER_FORENSIC_MODE` enabled for examinations where the host profile must not be modified.
-- [ ] Exports go to **external** or **designated** media, not to folders on analyzed evidence volumes (unless policy allows).
-- [ ] Installer / downloads run only on a **build machine**, not on the subject system.
-
 ## Related documentation
 
 - [STATIC_BUILDS.md](STATIC_BUILDS.md) — static / musl builds and runtime dependencies.
