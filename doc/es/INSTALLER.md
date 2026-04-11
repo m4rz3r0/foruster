@@ -1,6 +1,6 @@
 # Instalador de Foruster (`foruster-installer`)
 
-Utilidad gráfica para preparar el **kit de despliegue**: copia la aplicación Foruster y los activos opcionales (conjuntos de hashes, modelos, etc.) en un **medio de despliegue** (p. ej. un USB montado en una **estación de trabajo** o laboratorio). Ejecútela **solo en la fase de preparación** —no en el sistema objeto de análisis durante la adquisición—, de forma que las descargas opcionales y la configuración no comprometan la **cadena de custodia** del equipo examinado.
+Utilidad gráfica para preparar el **kit de despliegue**: copia Foruster y los recursos opcionales (conjuntos de hashes, modelos, etc.) a un **medio de destino** (por ejemplo un USB preparado en el laboratorio o en una estación de trabajo). Ejecútela **únicamente durante la preparación del kit**, no en el equipo objeto de examen, para evitar descargas o cambios de configuración que puedan interferir con la **cadena de custodia**.
 
 **Idioma:** [English →](../en/INSTALLER.md)
 

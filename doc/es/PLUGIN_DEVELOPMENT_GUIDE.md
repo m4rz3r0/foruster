@@ -1,6 +1,6 @@
 # Guía de desarrollo de plugins para Foruster
 
-Guía para implementar **extensiones WASM** (*plugins*): módulos de análisis que el **sistema forense** carga de forma aislada y que pueden acoplar **visión artificial** u otras capacidades al **motor de análisis**, en la línea de la **abstracción de capacidades cognitivas** descrita en la memoria del proyecto. **Referencia normativa del SDK:** [PLUGIN_SDK.md](PLUGIN_SDK.md). **English:** [PLUGIN_DEVELOPMENT_GUIDE.md](../en/PLUGIN_DEVELOPMENT_GUIDE.md)
+Esta guía describe cómo implementar **plugins WASM**: módulos de análisis que la aplicación carga de forma aislada y que pueden incorporar **visión artificial** u otras capacidades al motor de análisis, según el enfoque de **abstracción de capacidades cognitivas** recogido en el *Trabajo Fin de Máster*. **Referencia normativa del SDK:** [PLUGIN_SDK.md](PLUGIN_SDK.md). **English:** [PLUGIN_DEVELOPMENT_GUIDE.md](../en/PLUGIN_DEVELOPMENT_GUIDE.md)
 
 ## Tabla de contenidos
 
@@ -407,18 +407,18 @@ ls -lh target/wasm32-wasip1/release/my_detector.wasm
 
 ## Ejemplos completos
 
-En `examples/` hay extensiones de referencia alineadas con los detectores descritos en la memoria del proyecto:
+En `examples/` encontrará plugins de referencia coherentes con los detectores del proyecto:
 
-- `nsfw-detector-wasm/` — clasificación de **contenido sensible** (*NSFW*) mediante **Vision Transformer** (motor de inferencia local).
-- `weapon-detector-wasm/` — **detección de objetos** (armas) con **YOLOv8** en escenas complejas.
-- `cookie-extractor-wasm/` — extracción de metadatos almacenados en bases de datos de navegador (*Data Extraction*).
+- `nsfw-detector-wasm/` — clasificación de **contenido sensible** (*NSFW*) con **Vision Transformer** e inferencia local.
+- `weapon-detector-wasm/` — **detección de objetos** (armas) mediante **YOLOv8**.
+- `cookie-extractor-wasm/` — extracción de datos de cookies del navegador.
 
 ---
 
 ## Soporte
 
-- **Arquitectura interna del cargador WASM:** `doc/WASM_PLUGIN_ARCHITECTURE.md` (no publicada en el espejo).
-- **Soporte comercial o académico:** utilice el canal acordado con su distribuidor o las condiciones de licencia (este espejo público no gestiona incidencias del SDK).
+- **Arquitectura del cargador WASM:** `doc/WASM_PLUGIN_ARCHITECTURE.md` (no publicada en el espejo).
+- **Soporte:** utilice el canal acordado con su distribuidor o con las condiciones de licencia (este repositorio público no gestiona incidencias del SDK).
 - **Discord:** *(próximamente)*
 
 ---

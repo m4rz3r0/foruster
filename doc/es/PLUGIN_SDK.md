@@ -1,6 +1,6 @@
 # Referencia del SDK de plugins Foruster
 
-Describe los **tipos canónicos del SDK** y las convenciones compartidas por las extensiones **WASM** (*plugins*), el *runtime* del **host** (aplicación nativa Foruster), el instalador y la integración continua. El contrato garantiza que el **host** y los módulos WebAssembly compartan una ABI estable, coherente con el diseño modular y el aislamiento del *sandbox*.
+Documenta los **tipos canónicos del SDK** y las convenciones compartidas entre los **plugins WASM**, la aplicación anfitriona (**host**, binario nativo Foruster), el instalador y la integración continua. El contrato asegura una **ABI** estable entre el nativo y los módulos WebAssembly, en línea con el diseño modular y el aislamiento del *sandbox*.
 
 **Idioma:** [English →](../en/PLUGIN_SDK.md)  
 **Véase también:** [PLUGIN_DEVELOPMENT_GUIDE.md](PLUGIN_DEVELOPMENT_GUIDE.md) (guía práctica), [INDEX.md](INDEX.md) (índice).
@@ -265,20 +265,20 @@ alineados.
 
 ## 6. Funciones del host (solo WASM)
 
-El *runtime* de Foruster registra las importaciones Wasm bajo el módulo **`env`**. Las firmas canónicas y los diseños de `ret_area` coinciden con el cargador nativo. La inferencia neuronal (`host_run_inference`) se ejecuta en el **motor de inferencia** del host (ONNX Runtime), en línea con el paradigma de **IA en el borde**.
+El *runtime* de Foruster registra las importaciones Wasm bajo el módulo **`env`**. Las firmas y el diseño de `ret_area` coinciden con el cargador nativo. La inferencia (`host_run_inference`) se ejecuta en el **motor de inferencia** del host (ONNX Runtime), alineada con la **IA en el borde** (procesamiento local).
 
 ### 6.1 ABI de importación Wasm (canónica)
 
 | Importación | Firma Wasm | Retorno / notas |
 |--------|----------------|----------------|
-| `host_read_file` | `(ret_area: i32, handle: i64) → ()` | `ret_area`: 12 octetos — `ptr: i32`, `len: i32`, `error_code: i32` (*little-endian*). Si tiene éxito, el invitado lee los bytes en `ptr` / `len`. |
-| `host_log` | `(level: i32, msg_ptr: i32, msg_len: i32) → ()` | `level`: *trace*=0 … *error*=4 (véase `LogLevel`). Mensaje UTF-8 en memoria del invitado. |
-| `host_file_metadata` | `(ret_area: i32, handle: i64) → ()` | Misma tripleta `ret_area` que `read_file`. Carga útil JSON para `FileMetadata` (`size`, `extension`, `mime_type` / `blake3_hash` opcionales). |
-| `host_compute_hash` | `(ret_area: i32, handle: i64) → ()` | Misma tripleta. Carga útil: **BLAKE3** del archivo en hexadecimal (ASCII), calculado en el host. |
-| `host_run_inference` | `(ret_area, model_ptr, model_len, tensor_ptr, tensor_len, shape_ptr, shape_len) → ()` | Misma tripleta `ret_area`. Salida: tensor en `f32`; la forma la fija el host o el modelo. |
-| `host_current_time` | `() → i64` | Tiempo Unix en segundos. |
-| `host_query_sqlite` | `(ret_area, handle, query_ptr, query_len) → ()` | Misma tripleta. Resultado JSON `SqliteResult` (`columns` + `rows`). |
-| `host_decode_image` | `(ret_area, handle, target_w, target_h) → ()` | `ret_area`: **20 octetos** — `ptr`, `len`, `orig_w`, `orig_h`, `error_code` (`write_ret5` en el host). Tensor CHW `f32`, normalizado 0..1. |
+| `host_read_file` | `(ret_area: i32, handle: i64) → ()` | `ret_area`: 12 bytes (`ptr`, `len`, `error_code`, *little-endian*). Si la llamada tiene éxito, el invitado lee desde `ptr`/`len`. |
+| `host_log` | `(level: i32, msg_ptr: i32, msg_len: i32) → ()` | `level`: de *trace* (0) a *error* (4); véase `LogLevel`. Mensaje UTF-8 en memoria del invitado. |
+| `host_file_metadata` | `(ret_area: i32, handle: i64) → ()` | Igual estructura `ret_area` que `read_file`. Devuelve JSON con `FileMetadata` (`size`, `extension`, `mime_type` / `blake3_hash` opcionales). |
+| `host_compute_hash` | `(ret_area: i32, handle: i64) → ()` | Misma estructura. Respuesta: hash **BLAKE3** en hexadecimal (ASCII), calculado en el host. |
+| `host_run_inference` | `(ret_area, model_ptr, model_len, tensor_ptr, tensor_len, shape_ptr, shape_len) → ()` | Misma estructura `ret_area`. Salida: tensor `f32`; la forma la determina el host o el modelo. |
+| `host_current_time` | `() → i64` | Tiempo Unix (segundos). |
+| `host_query_sqlite` | `(ret_area, handle, query_ptr, query_len) → ()` | Misma estructura. JSON `SqliteResult` (`columns` + `rows`). |
+| `host_decode_image` | `(ret_area, handle, target_w, target_h) → ()` | `ret_area`: **20 bytes** (`ptr`, `len`, `orig_w`, `orig_h`, `error_code`; `write_ret5` en el host). Tensor CHW `f32`, normalizado entre 0 y 1. |
 
 Los plugins compilados para `wasm32` deben usar la API Rust **`foruster-plugin-sdk::host`** que sigue en lugar de invocar estas importaciones manualmente.
 
@@ -288,14 +288,14 @@ Disponibles al compilar para **`wasm32`** (véase el módulo `host` del SDK):
 
 | Función | Finalidad |
 |----------|---------|
-| `read_file(handle)` | Octetos completos del archivo para el `file_handle` del análisis. |
-| `file_metadata(handle)` | `FileMetadata` obtenido del JSON del host. |
-| `compute_hash(handle)` | Cadena hexadecimal BLAKE3 del archivo. |
-| `run_inference(model_id, tensor, shape)` | Inferencia ONNX en el host (*motor de inferencia*). |
-| `decode_image(handle, target_w, target_h)` | Decodificación y redimensionado → tensor CHW `f32` y dimensiones originales. |
-| `query_sqlite(handle, query)` | Consulta SQL de solo lectura sobre un archivo SQLite (p. ej. bases estilo NSRL). |
+| `read_file(handle)` | Contenido completo del archivo asociado al `file_handle` del análisis. |
+| `file_metadata(handle)` | `FileMetadata` a partir del JSON del host. |
+| `compute_hash(handle)` | Hash BLAKE3 del archivo en hexadecimal. |
+| `run_inference(model_id, tensor, shape)` | Inferencia ONNX en el host (motor ONNX Runtime). |
+| `decode_image(handle, target_w, target_h)` | Decodifica y redimensiona; devuelve tensor CHW `f32` y dimensiones originales. |
+| `query_sqlite(handle, query)` | Consulta SQL de solo lectura sobre SQLite (p. ej. bases al estilo NSRL). |
 | `current_time()` | Tiempo Unix (`i64`). |
-| `log(level, msg)` | Línea de registro estructurada hacia el host. |
+| `log(level, msg)` | Registro estructurado en el host. |
 
 Macros de conveniencia: `plugin_info!`, `plugin_warn!`, `plugin_error!` (y `plugin_log!`).
 
@@ -305,11 +305,11 @@ La aplicación de escritorio impone **límites adicionales** en el host (no form
 
 | Política | Valor | Notas |
 |--------|-------|--------|
-| Máximo de octetos por archivo (`host_read_file`, `host_compute_hash`, `host_decode_image`) | 256 MiB | Rechazo con `InvalidInput` si el tamaño en disco lo supera. |
-| Máximo total de lectura desde disco por llamada a `plugin_analyze` | 1 GiB | Acumulado entre importaciones del host; lecturas adicionales devuelven `OutOfMemory`. |
-| Reinicio del presupuesto | Cada `plugin_analyze` | Se ejecuta `reset_host_io_budget()` antes de `plugin_analyze` en el invitado. |
+| Límite por archivo (`host_read_file`, `host_compute_hash`, `host_decode_image`) | 256 MiB | Se rechaza con `InvalidInput` si el tamaño en disco lo supera. |
+| Límite acumulado de lectura por llamada a `plugin_analyze` | 1 GiB | Suma de todas las lecturas del host en esa invocación; por encima, `OutOfMemory`. |
+| Restablecimiento del contador | Cada `plugin_analyze` | Antes de invocar al invitado se llama a `reset_host_io_budget()`. |
 
-Los plugins deben usar `host_file_metadata` para comprobar el tamaño antes de asumir lecturas completas. Las bases de datos de hashes y los volúmenes de datos grandes pueden exigir preprocesado en el host o *fixtures* de prueba más reducidos.
+Los autores de plugins deben usar `host_file_metadata` para comprobar el tamaño antes de asumir lecturas completas. Las bases de datos de hashes y los archivos muy grandes pueden requerir preprocesado en el host o *fixtures* de prueba más pequeños.
 
 ---
 

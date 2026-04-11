@@ -1,6 +1,6 @@
 # Política de operación forense
 
-Foruster se emplea en el marco del **triaje forense digital** y del **análisis en vivo** de **sistemas en uso**: complementa, sin sustituir, los procedimientos *post-mortem* y el peritaje exhaustivo en laboratorio. Quien despliegue la herramienta debe controlar **dónde** se lee y **dónde** se escribe, de modo que se respete la **cadena de custodia** y se minimice el impacto sobre la **evidencia digital** y el sistema anfitrión. Este documento define el comportamiento del producto y relaciona las interacciones con disco con niveles de riesgo.
+Foruster se utiliza en escenarios de **triaje forense digital** y **análisis en vivo** sobre **sistemas en uso**. No sustituye el peritaje exhaustivo en laboratorio ni los flujos *post-mortem*; los complementa. Quien opere la herramienta debe delimitar con precisión **dónde** se lee y **dónde** se escribe, de forma que se preserve la **cadena de custodia** y se limite el impacto sobre la **evidencia digital** y el sistema anfitrión. Este documento fija el comportamiento del producto y relaciona el acceso a disco con niveles de riesgo.
 
 **Idioma:** [English →](../en/FORENSIC_POLICY.md)
 
@@ -8,7 +8,7 @@ Foruster se emplea en el marco del **triaje forense digital** y del **análisis 
 
 | Término | Significado |
 |---------|-------------|
-| **Volumen analizado** | Toda ruta de sistema de archivos, disco o partición añadida para análisis (contenedor de **evidencia digital**). |
+| **Volumen analizado** | Toda ruta de sistema de archivos, disco o partición incorporada al análisis como objeto de examen (**evidencia digital**). |
 | **Árbol portátil** | Directorio que contiene el binario de Foruster y, opcionalmente, `data/` (kit USB, recurso compartido preparado para el caso, etc.). Se fija con `FORUSTER_PORTABLE_ROOT` si el diseño difiere de «binario junto a `data/`». |
 | **Perfil del SO anfitrión** | Configuración de usuario del sistema operativo (p. ej. `%APPDATA%`, `~/.config`) — **no** forma parte del kit portátil. |
 | **Exportación dirigida por el usuario** | Guardar solo mediante un diálogo **Guardar** / **Exportar** donde el investigador elige el destino. |
@@ -44,7 +44,7 @@ Ejecute **`foruster-desktop --help`** para un resumen breve (desde terminal; en 
 | `FORUSTER_STANDARD_MODE` | Con valor verdadero y `FORUSTER_FORENSIC_MODE` no definida o vacía → modo estándar. Se ignora cuando `FORUSTER_FORENSIC_MODE` está explícitamente no vacía. |
 | `FORUSTER_NO_DEFAULT_HASHSETS` | Si está definida, omite por completo la carga y siembra portátil de conjuntos de hashes (opción heredada de exclusión). |
 
-## Inventario de entrada/salida — E/S (componentes de la aplicación)
+## Inventario de operaciones de entrada/salida (E/S)
 
 Las operaciones son **lectura (R)** o **escritura (W)**. El «riesgo» es el impacto en el **sistema analizado** si la aplicación se ejecuta desde o se instala en ese sistema sin kit portátil.
 
