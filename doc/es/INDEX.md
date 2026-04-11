@@ -23,4 +23,4 @@ Este índice recoge el material publicado junto a los binarios; no describe el r
 
 ---
 
-Las versiones de aplicación y de paquetes de plugins se describen en los materiales de su entrega (no necesariamente en este espejo).
+Las versiones de aplicación y de paquetes de plugins se describen en los materiales de su entrega (no tienen por qué coincidir con lo publicado en abierto en este repositorio).

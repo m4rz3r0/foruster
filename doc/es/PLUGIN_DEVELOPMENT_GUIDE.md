@@ -180,7 +180,7 @@ pub struct Finding {
 // Serializar y retornar JSON
 sdk::return_json(&metadata) -> (i32, i32)
 
-// Parsear JSON del anfitrión
+// Deserializar JSON procedente del anfitrión
 sdk::read_json::<T>(ptr, len) -> Result<T, ErrorCode>
 
 // Retornar error
@@ -269,7 +269,7 @@ mod tests {
     fn test_metadata() {
         let (ptr, len) = plugin_metadata();
         assert!(len > 0);
-        // Parsear y validar JSON
+        // Deserializar y validar JSON
     }
 }
 ```
@@ -386,7 +386,7 @@ crate-type = ["cdylib"]
 
 #### 3. "Invalid response JSON"
 
-**Problema**: La respuesta no se puede parsear.
+**Problema**: La respuesta no es JSON válido o no puede deserializarse.
 
 **Solución**: Usar `sdk::return_result()` en lugar de serializar manualmente.
 
@@ -417,8 +417,8 @@ En `examples/` encontrará plugins de referencia coherentes con los detectores d
 
 ## Soporte
 
-- **Arquitectura del cargador WASM:** `doc/WASM_PLUGIN_ARCHITECTURE.md` (no publicada en el espejo).
-- **Soporte:** utilice el canal acordado con su distribuidor o con las condiciones de licencia (este repositorio público no gestiona incidencias del SDK).
+- **Arquitectura del cargador WASM:** `doc/WASM_PLUGIN_ARCHITECTURE.md` (no incluida en la documentación publicada en abierto).
+- **Soporte:** utilice el canal acordado con su distribuidor o con las condiciones de licencia (esta documentación en abierto no ofrece soporte técnico del SDK).
 - **Discord:** *(próximamente)*
 
 ---

@@ -9,7 +9,7 @@ Utilidad gráfica para preparar el **kit de despliegue**: copia Foruster y los r
 | Modo | Uso |
 |------|-----|
 | **Sin conexión** | El instalador está junto a un **paquete** local (`foruster` / `foruster.exe` y carpetas de soporte). No se descarga nada. |
-| **En línea** | Obtiene paquetes de publicación y manifiestos de extensiones desde GitHub (TLS). Requiere red **solo en este PC de preparación**. |
+| **En línea** | Obtiene paquetes de publicación y manifiestos de extensiones desde GitHub (TLS). Requiere red **solo en este equipo de preparación**. |
 
 Defina `FORUSTER_BUNDLE_ROOT` si el paquete no está junto al ejecutable del instalador.
 

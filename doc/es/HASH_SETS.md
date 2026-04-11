@@ -45,7 +45,7 @@ El **foruster-installer** gráfico (solo en el puesto de preparación, no en la 
 |--------|----------------|
 | **Ninguno** | No hay archivo SQLite de conocidos buenos en la configuración (otros niveles pueden estar definidos). |
 | **Muestra mínima** | Copia la SQLite RDSv3 incrustada (~8 KiB, `known_system.sqlite`) — funciona **sin red**. |
-| **Demo curada NIST** | Descarga el zip público RDSv3 curado del NIST (~87 MiB). Requiere modo **en línea** en el instalador **solo en este PC de preparación**. |
+| **Demo curada NIST** | Descarga el zip público RDSv3 curado del NIST (~87 MiB). Requiere modo **en línea** en el instalador **solo en este equipo de preparación**. |
 | **Demo curada legada NIST** | Segundo zip curado desde una ruta antigua del NIST; requiere **en línea**. Si el NIST retira la URL, use otra opción o añada el archivo manualmente. |
 | **NSRL completo (Android / Legacy / Modern minimal o Modern complete)** | Descarga un zip RDSv3 oficial multigigabyte del bucket S3 del NIST (versión fijada en el instalador, actualmente **2026.03.1**). Requiere **en línea**, diálogo de **confirmación** y comprobación de **espacio libre** (aprox. **2×** el tamaño publicado de la descarga). El NSRL **no** se genera localmente: solo lo **publica** el NIST. |
 

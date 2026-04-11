@@ -30,7 +30,7 @@ Toda la documentación publicada existe en **inglés** y **castellano**, con los
 | Instalador | [doc/en/INSTALLER.md](doc/en/INSTALLER.md) | [doc/es/INSTALLER.md](doc/es/INSTALLER.md) |
 | Verificación de plugins WASM | [doc/en/PLUGIN_BUILD_VERIFY.md](doc/en/PLUGIN_BUILD_VERIFY.md) | [doc/es/PLUGIN_BUILD_VERIFY.md](doc/es/PLUGIN_BUILD_VERIFY.md) |
 
-Los archivos copiados al espejo público están **redactados**: no incluyen rutas internas del repositorio ni detalles de infraestructura.
+Los archivos que se publican en este repositorio público están **redactados**: no incluyen rutas internas del código ni detalles de infraestructura.
 
 ## Producto
 

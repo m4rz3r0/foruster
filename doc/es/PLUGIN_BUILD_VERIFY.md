@@ -67,7 +67,7 @@ Pruebas del espacio de trabajo:
 cargo test --workspace
 ```
 
-Las pruebas de integración de plugins van con el **repositorio de desarrollo completo** (no con este espejo). Si tiene acceso, ejecute las pruebas descritas allí.
+Las pruebas de integración de plugins van con el **repositorio de desarrollo completo** (no con la documentación publicada en abierto aquí). Si tiene acceso, ejecute las pruebas descritas allí.
 
 ## 5. Resolución de problemas
 
