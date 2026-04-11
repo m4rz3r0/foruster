@@ -27,7 +27,7 @@ Análisis estático opcional:
 cargo clippy --workspace -- -W clippy::all
 ```
 
-Si las versiones de dependencias divergen (p. ej. Wasmtime, `ort`), alinee los pines del host y del espacio de trabajo con la publicación del SDK admitida.
+Si las versiones de dependencias divergen (p. ej. Wasmtime, `ort`), alinee los pines del cargador nativo y del espacio de trabajo con la publicación del SDK admitida.
 
 ## 2. Compilar plugins de ejemplo
 
@@ -57,7 +57,7 @@ wasm-objdump -x plugins/simple_detector.wasm | grep -A 20 Export
 wasm-objdump -x plugins/simple_detector.wasm | grep -A 10 Import
 ```
 
-Las exportaciones deben incluir los símbolos que exige el host (véase [PLUGIN_SDK.md](PLUGIN_SDK.md)).
+Las exportaciones deben incluir los símbolos que exige el anfitrión (véase [PLUGIN_SDK.md](PLUGIN_SDK.md)).
 
 ## 4. Pruebas
 
@@ -67,7 +67,7 @@ Pruebas del espacio de trabajo:
 cargo test --workspace
 ```
 
-Las pruebas de integración de plugins se entregan con las **fuentes completas del host** (no con este espejo de documentación). Si tiene acceso a ese árbol, ejecute las pruebas de integración descritas allí.
+Las pruebas de integración de plugins van con el **repositorio de desarrollo completo** (no con este espejo). Si tiene acceso, ejecute las pruebas descritas allí.
 
 ## 5. Resolución de problemas
 
@@ -83,7 +83,7 @@ O use `bash scripts/check-plugin-sdk.sh`.
 
 **Desajuste de versión de Wasmtime**
 
-Alinee las dependencias relacionadas con Wasmtime con el conjunto usado en la compilación publicada del host.
+Alinee las dependencias relacionadas con Wasmtime con el conjunto usado en la compilación publicada del anfitrión.
 
 **El plugin no se detecta**
 

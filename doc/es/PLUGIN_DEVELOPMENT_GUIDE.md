@@ -7,7 +7,7 @@ Esta guía describe cómo implementar **plugins WASM**: módulos de análisis qu
 1. [Configuración del entorno](#configuración-del-entorno)
 2. [Tu primer plugin](#tu-primer-plugin)
 3. [API del SDK](#api-del-sdk)
-4. [Funciones del host](#funciones-del-host)
+4. [Funciones del anfitrión](#funciones-del-anfitrion)
 5. [Compilación y pruebas](#compilación-y-pruebas)
 6. [Buenas prácticas](#buenas-prácticas)
 7. [Depuración](#depuración)
@@ -180,7 +180,7 @@ pub struct Finding {
 // Serializar y retornar JSON
 sdk::return_json(&metadata) -> (i32, i32)
 
-// Parsear JSON del host
+// Parsear JSON del anfitrión
 sdk::read_json::<T>(ptr, len) -> Result<T, ErrorCode>
 
 // Retornar error
@@ -192,9 +192,9 @@ sdk::return_result(&response) -> (i32, i32, i32)
 
 ---
 
-## Funciones del host
+## Funciones del anfitrión
 
-Funciones que el plugin puede invocar en el host:
+Funciones que el plugin puede invocar en la aplicación anfitriona (módulo Rust `host`):
 
 ### host::read_file()
 
@@ -293,7 +293,7 @@ pub extern "C" fn plugin_analyze(req_ptr: i32, req_len: i32)
         }
     };
     
-    // SIEMPRE manejar errores de host functions
+    // SIEMPRE manejar errores de las funciones del anfitrión
     let content = match host::read_file(request.file_handle) {
         Ok(bytes) => bytes,
         Err(e) => {

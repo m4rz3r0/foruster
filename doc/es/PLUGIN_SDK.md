@@ -1,6 +1,6 @@
 # Referencia del SDK de plugins Foruster
 
-Documenta los **tipos canónicos del SDK** y las convenciones compartidas entre los **plugins WASM**, la aplicación anfitriona (**host**, binario nativo Foruster), el instalador y la integración continua. El contrato asegura una **ABI** estable entre el nativo y los módulos WebAssembly, en línea con el diseño modular y el aislamiento del *sandbox*.
+Documenta los **tipos canónicos del SDK** y las convenciones compartidas entre los **plugins WASM**, la aplicación **anfitriona** (binario nativo Foruster), el instalador y la integración continua. El contrato asegura una **ABI** estable entre el código nativo y los módulos WebAssembly, acorde al diseño modular y al aislamiento del entorno de ejecución.
 
 **Idioma:** [English →](../en/PLUGIN_SDK.md)  
 **Véase también:** [PLUGIN_DEVELOPMENT_GUIDE.md](PLUGIN_DEVELOPMENT_GUIDE.md) (guía práctica), [INDEX.md](INDEX.md) (índice).
@@ -62,7 +62,7 @@ foruster-plugin-sdk = { path = "../plugin-sdk", features = ["std"] }
 
 ### `PluginMetadata`
 
-Lo devuelve la exportación `plugin_metadata` del plugin. El host valida
+Lo devuelve la exportación `plugin_metadata` del plugin. El anfitrión valida
 `abi_version` y almacena en caché el resto.
 
 ```rust
@@ -83,9 +83,9 @@ pub struct PluginMetadata {
 }
 ```
 
-Para plugins de **IA sobre imágenes**, deje `supported_extensions` vacío y fije `supported_profile_ids` a `["images"]` para que el host ejecute el plugin solo en rutas que el recorrido de análisis marcó con ese perfil (la tipificación de archivos está centralizada en el recorredor).
+Para plugins de **IA sobre imágenes**, deje `supported_extensions` vacío y fije `supported_profile_ids` a `["images"]` para que el anfitrión ejecute el plugin solo en rutas que el recorrido de análisis marcó con ese perfil (la tipificación de archivos está centralizada en el recorredor).
 
-En la pantalla de **gestión de extensiones** del escritorio, la aplicación resuelve esos identificadores a los mismos **nombres de perfil localizados** que el selector de perfiles de análisis y el filtro de resultados (mediante `ProfileAPI` y las definiciones de perfil incrustadas o cargadas). Los autores no traducen identificadores de perfil dentro del WASM; el host mapea `id` → nombre mostrado.
+En la pantalla de **gestión de extensiones** del escritorio, la aplicación resuelve esos identificadores a los mismos **nombres de perfil localizados** que el selector de perfiles de análisis y el filtro de resultados (mediante `ProfileAPI` y las definiciones de perfil incrustadas o cargadas). Los autores no traducen identificadores de perfil dentro del WASM; el anfitrión mapea `id` → nombre mostrado.
 
 El mapa `descriptions` permite incluir traducciones junto a la
 `description` predeterminada en inglés. Las claves son códigos de idioma ISO 639-1
@@ -101,9 +101,9 @@ catálogos.
 
 - **Metadatos** (`name` / `names`, `description` / `descriptions`, etiquetas de parámetros): mapas
   por código de idioma, incrustados en el WASM o el manifiesto.
-- **Salida en tiempo de ejecución** (`Finding::category`, `details`, celdas de tabla, etc.): el host pasa
+- **Salida en tiempo de ejecución** (`Finding::category`, `details`, celdas de tabla, etc.): el anfitrión pasa
   [`AnalysisRequest::locale`] para que el plugin elija la frase correcta entre **cadenas
-  incluidas en la extensión** (o devuelva un formato neutro). El host muestra esos campos
+  incluidas en la extensión** (o devuelva un formato neutro). El anfitrión muestra esos campos
   como texto opaco sin pasarlos por gettext.
 
 Así las extensiones externas siguen siendo utilizables sin parchear los catálogos de traducción de la aplicación principal.
@@ -145,8 +145,8 @@ pub struct Finding {
 }
 ```
 
-El campo `locale` en [`AnalysisRequest`] lo fija el host según el idioma de la aplicación; los plugins
-lo usan para elegir traducciones incrustadas. El host no traduce esas cadenas.
+El campo `locale` en [`AnalysisRequest`] lo fija el anfitrión según el idioma de la aplicación; los plugins
+lo usan para elegir traducciones incrustadas. El anfitrión no traduce esas cadenas.
 
 ---
 
@@ -263,9 +263,9 @@ alineados.
 
 ---
 
-## 6. Funciones del host (solo WASM)
+## 6. Funciones del anfitrión (solo WASM)
 
-El *runtime* de Foruster registra las importaciones Wasm bajo el módulo **`env`**. Las firmas y el diseño de `ret_area` coinciden con el cargador nativo. La inferencia (`host_run_inference`) se ejecuta en el **motor de inferencia** del host (ONNX Runtime), alineada con la **IA en el borde** (procesamiento local).
+El *runtime* de Foruster registra las importaciones Wasm bajo el módulo **`env`**. Las firmas y el diseño de `ret_area` coinciden con el cargador nativo. La inferencia (`host_run_inference`) se ejecuta en el **motor de inferencia** de la aplicación anfitriona (ONNX Runtime), **en el propio equipo**.
 
 ### 6.1 ABI de importación Wasm (canónica)
 
@@ -274,11 +274,11 @@ El *runtime* de Foruster registra las importaciones Wasm bajo el módulo **`env`
 | `host_read_file` | `(ret_area: i32, handle: i64) → ()` | `ret_area`: 12 bytes (`ptr`, `len`, `error_code`, *little-endian*). Si la llamada tiene éxito, el invitado lee desde `ptr`/`len`. |
 | `host_log` | `(level: i32, msg_ptr: i32, msg_len: i32) → ()` | `level`: de *trace* (0) a *error* (4); véase `LogLevel`. Mensaje UTF-8 en memoria del invitado. |
 | `host_file_metadata` | `(ret_area: i32, handle: i64) → ()` | Igual estructura `ret_area` que `read_file`. Devuelve JSON con `FileMetadata` (`size`, `extension`, `mime_type` / `blake3_hash` opcionales). |
-| `host_compute_hash` | `(ret_area: i32, handle: i64) → ()` | Misma estructura. Respuesta: hash **BLAKE3** en hexadecimal (ASCII), calculado en el host. |
-| `host_run_inference` | `(ret_area, model_ptr, model_len, tensor_ptr, tensor_len, shape_ptr, shape_len) → ()` | Misma estructura `ret_area`. Salida: tensor `f32`; la forma la determina el host o el modelo. |
+| `host_compute_hash` | `(ret_area: i32, handle: i64) → ()` | Misma estructura. Respuesta: hash **BLAKE3** en hexadecimal (ASCII), calculado en el anfitrión. |
+| `host_run_inference` | `(ret_area, model_ptr, model_len, tensor_ptr, tensor_len, shape_ptr, shape_len) → ()` | Misma estructura `ret_area`. Salida: tensor `f32`; la forma la determina el anfitrión o el modelo. |
 | `host_current_time` | `() → i64` | Tiempo Unix (segundos). |
 | `host_query_sqlite` | `(ret_area, handle, query_ptr, query_len) → ()` | Misma estructura. JSON `SqliteResult` (`columns` + `rows`). |
-| `host_decode_image` | `(ret_area, handle, target_w, target_h) → ()` | `ret_area`: **20 bytes** (`ptr`, `len`, `orig_w`, `orig_h`, `error_code`; `write_ret5` en el host). Tensor CHW `f32`, normalizado entre 0 y 1. |
+| `host_decode_image` | `(ret_area, handle, target_w, target_h) → ()` | `ret_area`: **20 bytes** (`ptr`, `len`, `orig_w`, `orig_h`, `error_code`; `write_ret5` en el anfitrión). Tensor CHW `f32`, normalizado entre 0 y 1. |
 
 Los plugins compilados para `wasm32` deben usar la API Rust **`foruster-plugin-sdk::host`** que sigue en lugar de invocar estas importaciones manualmente.
 
@@ -289,37 +289,37 @@ Disponibles al compilar para **`wasm32`** (véase el módulo `host` del SDK):
 | Función | Finalidad |
 |----------|---------|
 | `read_file(handle)` | Contenido completo del archivo asociado al `file_handle` del análisis. |
-| `file_metadata(handle)` | `FileMetadata` a partir del JSON del host. |
+| `file_metadata(handle)` | `FileMetadata` a partir del JSON del anfitrión. |
 | `compute_hash(handle)` | Hash BLAKE3 del archivo en hexadecimal. |
-| `run_inference(model_id, tensor, shape)` | Inferencia ONNX en el host (motor ONNX Runtime). |
+| `run_inference(model_id, tensor, shape)` | Inferencia ONNX en el anfitrión (ONNX Runtime). |
 | `decode_image(handle, target_w, target_h)` | Decodifica y redimensiona; devuelve tensor CHW `f32` y dimensiones originales. |
 | `query_sqlite(handle, query)` | Consulta SQL de solo lectura sobre SQLite (p. ej. bases al estilo NSRL). |
 | `current_time()` | Tiempo Unix (`i64`). |
-| `log(level, msg)` | Registro estructurado en el host. |
+| `log(level, msg)` | Registro estructurado en el anfitrión. |
 
 Macros de conveniencia: `plugin_info!`, `plugin_warn!`, `plugin_error!` (y `plugin_log!`).
 
-### 6.3 Aplicación en el host (Foruster nativo)
+### 6.3 Límites en la aplicación anfitriona (Foruster nativo)
 
-La aplicación de escritorio impone **límites adicionales** en el host (no forman parte del contrato ABI WASM, pero son política estable en esta publicación):
+La aplicación de escritorio impone **límites adicionales** (no forman parte del contrato ABI WASM, pero son política estable en esta publicación):
 
 | Política | Valor | Notas |
 |--------|-------|--------|
 | Límite por archivo (`host_read_file`, `host_compute_hash`, `host_decode_image`) | 256 MiB | Se rechaza con `InvalidInput` si el tamaño en disco lo supera. |
-| Límite acumulado de lectura por llamada a `plugin_analyze` | 1 GiB | Suma de todas las lecturas del host en esa invocación; por encima, `OutOfMemory`. |
+| Límite acumulado de lectura por llamada a `plugin_analyze` | 1 GiB | Suma de todas las lecturas del anfitrión en esa invocación; por encima, `OutOfMemory`. |
 | Restablecimiento del contador | Cada `plugin_analyze` | Antes de invocar al invitado se llama a `reset_host_io_budget()`. |
 
-Los autores de plugins deben usar `host_file_metadata` para comprobar el tamaño antes de asumir lecturas completas. Las bases de datos de hashes y los archivos muy grandes pueden requerir preprocesado en el host o *fixtures* de prueba más pequeños.
+Los autores de plugins deben usar `host_file_metadata` para comprobar el tamaño antes de asumir lecturas completas. Las bases de datos de hashes y los archivos muy grandes pueden requerir preprocesado en el anfitrión o **conjuntos de prueba** más reducidos.
 
 ---
 
 ## 7. Gestión de memoria
 
-Los plugins usan un asignador por regiones (`memory.rs`). El host invoca
+Los plugins usan un asignador por regiones (`memory.rs`). El anfitrión invoca
 `plugin_reset()` antes de cada llamada a `plugin_analyze` para liberar todas las
 asignaciones temporales y evitar fugas entre llamadas.
 
-Funciones exportadas usadas por el host:
+Funciones exportadas usadas por el anfitrión:
 
 | Exportación | Finalidad |
 |---|---|
@@ -334,12 +334,12 @@ Los autores de plugins **no** deben llamarlas directamente; los auxiliares del S
 
 ## 8. Versiones y compatibilidad
 
-- **Versión del ABI** (`WASM_ABI_VERSION`): actualmente `(1, 0)`. El host
+- **Versión del ABI** (`WASM_ABI_VERSION`): actualmente `(1, 0)`. El anfitrión
   rechaza plugins cuya versión mayor difiera.
 - **Versión del SDK** (`foruster-plugin-sdk`): sigue semver de forma independiente
   de la aplicación principal (véase `plugin-sdk/CHANGELOG.md`).
 - **Versión del plugin**: se declara por plugin en `PluginMetadata.version`.
-- **Cadena de herramientas host frente a SDK:** el espacio de trabajo principal de Foruster apunta a un **Rust estable reciente** (véase el `Cargo.toml` raíz). La caja `plugin-sdk` puede usar un **`rust-version` y `edition` más antiguos** para que plugins de terceros compilen con un abanico más amplio de compiladores; los invitados siguen compilándose para **`wasm32-wasip1`**. Ante la duda, use la misma versión mayor de Rust que el host para compilaciones reproducibles.
+- **Cadena de herramientas (anfitrión frente a SDK):** el espacio de trabajo principal de Foruster apunta a un **Rust estable reciente** (véase el `Cargo.toml` raíz). La caja `plugin-sdk` puede usar un **`rust-version` y `edition` más antiguos** para que plugins de terceros compilen con un abanico más amplio de compiladores; los invitados siguen compilándose para **`wasm32-wasip1`**. Ante la duda, use la misma versión mayor de Rust que la aplicación anfitriona para compilaciones reproducibles.
 
 Las versiones de paquetes de extensiones se publican junto con las publicaciones de plugins.
 

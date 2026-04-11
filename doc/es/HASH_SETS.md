@@ -7,9 +7,9 @@ En **triaje forense digital**, la **reducción de datos** —por ejemplo, separa
 
 **Idioma:** [English →](../en/HASH_SETS.md)
 
-### ¿Por qué no hay una «descarga pública de la Policía / Guardia Civil»?
+### Listas de fuerzas de seguridad frente al NSRL
 
-Los cuerpos nacionales de policía, la Guardia Civil y organismos similares **no** publican bases operativas de hashes para descarga pública sin restricciones del mismo modo que [el NIST publica el NSRL](https://www.nist.gov/itl/ssd/software-quality-group/national-software-reference-library-nsrl/nsrl-download/current-rds). Muchas categorías de alerta están **legalmente restringidas**, sujetas a **memorándums de entendimiento** o se distribuyen solo por **canales restringidos a fuerzas de seguridad** — no como enlaces HTTP anónimos dentro de un instalador genérico. Foruster mantiene por tanto esos niveles como **suministrados por la organización**: añada listas aprobadas bajo `data/hashsets/` según el procedimiento de su unidad, o comience con marcadores vacíos.
+Los cuerpos policiales y organismos similares **no** publican bases operativas de hashes para descarga pública sin restricciones como [el NIST publica el NSRL](https://www.nist.gov/itl/ssd/software-quality-group/national-software-reference-library-nsrl/nsrl-download/current-rds). Muchas categorías están **legalmente restringidas** o se distribuyen por **canales restringidos**. Foruster deja esos niveles como **aportados por la organización**: añada listas aprobadas bajo `data/hashsets/` según su procedimiento, o comience con marcadores vacíos.
 
 ## Privacidad y seguridad
 
@@ -18,8 +18,8 @@ Los cuerpos nacionales de policía, la Guardia Civil y organismos similares **no
 
 ## Examen sin conexión (uso forense habitual)
 
-- **Durante el análisis**, Foruster **no** requiere Internet: las búsquedas utilizan únicamente los archivos del árbol portátil `data/hashsets/` (por ejemplo en un USB), de modo que no se transmite evidencia fuera del equipo.
-- Las descargas voluminosas **opcionales** (p. ej. la demo curada del NIST) se realizan **solo mediante el instalador**, en un **equipo de preparación** con red. Después puede trasladar el kit a un entorno **sin conexión** (*air-gapped*) si su protocolo lo exige.
+- **Durante el análisis**, Foruster **no** requiere Internet: las búsquedas usan solo los archivos de `data/hashsets/` **dentro del kit portátil** (por ejemplo en un USB), sin transmitir evidencia fuera del equipo.
+- Las descargas voluminosas **opcionales** (p. ej. la demo curada del NIST) se hacen **solo con el instalador**, en un **equipo de preparación** con red. Después puede llevar el kit a un equipo **sin conexión de red** si su protocolo lo exige.
 
 ## Formatos admitidos
 
@@ -30,14 +30,14 @@ Los cuerpos nacionales de policía, la Guardia Civil y organismos similares **no
 
 ## Almacenamiento portátil (forense / USB)
 
-Todos los archivos de conjuntos de hashes y `hashsets-config.json` residen bajo **`data/hashsets/` junto al binario de Foruster** (el árbol de despliegue que copia al USB). **No** se escribe bajo el perfil de usuario del anfitrión (`~/.local/share`, `%APPDATA%`, etc.).
+Los conjuntos de hashes y `hashsets-config.json` residen bajo **`data/hashsets/` junto al ejecutable** (la carpeta del kit que copia al USB). **No** se escribe bajo el perfil de usuario del anfitrión (`~/.local/share`, `%APPDATA%`, etc.).
 
-- Sobrescriba la raíz con la ruta absoluta `FORUSTER_PORTABLE_ROOT` si su diseño difiere (p. ej. `bin/` y `data/` no son hermanos).
-- La disposición en disco queda definida por el esquema `hashsets-config.json` (configuración portátil de conjuntos de hashes).
+- Si la disposición no es estándar, fije la raíz con `FORUSTER_PORTABLE_ROOT` (p. ej. `bin/` y `data/` no son hermanos).
+- La disposición en disco la define `hashsets-config.json`.
 
 ### Instalador
 
-El **foruster-installer** gráfico (ejecútelo solo en el puesto de preparación, no en la máquina examinada) configura **tres niveles** de forma independiente. Véase **[INSTALLER.md](INSTALLER.md)** para el comportamiento completo (modo sin conexión / en línea, progreso, registro).
+El **foruster-installer** gráfico (solo en el puesto de preparación, no en la máquina examinada) configura **tres niveles** de forma independiente. Véase **[INSTALLER.md](INSTALLER.md)** para el comportamiento completo (modo sin conexión / en línea, progreso, registro).
 
 **Conocidos buenos (estilo NSRL)**
 
@@ -83,11 +83,7 @@ La página **Ajustes** del escritorio permite:
 - Rutas para fuentes conocidas buenas, lista de alerta sospechosa y lista de alerta de evidencia.
 - **Aplicar** recarga todas las fuentes desde disco sin reiniciar la aplicación.
 
-A nivel programático, el escritorio expone la configuración de conjuntos de hashes a través de la API de análisis pública (véase la documentación del SDK y del host en el árbol de desarrollo completo si dispone de acceso).
-
-## Nota de arquitectura
-
-Las búsquedas por hash se ejecutan en el **host** con acceso directo a archivos y SQLite opcional. **No** se implementan como plugins WASM: el modelo aislado de plugins no aplica a esta fase.
+Las búsquedas por hash las resuelve la **aplicación nativa** (acceso directo a archivos y SQLite), no los plugins WASM.
 
 ## Referencias
 

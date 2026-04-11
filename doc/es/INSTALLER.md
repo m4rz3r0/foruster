@@ -60,4 +60,4 @@ La interfaz está disponible en **inglés**, **español** y **francés** (botone
 
 ## Análisis frente a preparación
 
-La **aplicación Foruster** no necesita Internet **durante el análisis**. Las búsquedas por hash usan solo archivos bajo su árbol portátil `data/hashsets/`. Las descargas grandes opcionales ocurren **aquí, en el instalador**, en el puesto de preparación, de forma coherente con [HASH_SETS.md](HASH_SETS.md).
+La **aplicación Foruster** no necesita Internet **durante el análisis**: las búsquedas por hash usan solo los archivos de `data/hashsets/` **en el kit portátil**. Las descargas grandes opcionales se hacen **desde el instalador**, en el equipo de preparación; véase [HASH_SETS.md](HASH_SETS.md).

@@ -1,6 +1,6 @@
 # Compilaciones estáticas y binarios portátiles
 
-Objetivo: obtener **binarios nativos** portátiles que, en la medida de lo posible, dependan solo del ejecutable y del núcleo del sistema operativo, sin arrastrar copias adicionales de `libc`, el runtime MSVC u otras DLL, salvo las que se documenten explícitamente en el despliegue. Ello encaja con la **inteligencia artificial en el borde** (*Edge AI*) y con el **motor de inferencia** ONNX Runtime empaquetado junto a la aplicación.
+Objetivo: obtener **binarios nativos** portátiles que, en la medida de lo posible, dependan solo del ejecutable y del núcleo del sistema operativo, sin arrastrar copias adicionales de `libc`, el runtime MSVC u otras DLL, salvo las que se documenten explícitamente. El **motor de inferencia** ONNX Runtime suele distribuirse junto al ejecutable: la inferencia se ejecuta **en el propio equipo**, no en servidores remotos.
 
 **Idioma:** [English →](../en/STATIC_BUILDS.md)
 
@@ -19,12 +19,12 @@ Objetivo: obtener **binarios nativos** portátiles que, en la medida de lo posib
 
 ### Compilaciones sin red / sin descargas (`ort`)
 
-Un árbol de fuentes típico fija `ort` con **`download-binaries`** para que `cargo build` pueda obtener ONNX Runtime cuando haga falta. Es cómodo en desarrollo pero puede ser indeseable en entornos **aislados** o en **kits forenses reproducibles**.
+En una copia habitual del repositorio, `ort` suele activarse con **`download-binaries`** para que `cargo build` pueda obtener ONNX Runtime cuando haga falta. Es cómodo en desarrollo pero puede ser indeseable en entornos **sin red** o en **kits forenses reproducibles**.
 
 Opciones:
 
 1. **Proveer ONNX Runtime** — Instale el paquete oficial para su plataforma (o copie `libonnxruntime.so` / `.dll` / `.dylib` desde una compilación de confianza) y apunte el cargador. Ajuste los **feature flags** de `ort` en el `Cargo.toml` raíz para desactivar `download-binaries` y use el conjunto que documente su versión de `ort` para bibliotecas **del sistema** o **manuales** (véase la [documentación de `ort`](https://docs.rs/ort)).
-2. **Variables de entorno** — Muchas configuraciones de `ort` / ONNX Runtime respetan variables como `ORT_DYLIB_PATH` (el nombre puede variar) para cargar una biblioteca concreta; fíjela en compilación o en tiempo de ejecución tras colocar la biblioteca bajo su árbol portátil.
+2. **Variables de entorno** — Muchas configuraciones de `ort` / ONNX Runtime respetan variables como `ORT_DYLIB_PATH` (el nombre puede variar) para cargar una biblioteca concreta; fíjela en compilación o en tiempo de ejecución tras colocar la biblioteca junto al ejecutable o en la carpeta del kit.
 3. **Documente el artefacto** — En cada publicación, registre la versión de ONNX Runtime y la ruta junto al binario (véase [FORENSIC_POLICY.md](FORENSIC_POLICY.md) para el diseño portátil).
 
 Tras cambiar los *features* de `ort`, ejecute `cargo build --release` en una máquina limpia **sin** red para confirmar que no se descarga nada en tiempo de compilación. Incluso con musl, la pila de interfaz puede exigir `fontconfig`, `freetype` o similares en tiempo de ejecución salvo que esté construida para incrustarlas o evitarlas.
