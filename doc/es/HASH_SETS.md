@@ -1,8 +1,8 @@
 # Bases de datos de hashes (NSRL y listas de alerta)
 
-Foruster puede comparar los resúmenes **MD5** y **SHA-1** de cada archivo escaneado con fuentes configurables:
+En el **triaje forense digital**, la **reducción de datos** —p. ej. filtrar software conocido frente a hallazgos prioritarios— es un criterio de eficiencia operativa. Foruster compara los resúmenes **MD5** y **SHA-1** de cada archivo escaneado con fuentes configurables:
 
-- **Software conocido / comercial** — habitualmente la publicación **RDSv3** del [NSRL del NIST](https://www.nist.gov/itl/ssd/software-quality-group/national-software-reference-library-nsrl/nsrl-download/current-rds) en formato SQLite. Es el conjunto de datos público estándar para archivos de aplicaciones y SO «conocidos» que reduce ruido en el triaje forense.
+- **Software conocido / comercial** — habitualmente la publicación **RDSv3** del [NSRL del NIST](https://www.nist.gov/itl/ssd/software-quality-group/national-software-reference-library-nsrl/nsrl-download/current-rds) en formato SQLite. Es el conjunto de datos público estándar para archivos de aplicaciones y SO «conocidos» que atenúa el ruido en escenarios de triaje.
 - **Listas de alerta (dos niveles)** — **Sospechoso** y **Evidencia**, aportadas por su organización como listas de hashes en texto plano o bases SQLite con el mismo esquema estilo `FILE` que RDSv3. Foruster **no** incluye conjuntos de hashes de contenido ilícito de terceros; el manejo jurídico de ese material corresponde a quien despliega la herramienta.
 
 **Idioma:** [English →](../en/HASH_SETS.md)
@@ -18,8 +18,8 @@ Los cuerpos nacionales de policía, la Guardia Civil y organismos similares **no
 
 ## Examen sin conexión (uso forense habitual)
 
-- **Durante el análisis**, Foruster **no** requiere Internet. Las búsquedas usan solo archivos bajo su árbol portátil `data/hashsets/` (p. ej. en USB).
-- Las descargas grandes **opcionales** (p. ej. demo curada del NIST) ocurren **solo en el instalador**, en una máquina de **preparación** con red. Después puede copiar la instalación terminada a un entorno de examen **aislado** si su procedimiento lo exige.
+- **Durante el análisis**, Foruster **no** requiere Internet. Las búsquedas usan solo archivos bajo su árbol portátil `data/hashsets/` (p. ej. en USB), en coherencia con el requisito de **inferencia y cribado local** (*Edge AI* / reducción de datos sin filtrar evidencia hacia la nube).
+- Las descargas grandes **opcionales** (p. ej. demo curada del NIST) ocurren **solo en el instalador**, en una **estación de preparación** con red. A continuación puede copiar el kit terminado a un entorno **aislado** (*air-gapped*) si su procedimiento pericial lo exige.
 
 ## Formatos admitidos
 

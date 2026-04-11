@@ -1,6 +1,6 @@
 # Guía de desarrollo de plugins para Foruster
 
-Guía completa para desarrollar plugins WASM para Foruster. **Referencia normativa del SDK:** [PLUGIN_SDK.md](PLUGIN_SDK.md). **English:** [PLUGIN_DEVELOPMENT_GUIDE.md](../en/PLUGIN_DEVELOPMENT_GUIDE.md)
+Guía para implementar **extensiones WASM** (*plugins*): módulos de análisis que el **sistema forense** carga de forma aislada y que pueden acoplar **visión artificial** u otras capacidades al **motor de análisis**, en la línea de la **abstracción de capacidades cognitivas** descrita en la memoria del proyecto. **Referencia normativa del SDK:** [PLUGIN_SDK.md](PLUGIN_SDK.md). **English:** [PLUGIN_DEVELOPMENT_GUIDE.md](../en/PLUGIN_DEVELOPMENT_GUIDE.md)
 
 ## Tabla de contenidos
 
@@ -407,18 +407,18 @@ ls -lh target/wasm32-wasip1/release/my_detector.wasm
 
 ## Ejemplos completos
 
-En `examples/` hay plugins de referencia:
+En `examples/` hay extensiones de referencia alineadas con los detectores descritos en la memoria del proyecto:
 
-- `nsfw-detector-wasm/` — detector de contenido NSFW/CSAM basado en IA
-- `weapon-detector-wasm/` — detector de armas con YOLOv8 (pistolas, cuchillos)
-- `cookie-extractor-wasm/` — extracción de bases de datos de cookies del navegador
+- `nsfw-detector-wasm/` — clasificación de **contenido sensible** (*NSFW*) mediante **Vision Transformer** (motor de inferencia local).
+- `weapon-detector-wasm/` — **detección de objetos** (armas) con **YOLOv8** en escenas complejas.
+- `cookie-extractor-wasm/` — extracción de metadatos almacenados en bases de datos de navegador (*Data Extraction*).
 
 ---
 
 ## Soporte
 
-- **Documentación interna del host:** `doc/WASM_PLUGIN_ARCHITECTURE.md` (no publicada en el espejo).
-- **Soporte:** use el canal acordado con su distribuidor o las condiciones de licencia (este espejo público no gestiona incidencias del SDK).
+- **Arquitectura interna del cargador WASM:** `doc/WASM_PLUGIN_ARCHITECTURE.md` (no publicada en el espejo).
+- **Soporte comercial o académico:** utilice el canal acordado con su distribuidor o las condiciones de licencia (este espejo público no gestiona incidencias del SDK).
 - **Discord:** *(próximamente)*
 
 ---

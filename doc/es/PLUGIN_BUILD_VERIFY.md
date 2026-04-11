@@ -1,6 +1,6 @@
 # Compilar y verificar plugins WASM
 
-Esta lista de comprobación complementa [PLUGIN_DEVELOPMENT_GUIDE.md](PLUGIN_DEVELOPMENT_GUIDE.md) y [PLUGIN_SDK.md](PLUGIN_SDK.md). Describe cómo compilar el espacio de trabajo, compilar extensiones de ejemplo y ejecutar pruebas relacionadas con plugins sin rutas dependientes de la máquina.
+Esta lista de comprobación complementa [PLUGIN_DEVELOPMENT_GUIDE.md](PLUGIN_DEVELOPMENT_GUIDE.md) y [PLUGIN_SDK.md](PLUGIN_SDK.md). Describe cómo compilar el espacio de trabajo, generar extensiones **WASM** de ejemplo —módulos de análisis que amplían la herramienta sin recompilar el núcleo— y ejecutar pruebas relacionadas, sin rutas dependientes de la máquina. El modelo de **extensibilidad** forma parte de la arquitectura modular descrita en la memoria del proyecto (*TFM*, 2026).
 
 **Idioma:** [English →](../en/PLUGIN_BUILD_VERIFY.md)
 

@@ -1,6 +1,6 @@
 # Instalador de Foruster (`foruster-installer`)
 
-Utilidad gráfica para copiar la aplicación Foruster y activos opcionales en un **medio de despliegue** (por ejemplo un USB preparado en un laboratorio). Ejecútela **solo en el equipo de preparación**, no en el sistema objeto de examen forense.
+Utilidad gráfica para preparar el **kit de despliegue**: copia la aplicación Foruster y los activos opcionales (conjuntos de hashes, modelos, etc.) en un **medio de despliegue** (p. ej. un USB montado en una **estación de trabajo** o laboratorio). Ejecútela **solo en la fase de preparación** —no en el sistema objeto de análisis durante la adquisición—, de forma que las descargas opcionales y la configuración no comprometan la **cadena de custodia** del equipo examinado.
 
 **Idioma:** [English →](../en/INSTALLER.md)
 

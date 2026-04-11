@@ -1,6 +1,6 @@
 # Política de operación forense
 
-Foruster se utiliza en **sistemas en uso** bajo investigación. Los investigadores deben controlar **dónde** la herramienta lee y escribe. Este documento define el comportamiento del producto y relaciona las interacciones con disco con niveles de riesgo.
+Foruster se emplea en el marco del **triaje forense digital** y del **análisis en vivo** de **sistemas en uso**: complementa, sin sustituir, los procedimientos *post-mortem* y el peritaje exhaustivo en laboratorio. Quien despliegue la herramienta debe controlar **dónde** se lee y **dónde** se escribe, de modo que se respete la **cadena de custodia** y se minimice el impacto sobre la **evidencia digital** y el sistema anfitrión. Este documento define el comportamiento del producto y relaciona las interacciones con disco con niveles de riesgo.
 
 **Idioma:** [English →](../en/FORENSIC_POLICY.md)
 
@@ -8,7 +8,7 @@ Foruster se utiliza en **sistemas en uso** bajo investigación. Los investigador
 
 | Término | Significado |
 |---------|-------------|
-| **Volumen analizado** | Toda ruta de sistema de archivos, disco o partición añadida para análisis (evidencia). |
+| **Volumen analizado** | Toda ruta de sistema de archivos, disco o partición añadida para análisis (contenedor de **evidencia digital**). |
 | **Árbol portátil** | Directorio que contiene el binario de Foruster y, opcionalmente, `data/` (kit USB, recurso compartido preparado para el caso, etc.). Se fija con `FORUSTER_PORTABLE_ROOT` si el diseño difiere de «binario junto a `data/`». |
 | **Perfil del SO anfitrión** | Configuración de usuario del sistema operativo (p. ej. `%APPDATA%`, `~/.config`) — **no** forma parte del kit portátil. |
 | **Exportación dirigida por el usuario** | Guardar solo mediante un diálogo **Guardar** / **Exportar** donde el investigador elige el destino. |
@@ -44,7 +44,7 @@ Ejecute **`foruster-desktop --help`** para un resumen breve (desde terminal; en 
 | `FORUSTER_STANDARD_MODE` | Con valor verdadero y `FORUSTER_FORENSIC_MODE` no definida o vacía → modo estándar. Se ignora cuando `FORUSTER_FORENSIC_MODE` está explícitamente no vacía. |
 | `FORUSTER_NO_DEFAULT_HASHSETS` | Si está definida, omite por completo la carga y siembra portátil de conjuntos de hashes (opción heredada de exclusión). |
 
-## Inventario de E/S (componentes de la aplicación)
+## Inventario de entrada/salida — E/S (componentes de la aplicación)
 
 Las operaciones son **lectura (R)** o **escritura (W)**. El «riesgo» es el impacto en el **sistema analizado** si la aplicación se ejecuta desde o se instala en ese sistema sin kit portátil.
 

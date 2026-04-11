@@ -1,6 +1,6 @@
 # Compilaciones estáticas y binarios portátiles
 
-Objetivo: distribuir ejecutables que dependan **solo** del formato ejecutable del sistema operativo y de las interfaces del núcleo, evitando copias separadas de `libc`, el runtime MSVC u otras DLL cuando sea posible.
+Objetivo: distribuir **binarios nativos** portátiles —en coherencia con el paradigma de **inteligencia artificial en el borde** (*Edge AI*) y el **motor de inferencia** ONNX Runtime— que dependan, en la medida de lo posible, **solo** del formato ejecutable del sistema operativo y de las interfaces del núcleo, evitando copias separadas de `libc`, el runtime MSVC u otras DLL salvo las que documente explícitamente su despliegue.
 
 **Idioma:** [English →](../en/STATIC_BUILDS.md)
 
