@@ -1,20 +1,20 @@
-# Foruster Plugin Development Guide
+# Guía de desarrollo de plugins para Foruster
 
-Guía completa para desarrollar plugins WASM para Foruster.
+Guía completa para desarrollar plugins WASM para Foruster. **Referencia normativa del SDK:** [PLUGIN_SDK.md](PLUGIN_SDK.md). **English:** [PLUGIN_DEVELOPMENT_GUIDE.md](../en/PLUGIN_DEVELOPMENT_GUIDE.md)
 
-## Tabla de Contenidos
+## Tabla de contenidos
 
-1. [Setup del Entorno](#setup-del-entorno)
-2. [Tu Primer Plugin](#tu-primer-plugin)
+1. [Configuración del entorno](#configuración-del-entorno)
+2. [Tu primer plugin](#tu-primer-plugin)
 3. [API del SDK](#api-del-sdk)
-4. [Host Functions](#host-functions)
-5. [Compilación y Testing](#compilación-y-testing)
-6. [Best Practices](#best-practices)
-7. [Debugging](#debugging)
+4. [Funciones del host](#funciones-del-host)
+5. [Compilación y pruebas](#compilación-y-pruebas)
+6. [Buenas prácticas](#buenas-prácticas)
+7. [Depuración](#depuración)
 
 ---
 
-## Setup del Entorno
+## Configuración del entorno
 
 ### Requisitos
 
@@ -47,20 +47,18 @@ crate-type = ["cdylib"]
 foruster-plugin-sdk = { path = "../plugin-sdk" }
 
 [profile.release]
-opt-level = "z"     # Size optimization
+opt-level = "z"     # Optimización de tamaño
 lto = true
 strip = true
 ```
 
 ---
 
-## Tu Primer Plugin
+## Tu primer plugin
 
-### Estructura Mínima
+### Estructura mínima
 
-Todo plugin debe export `plugin_metadata` (identity) and
-`plugin_analyze` (logic). The `declare_plugin!` macro generates the
-metadata export for you:
+Todo plugin debe exportar **`plugin_metadata`** (identidad) y **`plugin_analyze`** (lógica). La macro **`declare_plugin!`** genera la exportación de metadatos:
 
 ```rust
 #![no_std]
@@ -71,7 +69,7 @@ extern crate alloc;
 use alloc::vec::Vec;
 use foruster_plugin_sdk::prelude::*;
 
-// 1. Plugin declaration (generates plugin_metadata + plugin_manifest_entry)
+// 1. Declaración del plugin (genera plugin_metadata + plugin_manifest_entry)
 foruster_plugin_sdk::declare_plugin! {
     id: "my-detector",
     name: "My Detector",
@@ -89,7 +87,7 @@ foruster_plugin_sdk::declare_plugin! {
     model: None::<&str>,
 }
 
-// 2. Analysis function
+// 2. Función de análisis
 #[no_mangle]
 pub extern "C" fn plugin_analyze(req_ptr: i32, req_len: i32)
     -> (i32, i32, i32)
@@ -99,7 +97,7 @@ pub extern "C" fn plugin_analyze(req_ptr: i32, req_len: i32)
         Err(e) => return sdk::return_error(e),
     };
 
-    // Your analysis logic here
+    // Lógica de análisis aquí
     let findings = Vec::new();
 
     let response = AnalysisResponse {
@@ -111,8 +109,7 @@ pub extern "C" fn plugin_analyze(req_ptr: i32, req_len: i32)
 }
 ```
 
-> See [PLUGIN_SDK.md](PLUGIN_SDK.md) for the full type reference and
-> manifest format.
+> Consulte [PLUGIN_SDK.md](PLUGIN_SDK.md) para la referencia completa de tipos y el formato del manifiesto.
 
 ---
 
@@ -195,9 +192,9 @@ sdk::return_result(&response) -> (i32, i32, i32)
 
 ---
 
-## Host Functions
+## Funciones del host
 
-Funciones que el plugin puede llamar al host:
+Funciones que el plugin puede invocar en el host:
 
 ### host::read_file()
 
@@ -215,13 +212,13 @@ let content = match host::read_file(request.file_handle) {
 ```rust
 use foruster_plugin_sdk::{host, plugin_info, plugin_warn, plugin_error};
 
-// Directo
-host::log(LogLevel::Info, "Processing file");
+// Llamada directa
+host::log(LogLevel::Info, "Procesando archivo");
 
 // Con macros (recomendado)
-plugin_info!("Analyzing {} bytes", content.len());
-plugin_warn!("Unusual file size");
-plugin_error!("Failed to decode image");
+plugin_info!("Analizando {} bytes", content.len());
+plugin_warn!("Tamaño de archivo inusual");
+plugin_error!("No se pudo decodificar la imagen");
 ```
 
 ### host::run_inference() *(Próximamente)*
@@ -237,7 +234,7 @@ let output = host::run_inference(
 
 ---
 
-## Compilación y Testing
+## Compilación y pruebas
 
 ### Compilar
 
@@ -259,9 +256,9 @@ cp target/wasm32-wasip1/release/my_detector.wasm \
    /path/to/foruster/plugins/
 ```
 
-### Testing Local
+### Pruebas locales
 
-Crear un test runner (con feature `std`):
+Crear un ejecutor de pruebas (con la feature `std`):
 
 ```rust
 #[cfg(all(test, not(target_arch = "wasm32")))]
@@ -279,9 +276,9 @@ mod tests {
 
 ---
 
-## Best Practices
+## Buenas prácticas
 
-### 1. Manejo de Errores Robusto
+### 1. Manejo de errores robusto
 
 ```rust
 pub extern "C" fn plugin_analyze(req_ptr: i32, req_len: i32) 
@@ -313,7 +310,7 @@ pub extern "C" fn plugin_analyze(req_ptr: i32, req_len: i32)
 }
 ```
 
-### 2. Logging Informativo
+### 2. Registro informativo
 
 ```rust
 plugin_info!("Starting analysis of {} bytes", content.len());
@@ -321,7 +318,7 @@ plugin_info!("Detected format: {:?}", format);
 plugin_info!("Found {} potential matches", count);
 ```
 
-### 3. Performance
+### 3. Rendimiento
 
 ```rust
 // ✅ Reutilizar allocaciones
@@ -356,11 +353,11 @@ if !is_valid_image(&content) {
 
 ---
 
-## Debugging
+## Depuración
 
-### Logs
+### Registros
 
-Los logs del plugin aparecen en la consola de Foruster con prefijo `[Plugin]`:
+Los registros del plugin aparecen en la consola de Foruster con prefijo `[Plugin]`:
 
 ```
 [2024-04-07 19:30:15] INFO [Plugin] Analyzing file handle 42
@@ -408,21 +405,21 @@ ls -lh target/wasm32-wasip1/release/my_detector.wasm
 
 ---
 
-## Ejemplos Completos
+## Ejemplos completos
 
-Ver `examples/` para plugins funcionales:
+En `examples/` hay plugins de referencia:
 
-- `nsfw-detector-wasm/` - AI-based NSFW/CSAM content detector
-- `weapon-detector-wasm/` - YOLOv8-based weapon detector (pistols, knives)
-- `cookie-extractor-wasm/` - Browser cookie database extraction
+- `nsfw-detector-wasm/` — detector de contenido NSFW/CSAM basado en IA
+- `weapon-detector-wasm/` — detector de armas con YOLOv8 (pistolas, cuchillos)
+- `cookie-extractor-wasm/` — extracción de bases de datos de cookies del navegador
 
 ---
 
 ## Soporte
 
-- **Documentación**: `doc/WASM_PLUGIN_ARCHITECTURE.md`
-- **Support**: use the channel agreed with your distributor or license terms (this public mirror does not track SDK support tickets).
-- **Discord**: *(próximamente)*
+- **Documentación interna del host:** `doc/WASM_PLUGIN_ARCHITECTURE.md` (no publicada en el espejo).
+- **Soporte:** use el canal acordado con su distribuidor o las condiciones de licencia (este espejo público no gestiona incidencias del SDK).
+- **Discord:** *(próximamente)*
 
 ---
 

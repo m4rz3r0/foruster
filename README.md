@@ -16,16 +16,19 @@ This repository is the **public documentation and release channel** for **Forust
 
 ## Documentation
 
-| Topic | Document |
-|------|----------|
-| Index | [doc/INDEX.md](doc/INDEX.md) |
-| WASM plugin SDK (host API, ABI) | [doc/PLUGIN_SDK.md](doc/PLUGIN_SDK.md) |
-| Plugin authoring tutorial | [doc/PLUGIN_DEVELOPMENT_GUIDE.md](doc/PLUGIN_DEVELOPMENT_GUIDE.md) |
-| Forensic / portable behaviour | [doc/FORENSIC_POLICY.md](doc/FORENSIC_POLICY.md) |
-| Static builds | [doc/STATIC_BUILDS.md](doc/STATIC_BUILDS.md) |
-| Hash sets (NSRL-style) | [doc/HASH_SETS.md](doc/HASH_SETS.md) |
-| Installer | [doc/INSTALLER.md](doc/INSTALLER.md) |
-| Verify WASM plugins | [doc/PLUGIN_BUILD_VERIFY.md](doc/PLUGIN_BUILD_VERIFY.md) |
+All published guides exist in **English** and **Spanish** with the **same filenames** under [`doc/en/`](doc/en/README.md) and [`doc/es/`](doc/es/README.md). Pick one language and stay in that folder.
+
+| Topic | English | Español |
+|------|---------|---------|
+| Hub (topic list) | [doc/en/README.md](doc/en/README.md) | [doc/es/README.md](doc/es/README.md) |
+| Index | [doc/en/INDEX.md](doc/en/INDEX.md) | [doc/es/INDEX.md](doc/es/INDEX.md) |
+| WASM plugin SDK (host API, ABI) | [doc/en/PLUGIN_SDK.md](doc/en/PLUGIN_SDK.md) | [doc/es/PLUGIN_SDK.md](doc/es/PLUGIN_SDK.md) |
+| Plugin authoring guide | [doc/en/PLUGIN_DEVELOPMENT_GUIDE.md](doc/en/PLUGIN_DEVELOPMENT_GUIDE.md) | [doc/es/PLUGIN_DEVELOPMENT_GUIDE.md](doc/es/PLUGIN_DEVELOPMENT_GUIDE.md) |
+| Forensic / portable behaviour | [doc/en/FORENSIC_POLICY.md](doc/en/FORENSIC_POLICY.md) | [doc/es/FORENSIC_POLICY.md](doc/es/FORENSIC_POLICY.md) |
+| Static builds | [doc/en/STATIC_BUILDS.md](doc/en/STATIC_BUILDS.md) | [doc/es/STATIC_BUILDS.md](doc/es/STATIC_BUILDS.md) |
+| Hash sets (NSRL-style) | [doc/en/HASH_SETS.md](doc/en/HASH_SETS.md) | [doc/es/HASH_SETS.md](doc/es/HASH_SETS.md) |
+| Installer | [doc/en/INSTALLER.md](doc/en/INSTALLER.md) | [doc/es/INSTALLER.md](doc/es/INSTALLER.md) |
+| Verify WASM plugins | [doc/en/PLUGIN_BUILD_VERIFY.md](doc/en/PLUGIN_BUILD_VERIFY.md) | [doc/es/PLUGIN_BUILD_VERIFY.md](doc/es/PLUGIN_BUILD_VERIFY.md) |
 
 These files are **redacted for public distribution**: they omit internal repository layout, host implementation paths, and internal-only workflows. Some links may still point at paths that exist only in a full SDK or partner drop (for example under `examples/`).
 

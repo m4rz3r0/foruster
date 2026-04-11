@@ -16,20 +16,21 @@ Este repositorio es el **canal público de documentación y de publicación** de
 
 ## Documentación
 
-| Tema | Documento |
-|------|-----------|
-| Punto de entrada (inglés / español) | [doc/README.md](doc/README.md) |
-| Índice en castellano | [doc/es/INDICE.md](doc/es/INDICE.md) |
-| Índice técnico (inglés) | [doc/INDEX.md](doc/INDEX.md) |
-| SDK WASM (API del host, ABI) | [doc/PLUGIN_SDK.md](doc/PLUGIN_SDK.md) |
-| Guía de plugins | [doc/PLUGIN_DEVELOPMENT_GUIDE.md](doc/PLUGIN_DEVELOPMENT_GUIDE.md) |
-| Modo forense / despliegue portátil | [doc/FORENSIC_POLICY.md](doc/FORENSIC_POLICY.md) |
-| Compilación estática | [doc/STATIC_BUILDS.md](doc/STATIC_BUILDS.md) |
-| Conjuntos de hashes | [doc/HASH_SETS.md](doc/HASH_SETS.md) |
-| Instalador | [doc/INSTALLER.md](doc/INSTALLER.md) |
-| Verificación de plugins WASM | [doc/PLUGIN_BUILD_VERIFY.md](doc/PLUGIN_BUILD_VERIFY.md) |
+Toda la documentación publicada existe en **inglés** y **castellano**, con los **mismos nombres de archivo** en [`doc/en/`](doc/en/README.md) y [`doc/es/`](doc/es/README.md). Elija un idioma y use solo esa carpeta.
 
-Los archivos copiados al espejo público están **redactados**: no incluyen rutas internas del repositorio ni detalles de infraestructura. Parte de la documentación de referencia está en **inglés**; el índice en español indica el idioma de cada guía.
+| Tema | English | Español |
+|------|---------|---------|
+| Punto de entrada | [doc/en/README.md](doc/en/README.md) | [doc/es/README.md](doc/es/README.md) |
+| Índice | [doc/en/INDEX.md](doc/en/INDEX.md) | [doc/es/INDEX.md](doc/es/INDEX.md) |
+| SDK WASM (API del host, ABI) | [doc/en/PLUGIN_SDK.md](doc/en/PLUGIN_SDK.md) | [doc/es/PLUGIN_SDK.md](doc/es/PLUGIN_SDK.md) |
+| Guía de plugins | [doc/en/PLUGIN_DEVELOPMENT_GUIDE.md](doc/en/PLUGIN_DEVELOPMENT_GUIDE.md) | [doc/es/PLUGIN_DEVELOPMENT_GUIDE.md](doc/es/PLUGIN_DEVELOPMENT_GUIDE.md) |
+| Modo forense / despliegue portátil | [doc/en/FORENSIC_POLICY.md](doc/en/FORENSIC_POLICY.md) | [doc/es/FORENSIC_POLICY.md](doc/es/FORENSIC_POLICY.md) |
+| Compilación estática | [doc/en/STATIC_BUILDS.md](doc/en/STATIC_BUILDS.md) | [doc/es/STATIC_BUILDS.md](doc/es/STATIC_BUILDS.md) |
+| Conjuntos de hashes | [doc/en/HASH_SETS.md](doc/en/HASH_SETS.md) | [doc/es/HASH_SETS.md](doc/es/HASH_SETS.md) |
+| Instalador | [doc/en/INSTALLER.md](doc/en/INSTALLER.md) | [doc/es/INSTALLER.md](doc/es/INSTALLER.md) |
+| Verificación de plugins WASM | [doc/en/PLUGIN_BUILD_VERIFY.md](doc/en/PLUGIN_BUILD_VERIFY.md) | [doc/es/PLUGIN_BUILD_VERIFY.md](doc/es/PLUGIN_BUILD_VERIFY.md) |
+
+Los archivos copiados al espejo público están **redactados**: no incluyen rutas internas del repositorio ni detalles de infraestructura.
 
 ## Producto
 
