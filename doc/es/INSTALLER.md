@@ -24,7 +24,7 @@ Use **Aplicar** junto a la lista de extensiones para volver a cargar el manifies
 
 ## Plataforma de destino
 
-Elija **Linux** o **Windows** para que el nombre del binario instalado coincida con el árbol de destino. Cambiar el objetivo actualiza la lista de etiquetas de la **aplicación** cuando hay conexión.
+Elija **Linux** o **Windows** para que el nombre del binario instalado sea coherente con la **instalación de destino** (convenciones de cada plataforma). Cambiar el objetivo actualiza la lista de etiquetas de la **aplicación** cuando hay conexión.
 
 ## Bases de datos de hashes (`data/hashsets/`)
 
