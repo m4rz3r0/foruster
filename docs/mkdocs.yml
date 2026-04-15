@@ -1,0 +1,71 @@
+# MkDocs Material — static HTML under site_dir (guide/). No client-side SPA router.
+site_name: Foruster
+site_description: Forensic triage and analysis — public guides
+site_author: Foruster
+site_url: https://m4rz3r0.github.io/foruster/guide/
+docs_dir: documentation
+site_dir: guide
+strict: false
+
+theme:
+  name: material
+  language: en
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue grey
+      accent: light blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue grey
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+
+plugins:
+  - search
+
+markdown_extensions:
+  - tables
+  - fenced_code
+  - admonition
+  - pymdownx.details
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+
+extra:
+  homepage: https://m4rz3r0.github.io/foruster/
+
+nav:
+  - "Elegir idioma": index.md
+  - "Descargas e inicio": https://m4rz3r0.github.io/foruster/
+  - English:
+      - Overview: en/README.md
+      - Topic index: en/INDEX.md
+      - Installation guide: en/INSTALLER.md
+      - Forensic policy: en/FORENSIC_POLICY.md
+      - Hash databases: en/HASH_SETS.md
+      - FAQ: en/FAQ.md
+  - Español:
+      - Centro de documentación: es/README.md
+      - Índice de temas: es/INDEX.md
+      - Guía de instalación: es/INSTALLER.md
+      - Política forense: es/FORENSIC_POLICY.md
+      - Bases de hashes: es/HASH_SETS.md
+      - Preguntas frecuentes: es/FAQ.md

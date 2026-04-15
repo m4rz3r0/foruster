@@ -1,0 +1,1353 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Forensic triage and analysis — public guides">
+      
+      
+        <meta name="author" content="Foruster">
+      
+      
+        <link rel="canonical" href="https://m4rz3r0.github.io/foruster/guide/es/INSTALLER/">
+      
+      
+        <link rel="prev" href="../INDEX/">
+      
+      
+        <link rel="next" href="../FORENSIC_POLICY/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Guía de instalación - Foruster</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="light-blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#guia-de-instalacion-y-preparacion-del-kit" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="https://m4rz3r0.github.io/foruster/" title="Foruster" class="md-header__button md-logo" aria-label="Foruster" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Foruster
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Guía de instalación
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Elegir idioma
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://m4rz3r0.github.io/foruster/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Descargas e inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../en/" class="md-tabs__link">
+          
+  
+  
+  English
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  Español
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://m4rz3r0.github.io/foruster/" title="Foruster" class="md-nav__button md-logo" aria-label="Foruster" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Foruster
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Elegir idioma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://m4rz3r0.github.io/foruster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Descargas e inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    English
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    English
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/INDEX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Topic index
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/INSTALLER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/FORENSIC_POLICY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Forensic policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/HASH_SETS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hash databases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/FAQ/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Español
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Español
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Centro de documentación
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../INDEX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice de temas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guía de instalación
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guía de instalación
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#resumen-que-va-a-hacer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resumen: qué va a hacer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#antes-de-empezar-lista-corta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Antes de empezar (lista corta)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modos-de-origen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modos de origen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#versiones-modo-en-linea" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Versiones (modo en línea)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plataforma-de-destino" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plataforma de destino
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bases-de-datos-de-hashes-datahashsets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bases de datos de hashes (data/hashsets/)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#progreso-registro-y-finalizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Progreso, registro y finalización
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#analisis-frente-a-preparacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Análisis frente a preparación
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mas-ayuda" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Más ayuda
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../FORENSIC_POLICY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Política forense
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HASH_SETS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bases de hashes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../FAQ/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preguntas frecuentes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#resumen-que-va-a-hacer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resumen: qué va a hacer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#antes-de-empezar-lista-corta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Antes de empezar (lista corta)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modos-de-origen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modos de origen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#versiones-modo-en-linea" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Versiones (modo en línea)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plataforma-de-destino" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plataforma de destino
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bases-de-datos-de-hashes-datahashsets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bases de datos de hashes (data/hashsets/)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#progreso-registro-y-finalizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Progreso, registro y finalización
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#analisis-frente-a-preparacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Análisis frente a preparación
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mas-ayuda" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Más ayuda
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="guia-de-instalacion-y-preparacion-del-kit">Guía de instalación y preparación del kit<a class="headerlink" href="#guia-de-instalacion-y-preparacion-del-kit" title="Permanent link">&para;</a></h1>
+<p>La utilidad <strong><code>foruster-installer</code></strong> es una ventana gráfica para <strong>preparar el kit de despliegue</strong>: copia Foruster y los recursos opcionales (conjuntos de hashes, modelos, etc.) a un <strong>medio de destino</strong> (por ejemplo un USB preparado en laboratorio o en una estación de trabajo).</p>
+<div class="admonition danger">
+<p class="admonition-title">No ejecute el instalador en el equipo bajo examen</p>
+<p>Úselo <strong>solo en el equipo de preparación</strong>. En la máquina analizada pueden producirse descargas, escrituras o cambios de configuración que <strong>afectan a la cadena de custodia</strong>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Para quién es esta guía</p>
+<p>Si solo va a <strong>abrir un paquete ya descargado</strong> (carpeta con el programa dentro), puede bastar con descomprimirlo. Esta página detalla el <strong>instalador gráfico</strong> cuando quiere <strong>elegir versiones</strong>, <strong>bases de hashes</strong> y <strong>destino</strong> de forma guiada.</p>
+</div>
+<hr />
+<h2 id="resumen-que-va-a-hacer">Resumen: qué va a hacer<a class="headerlink" href="#resumen-que-va-a-hacer" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Fase</th>
+<th>Qué ocurre</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Origen</td>
+<td>Indica si los archivos vienen <strong>de esta carpeta</strong> (sin red) o si el programa debe <strong>descargarlos</strong> (con red, solo aquí).</td>
+</tr>
+<tr>
+<td>2. Versión y extensiones</td>
+<td>En modo con red, puede fijar <strong>qué publicación</strong> de la aplicación y de extensiones instalar.</td>
+</tr>
+<tr>
+<td>3. Destino</td>
+<td>Elige la <strong>carpeta o disco</strong> donde quedará el kit (por ejemplo la unidad USB).</td>
+</tr>
+<tr>
+<td>4. Hashes opcionales</td>
+<td>Decide <strong>NSRL</strong> y <strong>listas de alerta</strong> que se copian o descargan al árbol <code>data/hashsets/</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Al terminar, tendrá una carpeta <strong>portátil</strong>: puede ejecutar Foruster desde ahí en el equipo previsto, según su protocolo.</p>
+<hr />
+<h2 id="antes-de-empezar-lista-corta">Antes de empezar (lista corta)<a class="headerlink" href="#antes-de-empezar-lista-corta" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Espacio en disco</strong>: si va a descargar bases grandes (NSRL completas), reserve <strong>varios gigabytes</strong> libres en el destino; el instalador comprueba espacio aproximado.</li>
+<li><strong>Red</strong>: el modo <strong>en línea</strong> solo debe usarse en el <strong>puesto de preparación</strong> con red permitida por su organización.</li>
+<li><strong>Paquete local</strong>: en modo <strong>sin conexión</strong>, coloque junto al instalador el <strong>paquete</strong> con <code>foruster</code> / <code>foruster.exe</code> y las carpetas de soporte, o defina la variable <code>FORUSTER_BUNDLE_ROOT</code> si el paquete está en otra ruta.</li>
+</ul>
+<hr />
+<h2 id="modos-de-origen">Modos de origen<a class="headerlink" href="#modos-de-origen" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Modo</th>
+<th>Uso</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sin conexión</strong></td>
+<td>El instalador está junto a un <strong>paquete</strong> local (<code>foruster</code> / <code>foruster.exe</code> y carpetas de soporte). No se descarga nada.</td>
+</tr>
+<tr>
+<td><strong>En línea</strong></td>
+<td>Obtiene paquetes de publicación y manifiestos de extensiones desde GitHub (TLS). Requiere red <strong>solo en este equipo de preparación</strong>.</td>
+</tr>
+</tbody>
+</table>
+<p>Defina <code>FORUSTER_BUNDLE_ROOT</code> si el paquete no está junto al ejecutable del instalador.</p>
+<hr />
+<h2 id="versiones-modo-en-linea">Versiones (modo en línea)<a class="headerlink" href="#versiones-modo-en-linea" title="Permanent link">&para;</a></h2>
+<p>Este bloque es <strong>siempre visible</strong>. En modo <strong>Sin conexión</strong> los controles están <strong>deshabilitados</strong> (y la tarjeta se atenúa) para que cambiar el ORIGEN <strong>no</strong> desplace el resto del formulario — mejor accesibilidad y disposición predecible. Cuando el ORIGEN es <strong>En línea</strong>, active <strong>Mostrar selección de versiones</strong> para elegir:</p>
+<ul>
+<li><strong>Publicación de la aplicación</strong> — Etiquetas que publican un paquete por plataforma para el SO elegido (o <strong>Última</strong> para la publicación predeterminada).</li>
+<li><strong>Publicación de extensiones</strong> — Una etiqueta <code>plugins/…</code> para <code>plugins-manifest.json</code> (o <strong>Últimos plugins</strong>).</li>
+</ul>
+<p>Use <strong>Aplicar</strong> junto a la lista de extensiones para volver a cargar el manifiesto tras cambiar la etiqueta de extensiones. <strong>Actualizar listas de versiones</strong> vuelve a consultar las etiquetas (p. ej. tras una nueva publicación).</p>
+<hr />
+<h2 id="plataforma-de-destino">Plataforma de destino<a class="headerlink" href="#plataforma-de-destino" title="Permanent link">&para;</a></h2>
+<p>Elija <strong>Linux</strong> o <strong>Windows</strong> para que el nombre del binario instalado sea coherente con la <strong>instalación de destino</strong> (convenciones de cada plataforma). Cambiar el objetivo actualiza la lista de etiquetas de la <strong>aplicación</strong> cuando hay conexión.</p>
+<hr />
+<h2 id="bases-de-datos-de-hashes-datahashsets">Bases de datos de hashes (<code>data/hashsets/</code>)<a class="headerlink" href="#bases-de-datos-de-hashes-datahashsets" title="Permanent link">&para;</a></h2>
+<p>El instalador escribe todo bajo la <strong>carpeta de destino</strong> elegida — diseño portátil: <code>data/hashsets/</code> junto a la aplicación. No se guarda nada bajo el perfil de usuario del sistema donde se instala.</p>
+<p>Puede configurar <strong>tres niveles</strong> de forma independiente:</p>
+<ol>
+<li><strong>Conocidos buenos (NSRL / software catalogado)</strong>  </li>
+<li><strong>Ninguno</strong> — sin SQLite de conocidos buenos en la configuración (otros niveles pueden estar definidos).  </li>
+<li><strong>Muestra mínima</strong> — SQLite RDSv3 incrustada pequeña (~8 KiB), funciona <strong>sin red</strong>.  </li>
+<li><strong>Demo curada NIST</strong> — descarga el zip público RDSv3 curado del NIST (~87 MiB). Requiere modo <strong>en línea</strong>.  </li>
+<li><strong>Demo curada legada NIST</strong> — segundo zip curado desde un diseño antiguo del NIST; requiere <strong>en línea</strong>. Si el NIST retira la URL, elija otra opción o coloque un archivo manualmente.  </li>
+<li>
+<p><strong>Publicaciones NSRL completas</strong> — <strong>Android minimal</strong>, <strong>Legacy minimal</strong>, <strong>Modern minimal</strong> o <strong>Modern complete</strong>: zips RDSv3 del NIST (multigigabyte; la versión de publicación está fijada en el instalador). Requiere <strong>en línea</strong>, diálogo de <strong>confirmación</strong> y espacio en disco suficiente (el instalador comprueba aproximadamente <strong>2×</strong> el tamaño esperado de descarga). Son descargas <strong>oficiales del NIST</strong>, no archivos generados en su máquina.</p>
+</li>
+<li>
+<p><strong>Lista de alerta nivel sospechoso</strong>  </p>
+</li>
+<li><strong>Ninguno</strong> — sin archivo.  </li>
+<li><strong>Marcador vacío (.txt)</strong> — crea <code>alert_suspicious.txt</code> solo con comentarios.  </li>
+<li>
+<p><strong>Líneas de demostración</strong> — <code>.txt</code> pequeño con vectores de prueba públicos para verificar el análisis; sustituya en producción.<br />
+   No existe aquí una «descarga pública de la Policía / Guardia Civil» como la del NSRL; las listas operativas las aporta la organización (véase <a href="../HASH_SETS/">Bases de datos de huellas (NSRL y listas)</a>).</p>
+</li>
+<li>
+<p><strong>Lista de alerta nivel evidencia</strong>  </p>
+</li>
+<li><strong>Ninguno</strong>, <strong>Marcador vacío</strong> o <strong>Líneas de demostración</strong> — misma idea que en sospechoso (<code>alert_evidence.txt</code>). Misma observación sobre fuentes de fuerzas de seguridad.</li>
+</ol>
+<p>Si todos los niveles quedan vacíos en la práctica, el instalador escribe un <code>hashsets-config.json</code> <strong>desactivado</strong> (búsquedas desactivadas).</p>
+<hr />
+<h2 id="progreso-registro-y-finalizacion">Progreso, registro y finalización<a class="headerlink" href="#progreso-registro-y-finalizacion" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Durante la instalación, una <strong>barra de progreso</strong> refleja descarga, extracción, copia y pasos de bases de datos de hashes (hitos gruesos).  </li>
+<li>Las líneas de texto se añaden al <strong>registro</strong> en pantalla; los mismos mensajes se emiten con <strong><code>tracing</code></strong> (use <code>RUST_LOG</code>, p. ej. <code>RUST_LOG=info</code>).  </li>
+<li>Al terminar, un <strong>diálogo nativo</strong> informa de éxito o error (mensaje breve; el detalle permanece en el registro).</li>
+</ul>
+<p>La interfaz del instalador está disponible en <strong>inglés</strong>, <strong>español</strong> y <strong>francés</strong> (botones de idioma en el aviso legal y la pantalla principal).</p>
+<hr />
+<h2 id="analisis-frente-a-preparacion">Análisis frente a preparación<a class="headerlink" href="#analisis-frente-a-preparacion" title="Permanent link">&para;</a></h2>
+<p>La <strong>aplicación Foruster</strong> no necesita Internet <strong>durante el análisis</strong>: las búsquedas por hash usan solo los archivos de <code>data/hashsets/</code> <strong>en el kit portátil</strong>. Las descargas grandes opcionales se hacen <strong>desde el instalador</strong>, en el equipo de preparación; los detalles conceptuales están en <a href="../HASH_SETS/">Bases de datos de huellas (NSRL y listas)</a>.</p>
+<hr />
+<h2 id="mas-ayuda">Más ayuda<a class="headerlink" href="#mas-ayuda" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../FAQ/">Preguntas frecuentes</a> — qué archivo descargar y dudas habituales.  </li>
+<li><a href="../FORENSIC_POLICY/">Política de uso forense y modo portátil</a> — dónde escribe el programa en modo forense.</li>
+</ul>
+<hr />
+<p><a href="https://m4rz3r0.github.io/foruster/">Descargas e inicio de la aplicación</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../INDEX/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Índice de temas">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Índice de temas
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../FORENSIC_POLICY/" class="md-footer__link md-footer__link--next" aria-label="Next: Política forense">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Política forense
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1400 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Forensic triage and analysis — public guides">
+      
+      
+        <meta name="author" content="Foruster">
+      
+      
+        <link rel="canonical" href="https://m4rz3r0.github.io/foruster/guide/es/FORENSIC_POLICY/">
+      
+      
+        <link rel="prev" href="../INSTALLER/">
+      
+      
+        <link rel="next" href="../HASH_SETS/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Política forense - Foruster</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="light-blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#politica-de-operacion-forense" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="https://m4rz3r0.github.io/foruster/" title="Foruster" class="md-header__button md-logo" aria-label="Foruster" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Foruster
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Política forense
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Elegir idioma
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://m4rz3r0.github.io/foruster/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Descargas e inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../en/" class="md-tabs__link">
+          
+  
+  
+  English
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  Español
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://m4rz3r0.github.io/foruster/" title="Foruster" class="md-nav__button md-logo" aria-label="Foruster" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Foruster
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Elegir idioma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://m4rz3r0.github.io/foruster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Descargas e inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    English
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    English
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/INDEX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Topic index
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/INSTALLER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/FORENSIC_POLICY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Forensic policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/HASH_SETS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hash databases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/FAQ/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Español
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Español
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Centro de documentación
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../INDEX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice de temas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../INSTALLER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guía de instalación
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Política forense
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Política forense
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#definiciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Definiciones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matriz-de-politica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matriz de política
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comportamiento-predeterminado-sin-configuracion-adicional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comportamiento predeterminado (sin configuración adicional)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variables-de-entorno" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variables de entorno
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inventario-de-operaciones-de-entradasalida-es" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inventario de operaciones de entrada/salida (E/S)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#acceso-a-archivos-y-marcas-de-tiempo-en-windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceso a archivos y marcas de tiempo en Windows
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentacion-relacionada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentación relacionada
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Documentación relacionada">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#guias-de-operador-esta-carpeta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Guías de operador (esta carpeta)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HASH_SETS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bases de hashes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../FAQ/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preguntas frecuentes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#definiciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Definiciones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matriz-de-politica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matriz de política
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comportamiento-predeterminado-sin-configuracion-adicional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comportamiento predeterminado (sin configuración adicional)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variables-de-entorno" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variables de entorno
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inventario-de-operaciones-de-entradasalida-es" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inventario de operaciones de entrada/salida (E/S)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#acceso-a-archivos-y-marcas-de-tiempo-en-windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceso a archivos y marcas de tiempo en Windows
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentacion-relacionada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentación relacionada
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Documentación relacionada">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#guias-de-operador-esta-carpeta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Guías de operador (esta carpeta)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="politica-de-operacion-forense">Política de operación forense<a class="headerlink" href="#politica-de-operacion-forense" title="Permanent link">&para;</a></h1>
+<p>Foruster se utiliza en escenarios de <strong>triaje forense digital</strong> y <strong>análisis en vivo</strong> sobre <strong>sistemas en uso</strong>. No sustituye el peritaje exhaustivo en laboratorio ni el análisis centrado en una imagen forense adquirida con anterioridad; lo complementa. Quien opere la herramienta debe delimitar con precisión <strong>dónde</strong> se lee y <strong>dónde</strong> se escribe, de forma que se preserve la <strong>cadena de custodia</strong> y se limite el impacto sobre la <strong>evidencia digital</strong> y el <strong>equipo donde se ejecuta el examen</strong>. Este documento fija el comportamiento del producto y relaciona el acceso a disco con niveles de riesgo.</p>
+<h2 id="definiciones">Definiciones<a class="headerlink" href="#definiciones" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Término</th>
+<th>Significado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Volumen analizado</strong></td>
+<td>Toda ruta de sistema de archivos, disco o partición incorporada al análisis como objeto de examen (<strong>evidencia digital</strong>).</td>
+</tr>
+<tr>
+<td><strong>Kit portátil</strong></td>
+<td>Carpeta que contiene el ejecutable de Foruster y, cuando aplica, el directorio <code>data/</code> (por ejemplo un USB o un recurso compartido preparado para el caso). Si la disposición no es «ejecutable junto a <code>data/</code>», fíjela con <code>FORUSTER_PORTABLE_ROOT</code>.</td>
+</tr>
+<tr>
+<td><strong>Perfil de usuario del sistema operativo</strong></td>
+<td>Configuración de usuario del sistema operativo del equipo en examen (p. ej. <code>%APPDATA%</code>, <code>~/.config</code>) — <strong>no</strong> forma parte del kit portátil.</td>
+</tr>
+<tr>
+<td><strong>Exportación dirigida por el usuario</strong></td>
+<td>Guardar solo mediante un diálogo <strong>Guardar</strong> / <strong>Exportar</strong> donde el investigador elige el destino.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="matriz-de-politica">Matriz de política<a class="headerlink" href="#matriz-de-politica" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Ámbito</th>
+<th>Objetivo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Volúmenes analizados</strong></td>
+<td>Solo lectura desde la perspectiva de Foruster: no crear, modificar ni eliminar archivos de evidencia. El análisis usa recorrido de directorios y lectura de archivos; los plugins reciben únicamente manejadores registrados.</td>
+</tr>
+<tr>
+<td><strong>Disco del sistema en examen</strong></td>
+<td>Minimizar escrituras silenciosas. Preferir el <strong>kit portátil</strong> para configuración, modelos, conjuntos de hashes y datos temporales cuando el <strong>modo forense</strong> está activo.</td>
+</tr>
+<tr>
+<td><strong>Exportaciones (informes, CSV, JSON, imágenes)</strong></td>
+<td>Permitidas solo como <strong>exportaciones dirigidas por el usuario</strong> a rutas elegidas en la interfaz — nunca escrituras silenciosas a ubicaciones arbitrarias.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="comportamiento-predeterminado-sin-configuracion-adicional">Comportamiento predeterminado (sin configuración adicional)<a class="headerlink" href="#comportamiento-predeterminado-sin-configuracion-adicional" title="Permanent link">&para;</a></h2>
+<p>El <strong>modo forense está activo por defecto</strong> al iniciar la aplicación (doble clic o línea de comandos sin opciones). No se exigen variables de entorno para auditorías legales o forenses: preferencias y datos temporales van bajo <code>data/</code> <strong>dentro del kit portátil</strong> junto al binario (o bajo <code>FORUSTER_PORTABLE_ROOT</code>), no bajo el perfil de usuario del sistema ni el directorio temporal del sistema operativo.</p>
+<p>Para usar el diseño <strong>estándar</strong> (perfil de usuario del SO, directorio temporal del sistema, posible siembra automática de conjuntos de hashes si no existe configuración), inicie con:</p>
+<ul>
+<li><strong><code>--standard</code></strong> o <strong><code>--no-forensic</code></strong> en la línea de comandos, o  </li>
+<li><strong><code>FORUSTER_FORENSIC_MODE=0</code></strong> (o <code>false</code> / <code>no</code>), o  </li>
+<li><strong><code>FORUSTER_STANDARD_MODE=1</code></strong> solo cuando <code>FORUSTER_FORENSIC_MODE</code> no tenga un valor no vacío.</li>
+</ul>
+<p>Ejecute <strong><code>foruster-desktop --help</code></strong> para un resumen breve (desde terminal; en Windows, las compilaciones GUI pueden no mostrar consola al abrir desde el Explorador).</p>
+<p><strong>Precedencia:</strong> la línea de comandos <code>--forensic</code> / <code>--standard</code> / <code>--no-forensic</code> prevalece sobre <code>FORUSTER_FORENSIC_MODE</code> y <code>FORUSTER_STANDARD_MODE</code> cuando está presente.</p>
+<h2 id="variables-de-entorno">Variables de entorno<a class="headerlink" href="#variables-de-entorno" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Efecto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FORUSTER_PORTABLE_ROOT</code></td>
+<td>Ruta absoluta a la raíz del kit portátil (sustituye el directorio del ejecutable). El directorio <code>data/</code> escribible queda bajo esa raíz.</td>
+</tr>
+<tr>
+<td><code>FORUSTER_FORENSIC_MODE</code></td>
+<td>Si <strong>no está definida</strong> o está <strong>vacía</strong>, el modo forense está <strong>activo</strong> salvo que <code>FORUSTER_STANDARD_MODE</code> indique lo contrario (véase arriba). Si tiene valor no vacío: <code>0</code> / <code>false</code> / <code>no</code> → modo estándar; cualquier otro valor → modo forense.</td>
+</tr>
+<tr>
+<td><code>FORUSTER_STANDARD_MODE</code></td>
+<td>Con valor verdadero y <code>FORUSTER_FORENSIC_MODE</code> no definida o vacía → modo estándar. Se ignora cuando <code>FORUSTER_FORENSIC_MODE</code> está explícitamente no vacía.</td>
+</tr>
+<tr>
+<td><code>FORUSTER_NO_DEFAULT_HASHSETS</code></td>
+<td>Si está definida, omite por completo la carga y siembra portátil de conjuntos de hashes (opción heredada de exclusión).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="inventario-de-operaciones-de-entradasalida-es">Inventario de operaciones de entrada/salida (E/S)<a class="headerlink" href="#inventario-de-operaciones-de-entradasalida-es" title="Permanent link">&para;</a></h2>
+<p>Las operaciones son <strong>lectura (R)</strong> o <strong>escritura (W)</strong>. El «riesgo» es el impacto en el <strong>sistema analizado</strong> si la aplicación se ejecuta desde o se instala en ese sistema <strong>sin</strong> un kit portátil preparado para el caso.</p>
+<table>
+<thead>
+<tr>
+<th>Componente / operación</th>
+<th>Volumen objetivo</th>
+<th>R/W</th>
+<th>Riesgo</th>
+<th>Mitigación</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Recorredor de análisis / hashing</td>
+<td>Rutas analizadas</td>
+<td>R</td>
+<td>Bajo si se usan APIs de solo lectura</td>
+<td>Linux: <code>O_NOATIME</code> cuando proceda; véase <a href="#acceso-a-archivos-y-marcas-de-tiempo-en-windows">acceso a archivos en Windows</a>.</td>
+</tr>
+<tr>
+<td>Capa de plugin: <code>read_file</code>, <code>compute_hash</code>, <code>decode_image</code>, <code>run_inference</code></td>
+<td>Rutas pasadas como <code>FileEntry</code> registrado</td>
+<td>R</td>
+<td>Bajo</td>
+<td>Límites de lectura por invocación; entorno de ejecución WebAssembly aislado (sin rutas arbitrarias).</td>
+</tr>
+<tr>
+<td>Capa de plugin: <code>query_sqlite</code></td>
+<td>Copia de la BD en temporal</td>
+<td>W (solo temporal)</td>
+<td>Medio si el temporal es del SO</td>
+<td>Modo forense: copias bajo <code>data/scratch/</code> del kit portátil.</td>
+</tr>
+<tr>
+<td>Escritorio: preferencias de interfaz</td>
+<td>Perfil de usuario del SO <strong>o</strong> <code>data/config/</code></td>
+<td>W</td>
+<td>Medio (perfil de usuario del SO)</td>
+<td>Modo forense: solo kit portátil.</td>
+</tr>
+<tr>
+<td>Escritorio: conjuntos de hashes portátiles</td>
+<td><code>data/hashsets/</code></td>
+<td>R/W</td>
+<td>Bajo si el kit está en medio extraíble</td>
+<td>Modo forense: sin siembra automática; opcional <code>FORUSTER_NO_DEFAULT_HASHSETS</code>.</td>
+</tr>
+<tr>
+<td>Escritorio: exportación PDF / JSON / CSV / imagen</td>
+<td>Ruta elegida por el usuario</td>
+<td>W</td>
+<td>Controlado por el usuario</td>
+<td>Solo diálogos de guardado.</td>
+</tr>
+<tr>
+<td>Escritorio: «Abrir carpeta» tras exportar</td>
+<td>El SO abre el explorador</td>
+<td>Indirecto</td>
+<td>Entorno del usuario</td>
+<td>El investigador elige la ruta de exportación.</td>
+</tr>
+<tr>
+<td>Ayudante de cookies del navegador</td>
+<td>Copia la BD al temporal y lanza el navegador</td>
+<td>W (temporal)</td>
+<td>Medio</td>
+<td>Modo forense: temporal bajo el kit portátil.</td>
+</tr>
+<tr>
+<td>Instalador / <code>foruster-installer</code></td>
+<td>Rutas de descarga / desempaquetado</td>
+<td>W</td>
+<td><strong>Herramienta de preparación</strong></td>
+<td>No pensado para ejecutarse en la máquina analizada durante la adquisición; use otro sistema para construir el kit.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="acceso-a-archivos-y-marcas-de-tiempo-en-windows">Acceso a archivos y marcas de tiempo en Windows<a class="headerlink" href="#acceso-a-archivos-y-marcas-de-tiempo-en-windows" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Linux</strong> usa <code>O_NOATIME</code> al abrir archivos para detección de formato cuando el núcleo y los permisos lo permiten, con recurso a apertura normal si <code>EPERM</code> (véase <code>crates/analysis/src/utils.rs</code>).</li>
+<li><strong>Windows</strong> no expone un equivalente directo a <code>O_NOATIME</code> en la biblioteca estándar. El comportamiento de último acceso depende de la <strong>política NTFS</strong> (p. ej. las actualizaciones de último acceso pueden desactivarse en todo el sistema por rendimiento). Abrir archivos para lectura puede actualizar metadatos según la configuración del SO.</li>
+<li><strong>Recomendación:</strong> ejecute la herramienta desde un <strong>medio extraíble</strong> con <code>FORUSTER_FORENSIC_MODE</code> activo, documente la <strong>versión del sistema operativo del equipo</strong> y el <strong>sistema de archivos</strong>, y considere la preservación de marcas de tiempo como <strong>mejor esfuerzo</strong> en Windows salvo controladores especializados o bloqueadores de escritura a nivel de volumen.</li>
+</ul>
+<h2 id="documentacion-relacionada">Documentación relacionada<a class="headerlink" href="#documentacion-relacionada" title="Permanent link">&para;</a></h2>
+<h3 id="guias-de-operador-esta-carpeta">Guías de operador (esta carpeta)<a class="headerlink" href="#guias-de-operador-esta-carpeta" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="../HASH_SETS/">Bases de datos de huellas (NSRL y listas)</a> — conjuntos bajo <code>data/hashsets/</code>.</li>
+<li><a href="../INSTALLER/">Guía de instalación y preparación del kit</a> — puesto de preparación y disposición del kit.</li>
+<li><a href="../INDEX/">Índice de temas</a> — mapa de la documentación para operadores.</li>
+</ul>
+<hr />
+<p><a href="https://m4rz3r0.github.io/foruster/">Descargas e inicio de la aplicación</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../INSTALLER/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Guía de instalación">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Guía de instalación
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../HASH_SETS/" class="md-footer__link md-footer__link--next" aria-label="Next: Bases de hashes">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Bases de hashes
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

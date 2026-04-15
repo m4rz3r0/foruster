@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es" class="lp-root lp-lang-es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Foruster — descargas y guías. Triaje forense en vivo." />
+  <meta name="color-scheme" content="light" />
+  <title>Foruster — descarga y guías</title>
+  <script>
+    (function () {
+      var k = "foruster-lang";
+      var lang;
+      try {
+        lang = localStorage.getItem(k);
+      } catch (e) {
+        lang = null;
+      }
+      if (lang !== "es" && lang !== "en") {
+        lang = /^es/i.test(navigator.language || "") ? "es" : "en";
+      }
+      document.documentElement.lang = lang;
+      document.documentElement.className = "lp-root lp-lang-" + lang;
+      document.title =
+        lang === "en" ? "Foruster — downloads & guides" : "Foruster — descarga y guías";
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="assets/landing.css" />
+</head>
+<body class="lp">
+  <a class="skip-link" href="#contenido" data-lp-lang="es">Saltar al contenido</a>
+  <a class="skip-link" href="#contenido" data-lp-lang="en">Skip to content</a>
+
+  <header class="lp-header">
+    <div class="lp-header__inner">
+      <a class="lp-brand" href="index.html">
+        <span class="lp-brand__mark" aria-hidden="true"></span>
+        Foruster
+      </a>
+      <div class="lp-header__tools">
+        <nav class="lp-nav" data-lp-lang="es" aria-label="Navegación principal">
+          <a href="#descargas">Descargas</a>
+          <a href="#ayuda">Guías</a>
+          <a href="guide/es/">Índice de documentación</a>
+        </nav>
+        <nav class="lp-nav" data-lp-lang="en" aria-label="Main navigation">
+          <a href="#descargas">Downloads</a>
+          <a href="#ayuda">Guides</a>
+          <a href="guide/en/">Documentation index</a>
+        </nav>
+        <div class="lp-lang-switch" id="lp-lang-switch" role="group" aria-label="Idioma">
+          <button type="button" class="lp-lang-btn" data-set-lang="es" id="lang-es">Español</button>
+          <button type="button" class="lp-lang-btn" data-set-lang="en" id="lang-en">English</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido" class="lp-main" tabindex="-1">
+    <div class="lp-hero-wrap">
+      <section class="lp-hero" aria-labelledby="hero-title">
+        <div class="lp-hero__copy">
+          <p class="lp-hero__eyebrow" data-lp-lang="es">Software forense</p>
+          <p class="lp-hero__eyebrow" data-lp-lang="en">Forensic software</p>
+          <h1 id="hero-title"><span data-lp-lang="es">Foruster</span><span data-lp-lang="en">Foruster</span></h1>
+          <p class="lp-hero__lead" data-lp-lang="es">
+            Triaje forense en <strong>sistemas en uso</strong>: almacenamiento, perfiles, huellas, informes PDF y extensiones en sandbox. Descarga la <strong>última versión publicada</strong> aquí, sin cuenta de GitHub.
+          </p>
+          <p class="lp-hero__lead" data-lp-lang="en">
+            <strong>Live forensic triage</strong> on running systems: storage, profiles, hashes, PDF reports, and sandboxed extensions. Download the <strong>latest published build</strong> below — no GitHub account required.
+          </p>
+          <div class="lp-hero__actions">
+            <a class="lp-btn lp-btn--on-dark" href="#descargas" data-lp-lang="es">Ir a descargas</a>
+            <a class="lp-btn lp-btn--on-dark" href="#descargas" data-lp-lang="en">Go to downloads</a>
+            <a class="lp-btn lp-btn--ghost-dark" href="guide/es/" data-lp-lang="es">Abrir guías</a>
+            <a class="lp-btn lp-btn--ghost-dark" href="guide/en/" data-lp-lang="en">Open guides</a>
+          </div>
+        </div>
+        <p class="lp-hero__slint">
+          <a href="https://slint.dev" rel="noopener noreferrer">
+            <img
+              src="https://raw.githubusercontent.com/slint-ui/slint/master/logo/MadeWithSlint-logo-light.svg"
+              width="128"
+              height="51"
+              data-lp-lang="es"
+              alt="Interfaz hecha con Slint"
+            />
+            <img
+              src="https://raw.githubusercontent.com/slint-ui/slint/master/logo/MadeWithSlint-logo-light.svg"
+              width="128"
+              height="51"
+              data-lp-lang="en"
+              alt="UI built with Slint"
+            />
+          </a>
+        </p>
+      </section>
+    </div>
+
+    <section id="descargas" class="lp-section lp-section--surface" aria-labelledby="downloads-title">
+      <p class="lp-section__eyebrow" data-lp-lang="es">Publicación</p>
+      <p class="lp-section__eyebrow" data-lp-lang="en">Release</p>
+      <h2 id="downloads-title" class="lp-section__title"><span data-lp-lang="es">Descargas</span><span data-lp-lang="en">Downloads</span></h2>
+      <p class="lp-section__intro">
+        <span data-lp-lang="es">Versión actual: </span>
+        <span data-lp-lang="en">Current version: </span>
+        <span id="release-version" class="lp-version">…</span>
+      </p>
+      <p class="lp-section__intro" data-lp-lang="es">
+        Elige tu plataforma. Los <em>paquetes sin conexión</em> incluyen ejecutable, modelos y extensiones de ejemplo en una sola carpeta.
+      </p>
+      <p class="lp-section__intro" data-lp-lang="en">
+        Choose your platform. <em>Offline bundles</em> include the app, models, and sample extensions in one folder.
+      </p>
+
+      <div id="download-status" class="lp-banner lp-banner--loading" role="status" aria-live="polite"></div>
+
+      <div id="download-assets"></div>
+
+      <div id="download-fallback" class="lp-banner lp-banner--warn" hidden></div>
+    </section>
+
+    <section id="ayuda" class="lp-section lp-section--docs" aria-labelledby="help-title">
+      <p class="lp-section__eyebrow" data-lp-lang="es">Documentación</p>
+      <p class="lp-section__eyebrow" data-lp-lang="en">Documentation</p>
+      <h2 id="help-title" class="lp-section__title"><span data-lp-lang="es">Guías esenciales</span><span data-lp-lang="en">Essential guides</span></h2>
+      <p class="lp-section__intro" data-lp-lang="es">
+        La documentación completa (con búsqueda) está en la <a href="guide/">vista de ayuda</a>, con el mismo contenido que las guías públicas.
+      </p>
+      <p class="lp-section__intro" data-lp-lang="en">
+        Full searchable documentation is in the <a href="guide/">help view</a>, matching the published guides.
+      </p>
+
+      <div class="lp-doc-grid" role="list" data-lp-lang="es">
+        <a class="lp-doc-card" href="guide/es/INSTALLER/" role="listitem">
+          <span class="lp-doc-card__label">Instalador</span>
+          <span class="lp-doc-card__desc">Herramienta gráfica para preparar el kit en un medio portátil.</span>
+          <span class="lp-doc-card__more">Abrir guía →</span>
+        </a>
+        <a class="lp-doc-card" href="guide/es/FAQ/" role="listitem">
+          <span class="lp-doc-card__label">Preguntas frecuentes</span>
+          <span class="lp-doc-card__desc">Descargas, licencia y primeros pasos.</span>
+          <span class="lp-doc-card__more">Abrir guía →</span>
+        </a>
+        <a class="lp-doc-card" href="guide/es/FORENSIC_POLICY/" role="listitem">
+          <span class="lp-doc-card__label">Política forense</span>
+          <span class="lp-doc-card__desc">Modo portátil, cadena de custodia y operaciones de E/S.</span>
+          <span class="lp-doc-card__more">Abrir guía →</span>
+        </a>
+        <a class="lp-doc-card" href="guide/es/HASH_SETS/" role="listitem">
+          <span class="lp-doc-card__label">Bases de hashes</span>
+          <span class="lp-doc-card__desc">NSRL, listas de alerta y niveles de configuración.</span>
+          <span class="lp-doc-card__more">Abrir guía →</span>
+        </a>
+        <a class="lp-doc-card" href="guide/es/" role="listitem">
+          <span class="lp-doc-card__label">Índice temático</span>
+          <span class="lp-doc-card__desc">Listado de todas las guías en castellano.</span>
+          <span class="lp-doc-card__more">Abrir guía →</span>
+        </a>
+      </div>
+
+      <div class="lp-doc-grid" role="list" data-lp-lang="en">
+        <a class="lp-doc-card" href="guide/en/INSTALLER/" role="listitem">
+          <span class="lp-doc-card__label">Installer</span>
+          <span class="lp-doc-card__desc">Graphical tool to prepare a kit on removable media.</span>
+          <span class="lp-doc-card__more">Open guide →</span>
+        </a>
+        <a class="lp-doc-card" href="guide/en/FAQ/" role="listitem">
+          <span class="lp-doc-card__label">FAQ</span>
+          <span class="lp-doc-card__desc">Downloads, licensing, and getting started.</span>
+          <span class="lp-doc-card__more">Open guide →</span>
+        </a>
+        <a class="lp-doc-card" href="guide/en/FORENSIC_POLICY/" role="listitem">
+          <span class="lp-doc-card__label">Forensic policy</span>
+          <span class="lp-doc-card__desc">Portable mode, chain of custody, and I/O expectations.</span>
+          <span class="lp-doc-card__more">Open guide →</span>
+        </a>
+        <a class="lp-doc-card" href="guide/en/HASH_SETS/" role="listitem">
+          <span class="lp-doc-card__label">Hash sets</span>
+          <span class="lp-doc-card__desc">NSRL-style tiers and alert lists.</span>
+          <span class="lp-doc-card__more">Open guide →</span>
+        </a>
+        <a class="lp-doc-card" href="guide/en/" role="listitem">
+          <span class="lp-doc-card__label">Topic index</span>
+          <span class="lp-doc-card__desc">Full list of English guides.</span>
+          <span class="lp-doc-card__more">Open guide →</span>
+        </a>
+      </div>
+    </section>
+
+    <footer class="lp-footer">
+      <div class="lp-footer__inner">
+        <p data-lp-lang="es">
+          <strong>Licencia.</strong> Foruster es software <strong>propietario</strong>. Las condiciones aplicables están en el fichero
+          <a href="https://github.com/m4rz3r0/foruster/blob/main/LICENSE">LICENSE</a>.
+        </p>
+        <p data-lp-lang="en">
+          <strong>License.</strong> Foruster is <strong>proprietary software</strong>. See the
+          <a href="https://github.com/m4rz3r0/foruster/blob/main/LICENSE">LICENSE</a> file for terms that apply to materials in that repository.
+        </p>
+      </div>
+    </footer>
+  </main>
+
+  <script src="assets/landing.js" defer></script>
+</body>
+</html>
