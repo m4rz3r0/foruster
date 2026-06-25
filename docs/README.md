@@ -1,6 +1,6 @@
 # Foruster — sitio público (GitHub Pages)
 
-Este directorio es lo que debe publicarse en **https://m4rz3r0.github.io/foruster/** cuando **GitHub Pages** toma la rama **`main`** y la carpeta **`/docs`** del repositorio público **github.com/m4rz3r0/foruster**.
+Este directorio (`gh_page_docs/` en el repositorio de desarrollo) se publica como carpeta **`/docs`** en el repositorio público **github.com/m4rz3r0/foruster** cuando **GitHub Pages** toma la rama **`main`**.
 
 ## Contenido
 
@@ -13,22 +13,22 @@ Este directorio es lo que debe publicarse en **https://m4rz3r0.github.io/foruste
 | **`assets/landing.css`**, **`assets/landing.js`** | Estilos y comportamiento solo de la portada. |
 | **`.nojekyll`** | Impide que Jekyll procese el sitio en GitHub Pages. |
 
-No hay carpetas `en/` ni `es/` sueltas en la raíz de `docs/`; lo publicado queda bajo **`documentation/`** y **`guide/`**.
+No hay carpetas `en/` ni `es/` sueltas en la raíz de `gh_page_docs/`; lo publicado queda bajo **`documentation/`** y **`guide/`**.
 
 ## Cambios en las guías (repositorio de desarrollo)
 
 1. Editar el Markdown canónico en **`doc/en/`** y **`doc/es/`** (no limitarse a la copia bajo `documentation/`).
-2. Regenerar y confirmar el resultado en `docs/`:
+2. Regenerar y confirmar el resultado en `gh_page_docs/`:
 
 ```bash
 make public-docs-site
-git add doc/ docs/documentation/ docs/guide/
+git add doc/ gh_page_docs/documentation/ gh_page_docs/guide/
 git commit -m "docs: …"
 ```
 
 3. Enviar la rama que alimenta GitHub (`main` u otra acordada) al remoto **github.com/m4rz3r0/foruster**.
 
-La integración continua en Forgejo puede ejecutar `scripts/sync-public-docs.sh --push-github` para volcar el mismo árbol al repositorio público; el contenido de `docs/` en el repositorio de desarrollo debe coincidir con lo generado para no desalinear fuentes y HTML.
+La integración continua en Forgejo puede ejecutar `scripts/sync-public-docs.sh --push-github` para volcar el mismo árbol al repositorio público; el contenido de `gh_page_docs/` en el repositorio de desarrollo debe coincidir con lo generado para no desalinear fuentes y HTML.
 
 ## Vista previa local
 
@@ -36,4 +36,4 @@ La integración continua en Forgejo puede ejecutar `scripts/sync-public-docs.sh 
 make public-docs-site
 ```
 
-Abra `docs/guide/index.html` o sirva `docs/` con un servidor HTTP estático. Requiere MkDocs Material (`pip install -r docs/requirements-docs.txt` o el entorno equivalente en su sistema).
+Abra `gh_page_docs/guide/index.html` o sirva `gh_page_docs/` con un servidor HTTP estático. Requiere MkDocs Material (`pip install -r gh_page_docs/requirements-docs.txt` o el entorno equivalente en su sistema).
