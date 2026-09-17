@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Foruster">
+  <!-- Milled edge of a stamp, drawn as a dashed ring so it survives being
+       shrunk to a favicon: at 16px it reads as a soft halo, at logo size as
+       the toothed rim of a seal. -->
+  <circle cx="16" cy="16" r="14.6" fill="none" stroke="currentColor"
+          stroke-width="1.9" stroke-dasharray="1.9 2.35" stroke-linecap="butt"/>
+  <circle cx="16" cy="16" r="11.4" fill="currentColor"/>
+  <!-- Slab F, cut out of the disc. -->
+  <path d="M11.6 9.3h9.2v3.05h-5.75v3.1h5.1v3.05h-5.1v4.2h-3.45z"
+        fill="#fdfdfb"/>
+</svg>
