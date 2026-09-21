@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Requisitos y primer vistazo — Foruster</title>
+<meta name="description" content="Qué debe cumplir el equipo antes de empezar, y cómo se organiza la aplicación.">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="preload" href="../../assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/doc.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../../">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a href="../../">Inicio</a>
+    <a href="../../#contacto">Contacto</a>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <h1>Requisitos y primer vistazo</h1>
+    <p>Qué debe cumplir el equipo antes de empezar, y cómo se organiza la aplicación.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside>
+      <p>Documentación</p>
+      <a href="../">Alcance</a>
+      <a href="../requisitos/" class="aqui">Requisitos</a>
+      <a href="../adquirir/">Adquirir la evidencia</a>
+      <a href="../expediente/">El expediente</a>
+      <a href="../firma/">Firma y custodia</a>
+      <a href="../clasificar/">Clasificar lo adquirido</a>
+      <a href="../analisis/">Analizar la memoria</a>
+      <a href="../limitaciones/">Lo que no hace</a>
+  </aside>
+
+  <main>
+    <h2 id="requisitos">Requisitos</h2>
+    <table>
+      <tr><th>Concepto</th><th>Requisito</th></tr>
+      <tr><td>Sistemas</td><td>Linux y Windows de 64 bits.</td></tr>
+      <tr><td>Despliegue</td><td>Un &uacute;nico ejecutable est&aacute;tico para
+        terminal y l&iacute;nea de comandos. No se instala: funciona desde un USB.</td></tr>
+      <tr><td>Privilegios</td><td>Root o administrador para an&aacute;lisis completo
+        de discos y para memoria. Recorrer rutas ya montadas no los necesita.</td></tr>
+      <tr><td>Destino</td><td>M&aacute;s espacio libre del que ocupa lo que se va a
+        recoger. Para memoria, como m&iacute;nimo el tama&ntilde;o de la RAM.</td></tr>
+    </table>
+    <p>
+      <code>foruster-cli preflight</code> informa del estado del equipo y de
+      qu&eacute; memoria puede adquirirse en &eacute;l. La interfaz gr&aacute;fica
+      lo consulta autom&aacute;ticamente y lo muestra en la barra lateral.
+    </p>
+
+    <h2 id="aplicacion">La aplicaci&oacute;n</h2>
+    <p>
+      Al abrirla, hay dos maneras de empezar. No hacen lo mismo, y conviene
+      tener clara la diferencia:
+    </p>
+    <table>
+      <tr><th>Explorar un equipo</th><td>Recorre los discos montados y clasifica lo
+        que encuentra. No copia ni modifica nada, as&iacute; que sirve para ver
+        qu&eacute; hay antes de decidir.</td></tr>
+      <tr><th>Adquirir evidencia</th><td>Copia memoria y ficheros a un expediente,
+        con el hash calculado durante la copia. Es lo que despu&eacute;s sostiene
+        un informe.</td></tr>
+    </table>
+    <p>
+      Lo normal es explorar primero, marcar lo que interese y adquirir solo eso.
+      Si ya sabes qu&eacute; vas a adquirir, puedes ir directo a la adquisici&oacute;n.
+    </p>
+    <p>
+      Durante una adquisici&oacute;n, la aplicaci&oacute;n muestra arriba en
+      qu&eacute; paso va: <b>Identificaci&oacute;n</b>,
+      <b>Adquisici&oacute;n</b>, <b>Verificaci&oacute;n</b> e <b>Informe</b>. Son
+      los mismos cuatro nombres que usa esta p&aacute;gina, a prop&oacute;sito.
+    </p>
+    <p>
+      La barra lateral indica en todo momento dos condiciones que determinan
+      qu&eacute; puede hacerse: si la sesi&oacute;n tiene privilegios y si la memoria est&aacute;
+      al alcance. Cuando no lo est&aacute;, la casilla de memoria aparece
+      desactivada con el motivo escrito al lado, no escondida.
+    </p>
+    <p>
+      Los expedientes cerrados quedan en <b>Anteriores</b>; aquel en el que se est&eacute;
+      trabajando, en <b>Abierto ahora</b>. Desde ah&iacute; se comprueba, se
+      firma, se anota un traspaso o se genera el informe.
+    </p>
+
+  </main>
+</div>
+
+<div class="wrap pasos">
+    <a class="prev" href="../"><span>Anterior</span>Documentación</a>
+    <a class="next" href="../adquirir/"><span>Siguiente</span>Adquirir la evidencia</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.<br>
+      Software propietario ·
+      <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+      <a href="../../">Inicio</a> ·
+      <a href="https://github.com/m4rz3r0/foruster">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

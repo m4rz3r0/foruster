@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Analizar la memoria — Foruster</title>
+<meta name="description" content="Una imagen de memoria aislada tiene poco recorrido. Estos son los ficheros de contexto que viajan con ella y por qué sin ellos no es interpretable.">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="preload" href="../../assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/doc.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../../">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a href="../../">Inicio</a>
+    <a href="../../#contacto">Contacto</a>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <h1>Analizar la memoria</h1>
+    <p>Una imagen de memoria aislada tiene poco recorrido. Estos son los ficheros de contexto que viajan con ella y por qué sin ellos no es interpretable.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside>
+      <p>Documentación</p>
+      <a href="../">Alcance</a>
+      <a href="../requisitos/">Requisitos</a>
+      <a href="../adquirir/">Adquirir la evidencia</a>
+      <a href="../expediente/">El expediente</a>
+      <a href="../firma/">Firma y custodia</a>
+      <a href="../clasificar/">Clasificar lo adquirido</a>
+      <a href="../analisis/" class="aqui">Analizar la memoria</a>
+      <a href="../limitaciones/">Lo que no hace</a>
+  </aside>
+
+  <main>
+    <h2 id="analisis">An&aacute;lisis de la memoria</h2>
+    <p>
+      La imagen es un fichero <i>core</i> ELF64 que conserva la direcci&oacute;n
+      f&iacute;sica de cada tramo, un formato que las herramientas de
+      an&aacute;lisis de memoria abren sin convertir nada. Para interpretarla hacen
+      falta los ficheros de contexto que se adquirieron con ella, en
+      <code>raw/</code>:
+    </p>
+    <table>
+      <tr><th>Fichero</th><th>Para qu&eacute;</th></tr>
+      <tr><td><code>version</code></td><td>Identifica la compilaci&oacute;n del kernel;
+        es la clave por la que se busca su tabla de s&iacute;mbolos.</td></tr>
+      <tr><td><code>kallsyms</code></td><td>Direcciones de los s&iacute;mbolos tal y
+        como estaban cargadas. Con KASLR es lo &uacute;nico que permite conciliar
+        una tabla gen&eacute;rica con esta imagen.</td></tr>
+      <tr><td><code>iomem</code></td><td>Mapa f&iacute;sico del que se recort&oacute;
+        la imagen.</td></tr>
+      <tr><td><code>modules</code></td><td>M&oacute;dulos cargados.</td></tr>
+    </table>
+    <p>
+      Con <code>kernel.kptr_restrict=2</code> el kernel devuelve la tabla de
+      s&iacute;mbolos a ceros incluso para root. El informe lo declara, porque el
+      fichero parece completo y no lo est&aacute;; en ese caso el an&aacute;lisis
+      depender&aacute; de una tabla externa de esa misma compilaci&oacute;n.
+    </p>
+
+  </main>
+</div>
+
+<div class="wrap pasos">
+    <a class="prev" href="../clasificar/"><span>Anterior</span>Clasificar lo adquirido</a>
+    <a class="next" href="../limitaciones/"><span>Siguiente</span>Lo que Foruster no hace</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.<br>
+      Software propietario ·
+      <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+      <a href="../../">Inicio</a> ·
+      <a href="https://github.com/m4rz3r0/foruster">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

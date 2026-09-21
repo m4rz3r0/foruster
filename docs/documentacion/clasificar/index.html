@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Clasificar lo adquirido — Foruster</title>
+<meta name="description" content="Listas de hashes y detección local en imágenes. Las dos usan material que aportas tú: Foruster no trae ninguna lista ni ningún modelo.">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="preload" href="../../assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/doc.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../../">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a href="../../">Inicio</a>
+    <a href="../../#contacto">Contacto</a>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <h1>Clasificar lo adquirido</h1>
+    <p>Listas de hashes y detecci&oacute;n local en im&aacute;genes. Las dos usan material que aportas t&uacute;: Foruster no trae ninguna lista ni ning&uacute;n modelo.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside>
+      <p>Documentación</p>
+      <a href="../">Alcance</a>
+      <a href="../requisitos/">Requisitos</a>
+      <a href="../adquirir/">Adquirir la evidencia</a>
+      <a href="../expediente/">El expediente</a>
+      <a href="../firma/">Firma y custodia</a>
+      <a href="../clasificar/" class="aqui">Clasificar lo adquirido</a>
+      <a href="../analisis/">Analizar la memoria</a>
+      <a href="../limitaciones/">Lo que no hace</a>
+  </aside>
+
+  <main>
+    <h2 id="listas">Listas de hashes</h2>
+    <p>
+      Una lista de hashes responde a una pregunta: de todo esto, &iquest;qu&eacute; es
+      software conocido y qu&eacute; no lo es? Foruster coteja lo adquirido contra las
+      listas que le pongas y marca cada coincidencia con el nivel que t&uacute; le hayas
+      dado a esa lista.
+    </p>
+    <table>
+      <tr><th>Nivel</th><th>Para qu&eacute;</th></tr>
+      <tr><td>Software conocido</td><td>Descartar lo que viene con el sistema o con una
+        aplicaci&oacute;n. Reduce el volumen que hay que mirar.</td></tr>
+      <tr><td>Sospechoso</td><td>Se&ntilde;alar sin concluir. Queda a la vista para que lo
+        revises.</td></tr>
+      <tr><td>Evidencia</td><td>Lo que tu organizaci&oacute;n considera hallazgo por s&iacute;
+        mismo.</td></tr>
+    </table>
+    <p>
+      Admite MD5 y SHA-1, un hash por l&iacute;nea. <b>El tipo lo reconoce Foruster leyendo
+      el propio fichero</b>, as&iacute; que no hay que declararlo ni se puede equivocar uno
+      al hacerlo. Cuando un mismo fichero aparece en varias listas, se queda con el
+      nivel m&aacute;s alto y deja constancia de todas las que coincidieron.
+    </p>
+    <p class="note">
+      <b>Foruster no trae ninguna lista.</b> Las aportas t&uacute;. No es una carencia:
+      algunas listas cubren contenido cuya distribuci&oacute;n es en s&iacute; misma il&iacute;cita,
+      y esa decisi&oacute;n no le corresponde a un programa.
+    </p>
+    <pre><code>foruster-cli hashset --path /casos/EXP-1-2026/raw \
+  --source "conocidos=/listas/conocidos.txt=known-system-software" \
+  --source "alerta=/listas/alerta.txt=alert-evidence" --json</code></pre>
+    <p>
+      En la aplicaci&oacute;n, las listas se a&ntilde;aden una vez en <b>Ajustes</b> y el
+      expediente tiene su propia pesta&ntilde;a para cotejar lo que ya est&aacute; dentro.
+    </p>
+
+    <h2 id="deteccion">Detecci&oacute;n en im&aacute;genes</h2>
+    <p>
+      Foruster clasifica im&aacute;genes con dos modelos que se ejecutan <b>en el equipo,
+      sin conexi&oacute;n</b>: uno busca armas y otro contenido adulto. Sirven para ordenar
+      por d&oacute;nde empezar cuando hay miles de im&aacute;genes, no para concluir nada.
+    </p>
+    <p>
+      <b>Foruster no descarga ni incluye ning&uacute;n modelo</b>, ni el motor que los
+      ejecuta. Indicas d&oacute;nde los tienes y qu&eacute; licencia los ampara. El mismo motor
+      vale para los dos.
+    </p>
+    <p class="note">
+      <b>No detecta CSAM, y no debe presentarse como si lo hiciera.</b> El clasificador
+      de contenido adulto no distingue la edad de nadie. Un hallazgo que apunte a un
+      menor va por el protocolo espec&iacute;fico de tu organizaci&oacute;n, nunca como un
+      resultado m&aacute;s de esta pantalla.
+    </p>
+    <p>
+      Los resultados se filtran por hallazgo, sin hallazgo o con error, y se exportan a
+      JSON. Un fichero que el modelo no pudo leer aparece <b>con error</b>; no se cuenta
+      como limpio.
+    </p>
+
+    <h2 id="donde">Sobre qu&eacute; se trabaja</h2>
+    <p>
+      Las listas sirven en los dos momentos. Mientras exploras un equipo, para decidir
+      qu&eacute; merece la pena llevarse. Y sobre un expediente ya cerrado, desde su propia
+      pesta&ntilde;a: ah&iacute; el equipo original no se vuelve a abrir, as&iacute; que puedes repetir
+      el cotejo tantas veces como haga falta.
+    </p>
+    <p>
+      La detecci&oacute;n en im&aacute;genes trabaja sobre las que aparecen al explorar. Explorar
+      no copia nada, de modo que el resultado sirve para decidir qu&eacute; adquirir; lo que
+      sostiene un informe es siempre lo que se haya adquirido despu&eacute;s.
+    </p>
+  </main>
+</div>
+
+<div class="wrap pasos">
+    <a class="prev" href="../firma/"><span>Anterior</span>Firma, comprobación y custodia</a>
+    <a class="next" href="../analisis/"><span>Siguiente</span>Analizar la memoria</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.<br>
+      Software propietario ·
+      <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+      <a href="../../">Inicio</a> ·
+      <a href="https://github.com/m4rz3r0/foruster">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

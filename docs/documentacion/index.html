@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Documentación — Foruster</title>
+<meta name="description" content="Cómo se trabaja con Foruster de principio a fin: qué requisitos hay, en qué orden se actúa, qué queda dentro de un expediente y cómo lo verifica un tercero.">
+<link rel="icon" href="../assets/favicon.svg">
+<link rel="preload" href="../assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/doc.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a href="../">Inicio</a>
+    <a href="../#contacto">Contacto</a>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <h1>Documentación</h1>
+    <p>Cómo se trabaja con Foruster de principio a fin: qué requisitos hay, en qué orden se actúa, qué queda dentro de un expediente y cómo lo verifica un tercero.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside>
+      <p>Documentación</p>
+      <a href="./" class="aqui">Alcance</a>
+      <a href="requisitos/">Requisitos</a>
+      <a href="adquirir/">Adquirir la evidencia</a>
+      <a href="expediente/">El expediente</a>
+      <a href="firma/">Firma y custodia</a>
+      <a href="clasificar/">Clasificar lo adquirido</a>
+      <a href="analisis/">Analizar la memoria</a>
+      <a href="limitaciones/">Lo que no hace</a>
+  </aside>
+
+  <main>
+    <h2 id="alcance">Alcance</h2>
+    <p>
+      Foruster adquiere evidencia digital de un equipo en funcionamiento y la
+      deja en un <b>expediente</b>: un directorio con los datos recogidos, su hash
+      SHA-256, la identidad del caso y un registro de auditor&iacute;a encadenado.
+      En pantalla y en estas p&aacute;ginas se le llama expediente; en la salida
+      de la l&iacute;nea de comandos ver&aacute;s tambi&eacute;n
+      <i>contenedor</i>. Es lo mismo.
+    </p>
+    <p>
+      A partir de ah&iacute;, Foruster analiza e informa sobre ese expediente y
+      nunca sobre el equipo original. Esa es la regla que ordena
+      todo lo dem&aacute;s: no se informa de nada que no se haya adquirido,
+      registrado con su hash y anotado en la auditor&iacute;a.
+    </p>
+
+    <h2 id="mapa">Por dónde seguir</h2>
+    <div class="mapa">
+      <a href="requisitos/">
+        <b>Requisitos y primer vistazo</b>
+        <span>Qué debe cumplir el equipo antes de empezar, y cómo se organiza la aplicación.</span>
+      </a>
+      <a href="adquirir/">
+        <b>Adquirir la evidencia</b>
+        <span>El orden lo impone la volatilidad, no la comodidad: primero lo que desaparece al apagar el equipo, después lo que seguirá ahí mañana.</span>
+      </a>
+      <a href="expediente/">
+        <b>El expediente y el informe</b>
+        <span>Qué contiene la carpeta de un expediente, fichero por fichero, y qué se obtiene de ella al redactar el informe.</span>
+      </a>
+      <a href="firma/">
+        <b>Firma, comprobación y custodia</b>
+        <span>Cómo se acredita que el expediente no ha sido alterado, quién lo levantó y qué consta en cada traspaso.</span>
+      </a>
+      <a href="clasificar/">
+        <b>Clasificar lo adquirido</b>
+        <span>Listas de hashes y detecci&oacute;n local en im&aacute;genes. Las dos usan material que aportas t&uacute;: Foruster no trae ninguna lista ni ning&uacute;n modelo.</span>
+      </a>
+      <a href="analisis/">
+        <b>Analizar la memoria</b>
+        <span>Una imagen de memoria aislada tiene poco recorrido. Estos son los ficheros de contexto que viajan con ella y por qué sin ellos no es interpretable.</span>
+      </a>
+      <a href="limitaciones/">
+        <b>Lo que Foruster no hace</b>
+        <span>Declarado aquí, y no escondido. Si alguna de estas limitaciones es determinante para tu caso, conviene saberlo antes de la actuación.</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<div class="wrap pasos">
+    <a class="next" href="requisitos/"><span>Siguiente</span>Requisitos y primer vistazo</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.<br>
+      Software propietario ·
+      <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+      <a href="../">Inicio</a> ·
+      <a href="https://github.com/m4rz3r0/foruster">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

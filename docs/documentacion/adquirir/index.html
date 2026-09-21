@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Adquirir la evidencia — Foruster</title>
+<meta name="description" content="El orden lo impone la volatilidad, no la comodidad: primero lo que desaparece al apagar el equipo, después lo que seguirá ahí mañana.">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="preload" href="../../assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/doc.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../../">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a href="../../">Inicio</a>
+    <a href="../../#contacto">Contacto</a>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <h1>Adquirir la evidencia</h1>
+    <p>El orden lo impone la volatilidad, no la comodidad: primero lo que desaparece al apagar el equipo, después lo que seguirá ahí mañana.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside>
+      <p>Documentación</p>
+      <a href="../">Alcance</a>
+      <a href="../requisitos/">Requisitos</a>
+      <a href="../adquirir/" class="aqui">Adquirir la evidencia</a>
+      <a href="../expediente/">El expediente</a>
+      <a href="../firma/">Firma y custodia</a>
+      <a href="../clasificar/">Clasificar lo adquirido</a>
+      <a href="../analisis/">Analizar la memoria</a>
+      <a href="../limitaciones/">Lo que no hace</a>
+  </aside>
+
+  <main>
+    <h2 id="procedimiento">Orden de trabajo</h2>
+    <p>
+      Por orden de volatilidad. Cada paso tiene su apartado m&aacute;s abajo con
+      el comando que le corresponde.
+    </p>
+    <ol>
+      <li><b>Identificar el caso.</b> Expediente, organizaci&oacute;n, operador e
+        identificador del operador. Sin los cuatro, la adquisici&oacute;n no arranca.</li>
+      <li><b>Adquirir la memoria</b>, si el equipo sigue encendido.</li>
+      <li><b>Adquirir artefactos o ficheros.</b></li>
+      <li><b>Comprobar y firmar.</b></li>
+      <li><b>Sacar el informe.</b></li>
+    </ol>
+
+    <h2 id="memoria">Memoria vol&aacute;til</h2>
+    <p>
+      Hace falta root. Antes de adquirir nada, mira qu&eacute; se puede hacer en
+      este equipo:
+    </p>
+    <pre><code><span class="k">foruster-cli</span> memory --dry-run --output /casos/EXP-1-2026-ram \
+  --case-number <span class="c">"EXP-1/2026"</span> --organization <span class="c">"Laboratorio"</span> \
+  --operator <span class="c">"Nombre Apellidos"</span> --operator-id <span class="c">"ID-0001"</span></code></pre>
+    <p>
+      Foruster te indica cu&aacute;nto va a ocupar la imagen y qu&eacute; ficheros
+      de contexto la acompa&ntilde;ar&aacute;n. Quita <code>--dry-run</code> para
+      ejecutar la adquisici&oacute;n. Si no hay ninguna v&iacute;a disponible, Foruster no adquiere nada e
+      indica el motivo.
+    </p>
+    <p>
+      Foruster no carga ning&uacute;n m&oacute;dulo en el equipo intervenido.
+      Cargarlo ser&iacute;a modificarlo, que es justo lo que no puede hacer.
+    </p>
+    <div class="note">
+      <p>
+        <b>La imagen no es una foto de un instante.</b> El equipo sigue trabajando
+        mientras se copia, as&iacute; que cada tramo se lee en un momento distinto.
+        El hash acredita que la imagen no ha cambiado desde que se adquiri&oacute;;
+        no que lo que hay dentro sea coherente entre s&iacute;. El informe lo dice.
+      </p>
+    </div>
+
+    <h2 id="artefactos">Artefactos y ficheros</h2>
+    <p>
+      Foruster recoge artefactos concretos de las rutas donde suelen estar, en
+      vez de clonar el disco entero:
+    </p>
+    <p>
+      El cat&aacute;logo cubre <b>cookies e historial de Chrome y de Firefox</b>, en Linux
+      y en Windows, y en Windows adem&aacute;s <b>la memoria que el sistema ha escrito en
+      disco</b>: hibernaci&oacute;n y paginaci&oacute;n. Es el &uacute;nico contenido de memoria que
+      sobrevive a un apagado, y en Windows es el que Foruster recoge.
+    </p>
+    <p>
+    </p>
+    <pre><code><span class="k">foruster-cli</span> artifacts --existing-only
+
+<span class="k">foruster-cli</span> artifacts --existing-only --locator firefox-cookies-linux \
+  --acquire /casos/EXP-1-2026 --case-number <span class="c">"EXP-1/2026"</span> \
+  --organization <span class="c">"Laboratorio"</span> --operator <span class="c">"Nombre Apellidos"</span> \
+  --operator-id <span class="c">"ID-0001"</span></code></pre>
+    <p>
+      Las bases de datos viajan siempre con sus ficheros auxiliares
+      (<code>-wal</code>, <code>-shm</code>, <code>-journal</code>). Sin ellos, una
+      base en modo WAL llega incompleta, y el informe lo declara.
+    </p>
+    <p>Para rutas arbitrarias:</p>
+    <pre><code><span class="k">foruster-cli</span> acquire --path /ruta --output /casos/EXP-1-2026 \
+  --case-number <span class="c">"EXP-1/2026"</span> --organization <span class="c">"Laboratorio"</span> \
+  --operator <span class="c">"Nombre Apellidos"</span> --operator-id <span class="c">"ID-0001"</span></code></pre>
+
+  </main>
+</div>
+
+<div class="wrap pasos">
+    <a class="prev" href="../requisitos/"><span>Anterior</span>Requisitos y primer vistazo</a>
+    <a class="next" href="../expediente/"><span>Siguiente</span>El expediente y el informe</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.<br>
+      Software propietario ·
+      <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+      <a href="../../">Inicio</a> ·
+      <a href="https://github.com/m4rz3r0/foruster">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Firma, comprobación y custodia — Foruster</title>
+<meta name="description" content="Cómo se acredita que el expediente no ha sido alterado, quién lo levantó y qué consta en cada traspaso.">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="preload" href="../../assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/doc.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../../">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a href="../../">Inicio</a>
+    <a href="../../#contacto">Contacto</a>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <h1>Firma, comprobación y custodia</h1>
+    <p>Cómo se acredita que el expediente no ha sido alterado, quién lo levantó y qué consta en cada traspaso.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside>
+      <p>Documentación</p>
+      <a href="../">Alcance</a>
+      <a href="../requisitos/">Requisitos</a>
+      <a href="../adquirir/">Adquirir la evidencia</a>
+      <a href="../expediente/">El expediente</a>
+      <a href="../firma/" class="aqui">Firma y custodia</a>
+      <a href="../clasificar/">Clasificar lo adquirido</a>
+      <a href="../analisis/">Analizar la memoria</a>
+      <a href="../limitaciones/">Lo que no hace</a>
+  </aside>
+
+  <main>
+    <h2 id="clave">Clave de firma</h2>
+    <p>
+      Foruster no genera ni guarda claves: la clave es del laboratorio y se crea
+      una sola vez.
+    </p>
+    <pre><code><span class="c"># Privada. Cust&oacute;diala: quien la tenga puede firmar.</span>
+openssl genpkey -algorithm ed25519 -out laboratorio.key
+chmod 600 laboratorio.key
+
+<span class="c"># P&uacute;blica, para quien deba verificar.</span>
+openssl pkey -in laboratorio.key -pubout -out laboratorio.pub</code></pre>
+    <p>Firmar un expediente ya cerrado:</p>
+    <pre><code><span class="k">foruster-cli</span> sign /casos/EXP-1-2026 --key laboratorio.key \
+  --signer <span class="c">"Nombre Apellidos"</span> --signer-id <span class="c">"ID-0001"</span></code></pre>
+    <p>
+      La clave p&uacute;blica se reparte <b>por fuera del expediente</b>: por
+      diligencia, en el pie del informe o desde el registro del laboratorio.
+    </p>
+    <div class="note">
+      <p>
+        <b>Una clave p&uacute;blica que venga dentro del expediente no sirve de
+        ra&iacute;z de confianza.</b> Quien pueda alterar el expediente puede
+        cambiarla y volver a firmar. Tienes que aportar por tu cuenta la clave en la que
+        conf&iacute;as; sin ella, Foruster declara que la firma
+        est&aacute; presente pero <i>sin comprobar</i>, nunca que sea v&aacute;lida.
+      </p>
+    </div>
+
+    <h2 id="verificacion">Verificaci&oacute;n</h2>
+    <p>
+      Foruster revisa el manifiesto, la cadena de auditor&iacute;a y el hash de
+      cada elemento; con <code>--public-key</code>, tambi&eacute;n la firma. Sale
+      con c&oacute;digo distinto de cero si algo no concuerda. A&ntilde;ade
+      <code>--json</code> y obtendr&aacute;s un campo <code>pass</code>, para no
+      tener que leer la prosa desde un script.
+    </p>
+    <pre><code><span class="k">foruster-cli</span> verify /casos/EXP-1-2026 --public-key laboratorio.pub</code></pre>
+    <h3>Por un tercero</h3>
+    <p>
+      La firma se calcula sobre los bytes del manifiesto tal y como est&aacute;n
+      guardados. Por eso se comprueba sin ejecutar Foruster:
+    </p>
+    <pre><code>openssl pkeyutl -verify -pubin -inkey laboratorio.pub \
+  -rawin -in manifest.json -sigfile manifest.sig</code></pre>
+
+    <h2 id="custodia">Custodia</h2>
+    <p>
+      Cada traspaso se a&ntilde;ade al final de la misma cadena. Si vuelves a
+      comprobar el expediente, ver&aacute;s que ese a&ntilde;adido no la
+      rompi&oacute;.
+    </p>
+    <pre><code><span class="k">foruster-cli</span> custody /casos/EXP-1-2026 --to <span class="c">"Secretaría"</span> \
+  --operator <span class="c">"Nombre Apellidos"</span> --operator-id <span class="c">"ID-0001"</span></code></pre>
+
+  </main>
+</div>
+
+<div class="wrap pasos">
+    <a class="prev" href="../expediente/"><span>Anterior</span>El expediente y el informe</a>
+    <a class="next" href="../clasificar/"><span>Siguiente</span>Clasificar lo adquirido</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.<br>
+      Software propietario ·
+      <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+      <a href="../../">Inicio</a> ·
+      <a href="https://github.com/m4rz3r0/foruster">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

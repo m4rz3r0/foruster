@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lo que Foruster no hace — Foruster</title>
+<meta name="description" content="Declarado aquí, y no escondido. Si alguna de estas limitaciones es determinante para tu caso, conviene saberlo antes de la actuación.">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="preload" href="../../assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/doc.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../../">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a href="../../">Inicio</a>
+    <a href="../../#contacto">Contacto</a>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <h1>Lo que Foruster no hace</h1>
+    <p>Declarado aquí, y no escondido. Si alguna de estas limitaciones es determinante para tu caso, conviene saberlo antes de la actuación.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside>
+      <p>Documentación</p>
+      <a href="../">Alcance</a>
+      <a href="../requisitos/">Requisitos</a>
+      <a href="../adquirir/">Adquirir la evidencia</a>
+      <a href="../expediente/">El expediente</a>
+      <a href="../firma/">Firma y custodia</a>
+      <a href="../clasificar/">Clasificar lo adquirido</a>
+      <a href="../analisis/">Analizar la memoria</a>
+      <a href="../limitaciones/" class="aqui">Lo que no hace</a>
+  </aside>
+
+  <main>
+    <h2 id="limitaciones">Limitaciones</h2>
+    <ul>
+      <li><b>Foruster no est&aacute; homologado, certificado ni validado</b> por
+        ning&uacute;n organismo.</li>
+      <li><b>La firma no es cualificada</b> (eIDAS) y no hay sellado de tiempo: la
+        marca temporal no constituye fecha cierta.</li>
+      <li><b>La imagen de memoria no es at&oacute;mica</b> y llega hasta donde el
+        kernel mapea. Los tramos que no se pudieron leer se rellenan a cero y sus
+        direcciones quedan escritas en el manifiesto.</li>
+      <li><b>En Windows no se adquiere memoria f&iacute;sica.</b> S&iacute; se recogen los
+        ficheros de hibernaci&oacute;n y paginaci&oacute;n, que son memoria escrita en disco.</li>
+      <li><b>El lector de SQLite no reproduce el WAL</b>, no sigue cadenas de
+        <i>overflow</i> y no recupera registros borrados. Est&aacute; escrito a mano en el proyecto
+        y es de solo lectura precisamente para no escribir sobre la evidencia, que es
+        lo que har&iacute;a una biblioteca de SQLite completa.</li>
+      <li><b>No rompe el cifrado del sistema operativo y no detecta CSAM.</b></li>
+    </ul>
+
+  </main>
+</div>
+
+<div class="wrap pasos">
+    <a class="prev" href="../analisis/"><span>Anterior</span>Analizar la memoria</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.<br>
+      Software propietario ·
+      <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+      <a href="../../">Inicio</a> ·
+      <a href="https://github.com/m4rz3r0/foruster">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

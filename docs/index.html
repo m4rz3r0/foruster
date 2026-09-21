@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Foruster — Adquisición forense de equipos en funcionamiento</title>
+<meta name="description" content="Foruster adquiere la memoria y el almacenamiento de un equipo en funcionamiento sin alterarlo, y deja un expediente que un tercero puede verificar por sus propios medios.">
+<meta property="og:title" content="Foruster">
+<meta property="og:description" content="Adquiere la evidencia. No toques el equipo.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://m4rz3r0.github.io/foruster/assets/app-inicio.png">
+<meta name="theme-color" content="#0b100e">
+<link rel="icon" href="assets/favicon.svg">
+<link rel="preload" href="assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Self-hosted: the page makes no third-party request. Variable fonts,
+     one file per subset. */
+  @font-face{
+    font-family:"Source Serif"; font-weight:400 700; font-style:normal;
+    font-display:swap; src:url(assets/serif-latin.woff2) format("woff2");
+    unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+  }
+  @font-face{
+    font-family:"Source Serif"; font-weight:400 700; font-style:normal;
+    font-display:swap; src:url(assets/serif-latin-ext.woff2) format("woff2");
+    unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+  }
+  @font-face{
+    font-family:"Plex Sans"; font-weight:400 600; font-style:normal;
+    font-display:swap; src:url(assets/plex-latin.woff2) format("woff2");
+    unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+  }
+  @font-face{
+    font-family:"Plex Sans"; font-weight:400 600; font-style:normal;
+    font-display:swap; src:url(assets/plex-latin-ext.woff2) format("woff2");
+    unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+  }
+
+  /* Brand palette — mirrors CLAUDE.md §8 in the product repository. The site
+     now runs on the application's DARK column, so a screenshot of the app and
+     the page around it are the same surface. Change the palette there first.
+     Teal is the interactive colour because no semantic state claims that hue;
+     oxblood is identity only and never a control. */
+  :root{
+    /* Mirrors CLAUDE.md §8 in the product repository, same as the
+       documentation's own CSS and the Slint application. Change it there
+       first. Names differ from doc.css on purpose — this page is dark and
+       names its tokens after the role — but the values do not drift, with one
+       sanctioned exception: a lifted dark ramp. The base sits between the
+       app's OLED and Dark bases because a commercial page reads better a
+       shade off pure black, and the text is lifted with it because the muted
+       tone of the OLED column is calibrated against #000000 and loses too
+       much contrast on a base that is not. Move one and the other moves. */
+    --base:#0b100e;
+    --surface:#141a17;
+    --elevated:#1b2320;
+    --line:rgba(223,230,225,.09);
+    --line-strong:rgba(223,230,225,.17);
+    --text:#e4ebe6;
+    --soft:#a3b0a8;
+    --muted:#72807a;
+    --teal:#46b8a2;
+    --teal-deep:#1c4034;
+    --serif:"Source Serif",Georgia,"Times New Roman",serif;
+    --sans:"Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+  body{margin:0; background:var(--base); color:var(--text);
+       font-family:var(--sans); font-size:17px; line-height:1.6;
+       -webkit-font-smoothing:antialiased; overflow-x:hidden}
+  img{max-width:100%; height:auto; display:block}
+  a{color:var(--teal)}
+  :focus-visible{outline:2px solid var(--teal); outline-offset:3px}
+  h1,h2{font-family:var(--serif); font-weight:600; letter-spacing:-.032em;
+        text-wrap:balance; margin:0}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 28px; position:relative;
+        z-index:1}
+
+  /* One ambient light, behind the hero, in the brand's own teal. It is the
+     page's single lighting effect: everything else is a hairline. */
+  .lamp{position:absolute; inset:0; overflow:hidden; pointer-events:none;
+        z-index:0}
+  .lamp::before{content:""; position:absolute; left:50%; top:-340px;
+        width:1500px; height:1100px; transform:translateX(-50%);
+        background:radial-gradient(50% 50% at 50% 50%,
+                   rgba(70,184,162,.22), rgba(28,64,52,.17) 45%, transparent 72%)}
+  /* Dot grid, faded out by its own mask so it never reaches an edge. */
+  .lamp::after{content:""; position:absolute; inset:0;
+        background-image:radial-gradient(rgba(223,230,225,.14) 1px, transparent 1px);
+        background-size:34px 34px;
+        -webkit-mask-image:radial-gradient(58% 48% at 50% 34%, #000, transparent 70%);
+        mask-image:radial-gradient(58% 48% at 50% 34%, #000, transparent 70%)}
+
+  /* ---------- masthead ---------- */
+  .masthead{position:sticky; top:0; z-index:30; background:rgba(11,16,14,.72);
+            backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+            border-bottom:1px solid transparent}
+  .masthead.stuck{border-bottom-color:var(--line)}
+  .masthead .wrap{display:flex; align-items:center; gap:20px; height:64px}
+  .brand{display:flex; align-items:center; gap:11px; color:var(--text);
+         text-decoration:none}
+  .brand b{font-family:var(--serif); font-size:19px; font-weight:600}
+  .masthead .sp{flex:1}
+  /* 26 px de alto: son objetivos de navegación, no enlaces dentro de una
+     frase, y en el móvil se quedaban por debajo del mínimo de 24. */
+  .nav{color:var(--soft); font-size:15.5px; text-decoration:none;
+       display:inline-flex; align-items:center; min-height:26px}
+  .nav:hover{color:var(--text)}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative; padding:88px 0 0; text-align:center}
+  .hero h1{font-size:clamp(42px,8.6vw,108px); line-height:.96;
+           max-width:20ch; margin:0 auto; letter-spacing:-.042em}
+  .hero h1 span{display:block}
+  .hero h1 .lit{background:linear-gradient(180deg,#5fd0b8,#2f8f7c);
+                -webkit-background-clip:text; background-clip:text;
+                color:transparent}
+  .hero p{margin:30px auto 0; font-size:clamp(17.5px,2vw,21px);
+          line-height:1.5; color:var(--soft); max-width:54ch}
+  .actions{margin:40px 0 0; display:flex; gap:14px; justify-content:center;
+           align-items:center; flex-wrap:wrap}
+  .cta{display:inline-block; padding:15px 30px; font-size:17px;
+       font-weight:600; border-radius:999px; background:var(--teal);
+       color:#04211b; text-decoration:none;
+       box-shadow:0 0 0 1px rgba(95,208,184,.5), 0 14px 40px -12px rgba(70,184,162,.55)}
+  .cta:hover{background:#5fd0b8}
+  .ghost{display:inline-block; padding:15px 24px; font-size:17px;
+         color:var(--soft); text-decoration:none; border-radius:999px;
+         border:1px solid var(--line-strong)}
+  .ghost:hover{color:var(--text); border-color:var(--line-strong);
+               background:var(--surface)}
+
+  /* The product, and the only image on the page. It keeps its own colours
+     because they are the page's colours, dissolves into the background
+     instead of ending on an edge, and the bottom of the window is masked
+     away rather than cropped. */
+  .shot{max-width:1320px; margin:76px auto 0; padding:0 28px;
+        position:relative; z-index:1}
+  .shot .glass{animation:rise .95s .3s cubic-bezier(.16,.84,.3,1) both;
+        border-radius:14px; border:1px solid var(--line-strong);
+        background:var(--surface); padding:8px;
+        box-shadow:0 60px 120px -50px rgba(0,0,0,.95),
+                   0 0 90px -30px rgba(70,184,162,.28)}
+  .shot img{border-radius:8px; width:100%;
+        -webkit-mask-image:linear-gradient(180deg,#000 68%,transparent 99%);
+        mask-image:linear-gradient(180deg,#000 68%,transparent 99%)}
+
+  /* ---------- rhythm ---------- */
+  .band{padding:104px 0; position:relative}
+  .rule{border-top:1px solid var(--line)}
+
+  /* ---------- the sentence ---------- */
+  .said{text-align:center}
+  .said p{font-family:var(--serif); font-weight:400;
+          font-size:clamp(28px,4.7vw,58px); line-height:1.16;
+          letter-spacing:-.028em; margin:0 auto; max-width:30ch}
+  .said em{font-style:normal; color:var(--teal)}
+
+  /* ---------- three words ---------- */
+  .three{display:grid; grid-template-columns:repeat(3,1fr); gap:0 56px}
+  .three>div{padding-top:26px; border-top:1px solid var(--line-strong)}
+  .three h2{font-size:clamp(28px,3.2vw,38px); margin:0 0 14px;
+            letter-spacing:-.028em}
+  .three p{margin:0; color:var(--soft); font-size:16.5px; max-width:34ch}
+
+  /* ---------- proof ---------- */
+  .proof{text-align:center}
+  .proof h2{font-size:clamp(30px,4.3vw,52px); line-height:1.06;
+            max-width:15ch; margin:0 auto}
+  .proof .lead{margin:24px auto 0; max-width:50ch; color:var(--soft);
+               font-size:18px}
+
+  /* ---------- the rail: the four phases, named as the app names them ----- */
+  .rail{list-style:none; margin:0; padding:0; display:grid;
+        grid-template-columns:repeat(4,1fr); text-align:center;
+        counter-reset:p}
+  .rail{margin-bottom:96px}
+  .rail li{position:relative; padding-top:34px; font-size:17px;
+           color:var(--soft)}
+  .rail li::before{content:""; position:absolute; top:7px; left:50%;
+           width:11px; height:11px; margin-left:-5.5px; border-radius:50%;
+           background:var(--base); border:2px solid var(--teal); z-index:1}
+  .rail li::after{content:""; position:absolute; top:12px; left:50%;
+           width:100%; height:1px; background:var(--line-strong)}
+  .rail li:last-child::after{display:none}
+  .rail b{display:block; color:var(--text); font-weight:600}
+
+  /* ---------- facts ---------- */
+  .facts{display:grid; grid-template-columns:repeat(3,1fr); gap:0 56px;
+         list-style:none; margin:0; padding:0}
+  .facts li{padding:18px 0; border-top:1px solid var(--line);
+            color:var(--soft); font-size:16.5px}
+  .facts li b{color:var(--text); font-weight:600}
+  .more{margin:38px 0 0; color:var(--soft); font-size:16.5px}
+
+  /* ---------- close ---------- */
+  .close{text-align:center; position:relative}
+  .close h2{font-size:clamp(30px,4.6vw,58px); line-height:1.06;
+            max-width:22ch; margin:0 auto}
+  .close p{margin:26px auto 0; max-width:44ch; color:var(--soft);
+           font-size:18px}
+  .close .actions{margin-top:42px}
+  .close .lamp::after{display:none}
+  .close .lamp::before{top:auto; bottom:-420px; height:880px;
+        background:radial-gradient(50% 50% at 50% 50%,
+                   rgba(70,184,162,.13), rgba(28,64,52,.11) 45%, transparent 72%)}
+
+  /* ---------- colophon ---------- */
+  .colophon{border-top:1px solid var(--line); padding:44px 0 56px;
+            color:var(--muted); font-size:14.5px}
+  .colophon a{color:var(--soft); text-decoration:none}
+  .colophon a:hover{color:var(--text); text-decoration:underline}
+  .colophon p{margin:0}
+  .colophon .name{font-family:var(--serif); font-size:17px; color:var(--text);
+                  margin-bottom:7px}
+  .crow{display:flex; justify-content:space-between; gap:34px;
+        flex-wrap:wrap; align-items:flex-end}
+  .colophon img{height:36px; width:auto; opacity:.75}
+  .plain{margin-top:12px; max-width:52ch}
+
+  /* Four reveals on the page, not one per section. */
+  .r{opacity:0; transform:translateY(30px) scale(.985);
+     transition:opacity .85s cubic-bezier(.2,.7,.3,1) var(--d,0s),
+                transform .85s cubic-bezier(.2,.7,.3,1) var(--d,0s)}
+  .r.seen{opacity:1; transform:none}
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .shot .glass{animation:none}
+    .r{opacity:1; transform:none; transition:none}
+  }
+  @media (max-width:900px){
+    .band{padding:78px 0}
+    .rail{margin-bottom:64px}
+    .three,.facts{grid-template-columns:1fr; gap:0}
+    .three>div{margin-top:30px}
+    .three>div:first-child{margin-top:0}
+    .three p{max-width:none}
+    .rail{grid-template-columns:1fr 1fr; gap:26px 0}
+    .hero{padding-top:64px}
+    .shot{margin-top:56px}
+  }
+  @media (max-width:560px){
+    .wrap,.shot{padding:0 20px}
+    .hero{padding-top:46px}
+    .mark{width:64px; height:64px; margin-bottom:24px}
+    .actions{flex-direction:column; align-items:stretch}
+    .cta,.ghost{text-align:center}
+    .rail{grid-template-columns:1fr; gap:22px 0}
+    .rail li::after{display:none}
+    /* A dense one-liner in a 350 px column: wrapping at its own spaces reads
+       better than a strip that has to be dragged sideways. */
+  }
+</style>
+<noscript><style>.r{opacity:1; transform:none; transition:none}</style></noscript>
+</head>
+<body>
+
+<header class="masthead" id="top">
+  <div class="wrap">
+    <a class="brand" href="./">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a class="nav" href="documentacion/">Documentación</a>
+    <a class="nav" href="#contacto">Contacto</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="lamp" aria-hidden="true"></div>
+  <div class="wrap">
+
+    <h1><span>Adquiere la evidencia.</span><span class="lit">No toques el equipo.</span></h1>
+    <p>Foruster adquiere la memoria y el almacenamiento de un equipo en
+       funcionamiento, y deja un expediente que un tercero puede
+       verificar.</p>
+    <div class="actions">
+      <a class="cta" href="mailto:contacto@mjsequera.com?subject=Demostraci%C3%B3n%20de%20Foruster">Solicitar una demostración</a>
+      <a class="ghost" href="documentacion/">Ver la documentación</a>
+    </div>
+  </div>
+
+  <div class="shot">
+    <div class="glass">
+      <img src="assets/app-inicio.png" width="3240" height="1220"
+           alt="Pantalla de inicio de Foruster: explorar el equipo, adquirir evidencia y los últimos expedientes">
+    </div>
+  </div>
+</section>
+
+<section class="band said">
+  <div class="wrap">
+    <p class="r">La información que solo existe en memoria <em>desaparece al
+       apagar el equipo</em>.</p>
+  </div>
+</section>
+
+<section class="band rule">
+  <div class="wrap three">
+    <div class="r">
+      <h2>Adquiere</h2>
+      <p>Primero la memoria volátil; después, el almacenamiento que
+         selecciones. Foruster abre los soportes en solo lectura, de modo que
+         el equipo queda tal y como lo encontraste.</p>
+    </div>
+    <div class="r" style="--d:.1s">
+      <h2>Sella</h2>
+      <p>Cada elemento lleva su hash SHA-256, calculado durante la copia y no
+         al terminarla. Si el elemento se altera después, el hash deja de
+         coincidir.</p>
+    </div>
+    <div class="r" style="--d:.2s">
+      <h2>Declara</h2>
+      <p>Lo que no se pudo adquirir íntegramente consta en el informe con su
+         motivo. Un expediente parcial jamás se presenta como completo.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band rule proof">
+  <div class="wrap">
+    <h2 class="r">Verificable por un tercero</h2>
+    <p class="lead r" style="--d:.08s">Si la otra parte impugna la evidencia,
+       puede comprobar por sus propios medios que el expediente no ha sido
+       alterado desde su cierre. No necesita instalar Foruster ni dar por buena
+       ninguna afirmación nuestra.</p>
+  </div>
+</section>
+
+<section class="band rule">
+  <div class="wrap">
+    <ol class="rail">
+      <li><b>Identificación</b></li>
+      <li><b>Adquisición</b></li>
+      <li><b>Verificación</b></li>
+      <li><b>Informe</b></li>
+    </ol>
+    <ul class="facts">
+      <li><b>Linux y Windows</b>, de 64 bits</li>
+      <li><b>Tres interfaces</b>: gráfica, de terminal y de línea de comandos</li>
+      <li><b>Se ejecuta desde un USB</b>, sin instalar nada en el equipo intervenido</li>
+      <li><b>Terminal y línea de comandos</b>, en un único ejecutable estático</li>
+      <li><b>Informe</b> en texto y en PDF</li>
+      <li><b>Salida en JSON</b> para automatización</li>
+    </ul>
+    <p class="more">La <a href="documentacion/">documentación</a> detalla qué
+       se adquiere, cómo se verifica y qué queda fuera del alcance.</p>
+  </div>
+</section>
+
+<section class="band close" id="contacto">
+  <div class="lamp" aria-hidden="true"></div>
+  <div class="wrap">
+    <h2>Contacto</h2>
+    <p>Te lo enseñamos y resolvemos las dudas que traigas.</p>
+    <div class="actions">
+      <a class="cta" href="mailto:contacto@mjsequera.com?subject=Demostraci%C3%B3n%20de%20Foruster">Solicitar una demostración</a>
+    </div>
+  </div>
+</section>
+
+<footer class="colophon">
+  <div class="wrap crow">
+    <div>
+      <p class="name">Foruster</p>
+      <p>
+        Software propietario. Todos los derechos reservados.<br>
+        <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+        <a href="documentacion/">Documentación</a> ·
+        <a href="https://github.com/m4rz3r0/foruster">Repositorio</a>
+      </p>
+      <p class="plain">Foruster no está homologado ni certificado por ningún
+         organismo oficial. La validez de la prueba la decide el juzgado.</p>
+    </div>
+    <a href="https://slint.dev" aria-label="Hecho con Slint">
+      <img src="assets/MadeWithSlint-light.svg" alt="Made with Slint">
+    </a>
+  </div>
+</footer>
+
+<script>
+  // Reveals and the masthead hairline. No library, no third-party request.
+  // With JavaScript off the <noscript> rule drops the effect entirely, so the
+  // page is never left with invisible sections.
+  (function () {
+    var quiet = window.matchMedia("(prefers-reduced-motion: reduce)");
+    var targets = document.querySelectorAll(".r");
+    if (quiet.matches || !("IntersectionObserver" in window)) {
+      for (var i = 0; i < targets.length; i++) targets[i].classList.add("seen");
+    } else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add("seen");
+            io.unobserve(e.target);
+          }
+        });
+      }, { rootMargin: "0px 0px -10% 0px", threshold: 0.1 });
+      targets.forEach(function (t) { io.observe(t); });
+    }
+
+    var head = document.querySelector(".masthead");
+    var onScroll = function () {
+      head.classList.toggle("stuck", window.scrollY > 8);
+    };
+    addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  })();
+</script>
+
+</body>
+</html>

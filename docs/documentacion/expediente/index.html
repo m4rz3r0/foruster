@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>El expediente y el informe — Foruster</title>
+<meta name="description" content="Qué contiene la carpeta de un expediente, fichero por fichero, y qué se obtiene de ella al redactar el informe.">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="preload" href="../../assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/doc.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../../">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a href="../../">Inicio</a>
+    <a href="../../#contacto">Contacto</a>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <h1>El expediente y el informe</h1>
+    <p>Qué contiene la carpeta de un expediente, fichero por fichero, y qué se obtiene de ella al redactar el informe.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside>
+      <p>Documentación</p>
+      <a href="../">Alcance</a>
+      <a href="../requisitos/">Requisitos</a>
+      <a href="../adquirir/">Adquirir la evidencia</a>
+      <a href="../expediente/" class="aqui">El expediente</a>
+      <a href="../firma/">Firma y custodia</a>
+      <a href="../clasificar/">Clasificar lo adquirido</a>
+      <a href="../analisis/">Analizar la memoria</a>
+      <a href="../limitaciones/">Lo que no hace</a>
+  </aside>
+
+  <main>
+    <h2 id="expediente">El expediente</h2>
+    <table>
+      <tr><th>Fichero</th><th>Contenido</th></tr>
+      <tr><td><code>manifest.json</code></td><td>Inventario: hash SHA-256,
+        tama&ntilde;o, origen y estado de cada elemento.</td></tr>
+      <tr><td><code>audit.jsonl</code></td><td>Registro de auditor&iacute;a
+        encadenado por hash.</td></tr>
+      <tr><td><code>case.json</code></td><td>Expediente y operador.</td></tr>
+      <tr><td><code>preflight.json</code></td><td>Estado del equipo al adquirir.</td></tr>
+      <tr><td><code>raw/</code></td><td>Los datos recogidos.</td></tr>
+      <tr><td><code>manifest.sig</code></td><td>Firma del manifiesto, si se ha firmado.</td></tr>
+    </table>
+    <p>
+      Un elemento que falla deja el expediente en <b>parcial</b>, y eso consta en
+      el manifiesto, en la auditor&iacute;a y en el informe. No hay forma de que
+      pase desapercibido.
+    </p>
+
+    <h2 id="informe">Informe</h2>
+    <pre><code><span class="k">foruster-cli</span> report /casos/EXP-1-2026
+<span class="k">foruster-cli</span> report /casos/EXP-1-2026 --pdf --output informe.pdf</code></pre>
+    <p>
+      El mismo expediente produce siempre el mismo documento, porque solo se lee lo que
+      ya est&aacute; guardado. Lleva una secci&oacute;n de limitaciones con las
+      salvedades que afecten a ese caso concreto. <code>--pdf</code> necesita
+      <code>--output</code>.
+    </p>
+
+  </main>
+</div>
+
+<div class="wrap pasos">
+    <a class="prev" href="../adquirir/"><span>Anterior</span>Adquirir la evidencia</a>
+    <a class="next" href="../firma/"><span>Siguiente</span>Firma, comprobación y custodia</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.<br>
+      Software propietario ·
+      <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+      <a href="../../">Inicio</a> ·
+      <a href="https://github.com/m4rz3r0/foruster">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
