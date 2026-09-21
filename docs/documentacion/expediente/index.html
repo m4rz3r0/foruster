@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>El expediente y el informe — Foruster</title>
+<meta name="description" content="Qué contiene la carpeta de un expediente, fichero por fichero, y qué se obtiene de ella al redactar el informe.">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="preload" href="../../assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/doc.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../../">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a href="../../">Inicio</a>
+    <a href="../../#contacto">Contacto</a>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <h1>El expediente y el informe</h1>
+    <p>Qué contiene la carpeta de un expediente, fichero por fichero, y qué se obtiene de ella al redactar el informe.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside>
+      <p>Documentación</p>
+      <a href="../">Alcance</a>
+      <a href="../requisitos/">Requisitos</a>
+      <a href="../adquirir/">Adquirir la evidencia</a>
+      <a href="../imagen/">Imagen de discos</a>
+      <a href="../expediente/" class="aqui">El expediente</a>
+      <a href="../acta/">Acta de volcado</a>
+      <a href="../firma/">Firma y custodia</a>
+      <a href="../clasificar/">Clasificar lo adquirido</a>
+      <a href="../analisis/">Analizar la memoria</a>
+      <a href="../limitaciones/">Lo que no hace</a>
+      <a href="../seguridad/">Seguridad</a>
+  </aside>
+
+  <main>
+    <h2 id="expediente">El expediente</h2>
+    <table>
+      <tr><th>Fichero</th><th>Contenido</th></tr>
+      <tr><td><code>manifest.json</code></td><td>Inventario: hash SHA-256,
+        tamaño, origen y estado de cada elemento; el hash de
+        <code>case.json</code> y de <code>preflight.json</code>; y el hash del
+        último asiento de la auditoría en el momento de cerrarlo.</td></tr>
+      <tr><td><code>audit.jsonl</code></td><td>Registro de auditoría
+        encadenado por hash.</td></tr>
+      <tr><td><code>case.json</code></td><td>Caso, operador, habilitación y
+        alcance autorizado.</td></tr>
+      <tr><td><code>preflight.json</code></td><td>Estado del equipo al adquirir,
+        con fabricante, modelo y número de serie de cada disco, la licencia y
+        el hash del ejecutable de Foruster.</td></tr>
+      <tr><td><code>raw/</code></td><td>Los datos recogidos: ficheros, imágenes
+        y volcados de memoria.</td></tr>
+      <tr><td><code>manifest.sig</code>, <code>signature.json</code></td><td>Firma
+        Ed25519 del manifiesto y quién la hizo, si se ha firmado.</td></tr>
+      <tr><td><code>manifest.tsr</code>, <code>timestamp.json</code></td><td>Sello
+        de tiempo del manifiesto, si se ha sellado.</td></tr>
+      <tr><td><code>external-signatures/</code></td><td>Firmas hechas fuera de
+        Foruster, si se han adjuntado.</td></tr>
+    </table>
+    <p>
+      Un elemento que falla deja el expediente en <b>parcial</b>, y eso consta en
+      el manifiesto, en la auditoría y en el informe. No hay forma de que
+      pase desapercibido.
+    </p>
+    <p>
+      El manifiesto vincula los datos del caso y el estado del equipo: si
+      <code>case.json</code> o <code>preflight.json</code> cambian, la
+      comprobación falla.
+    </p>
+    <p>
+      Un resultado correcto de <code>verify</code> significa que el expediente
+      está íntegro, no que la adquisición esté completa. El estado de la sesión
+      se indica aparte.
+    </p>
+
+    <h2 id="informe">Informe</h2>
+    <pre><code><span class="k">foruster-cli</span> report /casos/EXP-1-2026
+<span class="k">foruster-cli</span> report /casos/EXP-1-2026 --pdf --output informe.pdf</code></pre>
+    <p>
+      El mismo expediente produce siempre el mismo documento, porque solo se lee lo que
+      ya está guardado. Lleva una sección de limitaciones con las
+      salvedades que afecten a ese caso concreto. <code>--pdf</code> necesita
+      <code>--output</code>.
+    </p>
+    <p>
+      El informe no se escribe nunca dentro del expediente. Tampoco sustituye un
+      fichero que ya exista, salvo que añadas <code>--force</code>.
+    </p>
+    <p>
+      Del mismo expediente sale también <a href="../acta/">el acta de volcado</a>.
+    </p>
+    <figure>
+      <img src="../../assets/app-informe.png" width="1215" height="354" loading="lazy"
+           alt="Pestaña «Informe» de un expediente en la aplicación: exportar el informe en PDF o en texto, y exportar el acta de volcado">
+      <figcaption>La fase de Informe, desde el propio expediente.</figcaption>
+    </figure>
+
+    <h2 id="diagnostico">Paquete de diagnóstico</h2>
+    <p>
+      Si algo falla y quieres que lo revisemos, <code>diagnostics</code> escribe
+      un fichero JSON con la versión, la plataforma, los códigos de error y los
+      recuentos. Solo lleva códigos, recuentos e indicadores de una lista
+      cerrada: ningún texto libre, ni rutas, ni nombres de fichero, ni datos
+      del caso. Foruster no lo envía a ningún sitio. Revísalo antes de
+      entregarlo.
+    </p>
+    <pre><code><span class="k">foruster-cli</span> diagnostics --container /casos/EXP-1-2026 --output diagnostico.json</code></pre>
+  </main>
+</div>
+
+<div class="wrap pasos">
+    <a class="prev" href="../imagen/"><span>Anterior</span>Imagen de volúmenes y discos</a>
+    <a class="next" href="../acta/"><span>Siguiente</span>El acta de volcado</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.<br>
+      Software propietario ·
+      <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+      <a href="../../">Inicio</a> ·
+      <a href="https://github.com/m4rz3r0/foruster">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

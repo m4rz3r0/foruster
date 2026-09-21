@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>El acta de volcado — Foruster</title>
+<meta name="description" content="El acta se redacta a partir de lo que registra el expediente, sin volver a leer la evidencia original.">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="preload" href="../../assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/doc.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../../">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a href="../../">Inicio</a>
+    <a href="../../#contacto">Contacto</a>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <h1>El acta de volcado</h1>
+    <p>El acta se redacta a partir de lo que registra el expediente, sin volver a leer la evidencia original.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside>
+      <p>Documentación</p>
+      <a href="../">Alcance</a>
+      <a href="../requisitos/">Requisitos</a>
+      <a href="../adquirir/">Adquirir la evidencia</a>
+      <a href="../imagen/">Imagen de discos</a>
+      <a href="../expediente/">El expediente</a>
+      <a href="../acta/" class="aqui">Acta de volcado</a>
+      <a href="../firma/">Firma y custodia</a>
+      <a href="../clasificar/">Clasificar lo adquirido</a>
+      <a href="../analisis/">Analizar la memoria</a>
+      <a href="../limitaciones/">Lo que no hace</a>
+      <a href="../seguridad/">Seguridad</a>
+  </aside>
+
+  <main>
+    <h2 id="acta">El acta</h2>
+    <p>
+      Foruster redacta el acta de adquisición de evidencia digital a partir de
+      lo que registra el expediente. Para redactarla no vuelve a leer la
+      evidencia original, así que el mismo expediente produce siempre la misma
+      acta.
+    </p>
+    <table>
+      <tr><th>Apartado</th><th>Contenido</th></tr>
+      <tr><td>Comparecencia</td><td>Hora de inicio de la sesión, lugar, operador,
+        identificador y organización.</td></tr>
+      <tr><td>Habilitación y alcance</td><td>Tipo, referencia, autoridad y fecha
+        de la habilitación, y las categorías autorizadas. El acta aclara que el
+        alcance se aplica a las fuentes y a las rutas, no al contenido. Con una
+        medida policial urgente, recuerda el plazo de 24 horas para comunicarla
+        al juez, sin valorar si se ha cumplido.</td></tr>
+      <tr><td>Equipo intervenido</td><td>Nombre, sistema, arquitectura y discos,
+        según el registro del entorno que Foruster tomó al abrir la sesión.</td></tr>
+      <tr><td>Diligencias y elementos</td><td>Cada elemento adquirido, con su
+        hash SHA-256 y su estado.</td></tr>
+      <tr><td>Limitaciones</td><td>Las salvedades que afectan a este caso.</td></tr>
+      <tr><td>Integridad, sello y firmas</td><td>El resultado de la
+        comprobación, el sello de tiempo y las firmas que consten.</td></tr>
+      <tr><td>Cadena de custodia</td><td>Cada asiento posterior a la
+        adquisición, en el orden en que consta.</td></tr>
+      <tr><td>Firmas</td><td>Espacio para el operador, el Letrado de la
+        Administración de Justicia, si asiste, y el titular del equipo
+        intervenido o los testigos.</td></tr>
+    </table>
+    <p>
+      Lo que procede del equipo intervenido o del expediente aparece entre
+      comillas angulares. Un nombre de fichero no puede hacerse pasar por una
+      línea del acta.
+    </p>
+
+    <h2 id="exportar">Exportarla</h2>
+    <p>
+      Revísala primero en texto, en pantalla:
+    </p>
+    <pre><code><span class="k">foruster-cli</span> acta /casos/EXP-1-2026 --text</code></pre>
+    <p>
+      Y después genera el PDF que se imprime y se firma:
+    </p>
+    <pre><code><span class="k">foruster-cli</span> acta /casos/EXP-1-2026 --output acta.pdf</code></pre>
+    <p>
+      El PDF necesita <code>--output</code>. El acta no se escribe nunca dentro
+      del expediente y no sustituye un fichero que ya exista, salvo que añadas
+      <code>--force</code>. En la aplicación, el acta se exporta desde el propio
+      expediente.
+    </p>
+    <div class="note">
+      <p>
+        <b>El acta documenta la actuación; no la valida.</b> Recoge lo que
+        consta en el expediente. La validez de la prueba la decide el
+        juzgado.
+      </p>
+    </div>
+  </main>
+</div>
+
+<div class="wrap pasos">
+    <a class="prev" href="../expediente/"><span>Anterior</span>El expediente y el informe</a>
+    <a class="next" href="../firma/"><span>Siguiente</span>Firma, comprobación y custodia</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.<br>
+      Software propietario ·
+      <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+      <a href="../../">Inicio</a> ·
+      <a href="https://github.com/m4rz3r0/foruster">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

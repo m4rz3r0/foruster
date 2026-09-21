@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Adquirir la evidencia — Foruster</title>
+<meta name="description" content="El orden lo impone la volatilidad, no la comodidad: primero lo que desaparece al apagar el equipo, después lo que seguirá ahí mañana.">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="preload" href="../../assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/doc.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../../">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a href="../../">Inicio</a>
+    <a href="../../#contacto">Contacto</a>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <h1>Adquirir la evidencia</h1>
+    <p>El orden lo impone la volatilidad, no la comodidad: primero lo que desaparece al apagar el equipo, después lo que seguirá ahí mañana.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside>
+      <p>Documentación</p>
+      <a href="../">Alcance</a>
+      <a href="../requisitos/">Requisitos</a>
+      <a href="../adquirir/" class="aqui">Adquirir la evidencia</a>
+      <a href="../imagen/">Imagen de discos</a>
+      <a href="../expediente/">El expediente</a>
+      <a href="../acta/">Acta de volcado</a>
+      <a href="../firma/">Firma y custodia</a>
+      <a href="../clasificar/">Clasificar lo adquirido</a>
+      <a href="../analisis/">Analizar la memoria</a>
+      <a href="../limitaciones/">Lo que no hace</a>
+      <a href="../seguridad/">Seguridad</a>
+  </aside>
+
+  <main>
+    <h2 id="procedimiento">Orden de trabajo</h2>
+    <p>
+      La aplicación sigue cuatro fases, y cada una tiene su apartado en esta
+      documentación:
+    </p>
+    <ol>
+      <li><b>Identificación.</b> Los datos del caso, la habilitación y el
+        alcance. Sin ellos, la adquisición no arranca.</li>
+      <li><b>Adquisición.</b> Primero la memoria, si el equipo sigue encendido.
+        Después, los artefactos, los ficheros o la
+        <a href="../imagen/">imagen del volumen o del disco</a>.</li>
+      <li><b>Verificación.</b> <a href="../firma/">Comprobar, firmar y sellar</a>
+        el expediente.</li>
+      <li><b>Informe.</b> <a href="../expediente/#informe">El informe</a> y
+        <a href="../acta/">el acta de volcado</a>.</li>
+    </ol>
+
+    <h2 id="caso">Identificación</h2>
+    <p>
+      Hace falta una <a href="../requisitos/#licencia">licencia</a> para
+      adquirir. Cada orden que adquiere pide los mismos datos: número de caso,
+      organización, operador e identificador del operador; la habilitación que
+      autoriza la actuación; y el alcance autorizado. Esos datos se escriben
+      dentro del expediente y el acta los recoge. Si falta alguno, Foruster no
+      crea nada.
+    </p>
+    <figure>
+      <img src="../../assets/app-habilitacion.png" width="1072" height="378" loading="lazy"
+           alt="Formulario de habilitación en la aplicación: tipo de habilitación, referencia, autoridad y fecha, y el encabezado del alcance">
+      <figcaption>La habilitación y el alcance, en la fase de
+        Identificación.</figcaption>
+    </figure>
+    <p>
+      Los ejemplos de esta documentación están escritos para bash y guardan los
+      datos del caso en la variable <code>CASO</code>:
+    </p>
+    <pre><code>CASO=(--case-number <span class="c">"EXP-1/2026"</span> --organization <span class="c">"Laboratorio"</span> \
+  --operator <span class="c">"Nombre Apellidos"</span> --operator-id <span class="c">"ID-0001"</span> --location <span class="c">"Cáceres"</span> \
+  --legal-kind judicial-warrant --legal-reference <span class="c">"Auto 123/2026"</span> \
+  --legal-authority <span class="c">"Juzgado de Instrucción nº 3"</span> --legal-date 2026-01-15)</code></pre>
+    <p>
+      En PowerShell, la variable se escribe <code>$CASO = @(...)</code> y se pasa
+      como <code>@CASO</code>. Las órdenes y las opciones son las mismas en
+      Linux y en Windows.
+    </p>
+
+    <h3>Habilitación</h3>
+    <table>
+      <tr><th><code>--legal-kind</code></th><th>Habilitación</th></tr>
+      <tr><td><code>judicial-warrant</code></td><td>Autorización judicial.</td></tr>
+      <tr><td><code>urgent-police-measure</code></td><td>Medida policial urgente
+        (LECrim art. 588 sexies c.4), pendiente de confirmación judicial.</td></tr>
+      <tr><td><code>holder-consent</code></td><td>Consentimiento del titular.</td></tr>
+      <tr><td><code>private-expert-assignment</code></td><td>Encargo pericial privado.</td></tr>
+      <tr><td><code>other</code></td><td>Otra, descrita en <code>--legal-reference</code>.</td></tr>
+    </table>
+    <p>
+      Con <code>judicial-warrant</code> y <code>urgent-police-measure</code>,
+      <code>--legal-authority</code> es obligatoria. La fecha de la habilitación
+      no puede ser posterior a hoy. Con una medida policial urgente, el acta
+      recuerda el plazo de comunicación al juez.
+    </p>
+    <div class="note">
+      <p>
+        <b>Foruster registra la habilitación que declaras; no comprueba que
+        exista.</b> Anota el tipo, la referencia, la autoridad y la fecha en el
+        expediente y en la auditoría. Que la autorización exista y cubra la
+        actuación es responsabilidad de quien la declara.
+      </p>
+    </div>
+
+    <h3>Alcance</h3>
+    <p>
+      El alcance es una restricción técnica, no una anotación. Indicas con
+      <code>--scope</code> qué categorías autoriza la habilitación, una por
+      opción. Si la orden pide algo que no está autorizado, Foruster lo rechaza
+      antes de crear el expediente, y fuera del alcance no se copia nada.
+    </p>
+    <p>
+      El alcance actúa sobre las fuentes y las rutas. Foruster no filtra el
+      contenido de un fichero que pertenece a una categoría autorizada, porque
+      no hay forma técnica de saber si guarda relación con los hechos. El acta
+      lo dice.
+    </p>
+    <table>
+      <tr><th><code>--scope</code></th><th>Autoriza</th></tr>
+      <tr><td><code>physical-memory</code></td><td>Memoria física.</td></tr>
+      <tr><td><code>process-memory</code></td><td>Memoria de procesos.</td></tr>
+      <tr><td><code>system-artifacts</code></td><td>Artefactos del sistema.</td></tr>
+      <tr><td><code>volume-image</code></td><td>Imagen de un volumen o de una instantánea.</td></tr>
+      <tr><td><code>disk-image</code></td><td>Imagen de un disco completo.</td></tr>
+      <tr><td><code>selected-files</code></td><td>Ficheros seleccionados.
+        <code>--scope-path</code> los limita a una ruta.</td></tr>
+    </table>
+
+    <h3 id="destino">Destino</h3>
+    <p>
+      <b>El destino va siempre en otro dispositivo, nunca en el disco de
+      origen.</b> Conecta un soporte propio y escribe ahí cada expediente.
+      Foruster lo comprueba antes de crear nada:
+    </p>
+    <ul>
+      <li>Compara discos, no particiones. Otra partición del mismo disco
+        cuenta como origen.</li>
+      <li>Si no puede saber en qué disco está el destino, como en una carpeta de
+        red, lo rechaza.</li>
+      <li>Un directorio de salida que no está vacío se rechaza. Una segunda
+        adquisición nunca sobrescribe la primera.</li>
+    </ul>
+    <p>
+      Solo al adquirir ficheros o artefactos de navegador,
+      <code>--allow-same-device</code> permite escribir en el mismo disco que
+      el origen. Eso escribe en el equipo intervenido, así que queda en la
+      auditoría y el informe lo declara. Para las imágenes y los artefactos de
+      Windows no hay excepción.
+    </p>
+    <figure>
+      <img src="../../assets/app-objetivos.png" width="1215" height="568" loading="lazy"
+           alt="Pantalla «Qué se va a copiar al expediente»: memoria física marcada, memoria de procesos y artefactos de Windows no disponibles en este equipo, imagen de volumen y ficheros">
+      <figcaption>La fase de Adquisición. Lo que no está disponible en el
+        equipo aparece desactivado y con el motivo.</figcaption>
+    </figure>
+
+    <h2 id="memoria">Memoria volátil</h2>
+    <p>
+      En Linux hace falta root. Antes de adquirir nada, comprueba qué se puede
+      hacer en este equipo:
+    </p>
+    <pre><code><span class="k">foruster-cli</span> memory --dry-run --output /casos/EXP-1-2026-ram \
+  <span class="c">"${CASO[@]}"</span> --scope physical-memory</code></pre>
+    <p>
+      Foruster te indica cuánto va a ocupar la imagen y qué ficheros de
+      contexto la acompañarán. Quita <code>--dry-run</code> para ejecutar la
+      adquisición. Si no hay ninguna vía disponible, Foruster no adquiere nada e
+      indica el motivo.
+    </p>
+    <p>
+      Foruster no carga ningún módulo en el equipo intervenido. Cargarlo sería
+      modificarlo.
+    </p>
+    <div class="note">
+      <p>
+        <b>Una imagen de memoria nunca está completa.</b> El equipo sigue
+        trabajando mientras se copia, así que cada tramo se lee en un momento
+        distinto. El hash SHA-256 acredita que la imagen no ha cambiado desde
+        que se adquirió, no que su contenido sea coherente entre sí. Los tramos
+        que no se pueden leer se rellenan a cero y quedan anotados con su
+        dirección. El informe lo dice.
+      </p>
+    </div>
+    <h3>Windows: memoria de procesos</h3>
+    <p>
+      En Windows, Foruster no adquiere memoria física. Adquiere la memoria de
+      los procesos en ejecución, como volcados minidump que leen WinDbg y
+      Volatility. Hace falta una sesión de administrador.
+    </p>
+    <pre><code><span class="k">foruster-cli</span> memory --processes --output <span class="c">'E:\casos\EXP-1-2026-procesos'</span> \
+  <span class="c">"${CASO[@]}"</span> --scope process-memory</code></pre>
+    <p>
+      Esos volcados no son memoria física ni una imagen del equipo, y el
+      informe lo declara. No incluyen la memoria del núcleo ni la de procesos
+      ya terminados. Volcar un proceso suspende sus hilos mientras dura la
+      copia. Un proceso protegido que rechaza el volcado queda anotado con su
+      motivo, y la sesión no figura como completa.
+    </p>
+
+    <h2 id="artefactos">Artefactos y ficheros</h2>
+    <p>
+      Foruster recoge artefactos concretos de las rutas donde suelen estar, sin
+      clonar el disco entero. El catálogo cubre <b>cookies e historial de Chrome
+      y de Firefox</b>, en Linux y en Windows, y en Windows además
+      <b>la memoria que el sistema ha escrito en disco</b>: hibernación y
+      paginación.
+    </p>
+    <pre><code><span class="k">foruster-cli</span> artifacts --existing-only
+
+<span class="k">foruster-cli</span> artifacts --existing-only --locator firefox-cookies-linux \
+  --acquire /casos/EXP-1-2026-artefactos <span class="c">"${CASO[@]}"</span> --scope selected-files</code></pre>
+    <p>
+      Las bases de datos viajan siempre con sus ficheros auxiliares
+      (<code>-wal</code>, <code>-shm</code>, <code>-journal</code>). Sin ellos, una
+      base en modo WAL llega incompleta, y el informe lo declara.
+    </p>
+    <p>Para rutas concretas:</p>
+    <pre><code><span class="k">foruster-cli</span> acquire --path /ruta --output /casos/EXP-1-2026 \
+  <span class="c">"${CASO[@]}"</span> --scope selected-files</code></pre>
+
+    <h2 id="windows">Artefactos de Windows</h2>
+    <p>
+      Foruster recoge las colmenas del registro, los registros de eventos,
+      Amcache, prefetch, SRUM, accesos directos y listas de saltos,
+      <code>$MFT</code>, el diario USN y <code>$LogFile</code>. Los lee del NTFS
+      del volumen en crudo, así que también copia los ficheros que el sistema
+      mantiene bloqueados. Hace falta una sesión de administrador.
+    </p>
+    <pre><code><span class="k">foruster-cli</span> windows-artifacts --list
+
+<span class="k">foruster-cli</span> windows-artifacts --volume C: --output <span class="c">'E:\casos\EXP-1-2026-win'</span> \
+  <span class="c">"${CASO[@]}"</span> --scope system-artifacts</code></pre>
+    <p>
+      <code>--target</code> limita la recogida a los objetivos que indiques. Sin
+      ella, se recogen todos.
+    </p>
+    <div class="note">
+      <p>
+        <b>Foruster recoge estos artefactos, no los interpreta.</b> Los copia
+        con su hash SHA-256 y su procedencia para que los analices con la
+        herramienta de tu laboratorio. Un volumen en uso no se lee de forma
+        atómica, así que la sesión nunca figura como completa. Un fichero que
+        solo es un marcador de la nube, como los de OneDrive, se declara como
+        tal y no se presenta como su contenido.
+      </p>
+    </div>
+  </main>
+</div>
+
+<div class="wrap pasos">
+    <a class="prev" href="../requisitos/"><span>Anterior</span>Requisitos y primer vistazo</a>
+    <a class="next" href="../imagen/"><span>Siguiente</span>Imagen de volúmenes y discos</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.<br>
+      Software propietario ·
+      <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+      <a href="../../">Inicio</a> ·
+      <a href="https://github.com/m4rz3r0/foruster">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

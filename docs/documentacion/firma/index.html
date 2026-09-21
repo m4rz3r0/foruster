@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Firma, comprobación y custodia — Foruster</title>
+<meta name="description" content="Cómo se acredita que el expediente no ha sido alterado, cuándo existía, quién lo levantó y qué consta en cada traspaso.">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="preload" href="../../assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/doc.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../../">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a href="../../">Inicio</a>
+    <a href="../../#contacto">Contacto</a>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <h1>Firma, comprobación y custodia</h1>
+    <p>Cómo se acredita que el expediente no ha sido alterado, cuándo existía, quién lo levantó y qué consta en cada traspaso.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside>
+      <p>Documentación</p>
+      <a href="../">Alcance</a>
+      <a href="../requisitos/">Requisitos</a>
+      <a href="../adquirir/">Adquirir la evidencia</a>
+      <a href="../imagen/">Imagen de discos</a>
+      <a href="../expediente/">El expediente</a>
+      <a href="../acta/">Acta de volcado</a>
+      <a href="../firma/" class="aqui">Firma y custodia</a>
+      <a href="../clasificar/">Clasificar lo adquirido</a>
+      <a href="../analisis/">Analizar la memoria</a>
+      <a href="../limitaciones/">Lo que no hace</a>
+      <a href="../seguridad/">Seguridad</a>
+  </aside>
+
+  <main>
+    <h2 id="clave">Clave de firma</h2>
+    <p>
+      Foruster no genera ni guarda claves: la clave es del laboratorio y se crea
+      una sola vez.
+    </p>
+    <pre><code><span class="c"># Privada. Custódiala: quien la tenga puede firmar.</span>
+openssl genpkey -algorithm ed25519 -out laboratorio.key
+chmod 600 laboratorio.key
+
+<span class="c"># Pública, para quien deba verificar.</span>
+openssl pkey -in laboratorio.key -pubout -out laboratorio.pub</code></pre>
+    <p>Firmar un expediente ya cerrado:</p>
+    <pre><code><span class="k">foruster-cli</span> sign /casos/EXP-1-2026 --key laboratorio.key \
+  --signer <span class="c">"Nombre Apellidos"</span> --signer-id <span class="c">"ID-0001"</span></code></pre>
+    <p>
+      Un expediente ya firmado no se vuelve a firmar salvo que añadas
+      <code>--force</code>. La sustitución queda como asiento de custodia, con
+      los hashes de lo que se sustituyó.
+    </p>
+    <p>
+      La clave pública se reparte <b>por fuera del expediente</b>: por
+      diligencia, en el pie del informe o desde el registro del laboratorio.
+    </p>
+    <div class="note">
+      <p>
+        <b>Una clave pública que venga dentro del expediente no sirve de
+        raíz de confianza.</b> Quien pueda alterar el expediente puede
+        cambiarla y volver a firmar. Tienes que aportar por tu cuenta la clave en la que
+        confías; sin ella, Foruster declara que la firma
+        está presente pero <i>sin comprobar</i>, nunca que sea válida.
+      </p>
+    </div>
+    <p>
+      La firma Ed25519 es una firma avanzada, no cualificada en el sentido de
+      eIDAS.
+    </p>
+
+    <h2 id="sello">Sello de tiempo</h2>
+    <p>
+      Un sello de tiempo RFC 3161 acredita que el manifiesto existía en el
+      momento que indica la autoridad de sellado. Foruster solo le envía el hash
+      del manifiesto, nunca su contenido. Un sello no se sustituye nunca.
+    </p>
+    <p>
+      Hace falta una autoridad de sellado con dirección <code>http://</code>
+      para pedir el sello directamente:
+    </p>
+    <pre><code><span class="k">foruster-cli</span> timestamp /casos/EXP-1-2026 --tsa http://tsa.ejemplo.es</code></pre>
+    <p>
+      Con una autoridad <code>https://</code>, obtén la respuesta aparte, con
+      <code>openssl ts</code> y <code>curl</code>, y cárgala en el expediente:
+    </p>
+    <pre><code>openssl ts -query -data /casos/EXP-1-2026/manifest.json -sha256 -cert -out manifest.tsq
+curl -H <span class="c">"Content-Type: application/timestamp-query"</span> \
+  --data-binary @manifest.tsq https://tsa.ejemplo.es -o manifest.tsr
+
+<span class="k">foruster-cli</span> timestamp /casos/EXP-1-2026 --import manifest.tsr</code></pre>
+    <div class="note">
+      <p>
+        <b>Foruster no comprueba la firma de la autoridad de sellado.</b>
+        Comprueba que el sello corresponde a este manifiesto. La firma de la
+        autoridad y su cadena de certificados se comprueban con
+        <code>openssl ts -verify</code>. Hasta entonces, ni la fecha ni el
+        emisor quedan acreditados.
+      </p>
+    </div>
+    <pre><code>openssl ts -verify -data manifest.json -in manifest.tsr \
+  -CAfile certificado-ac-tsa.pem</code></pre>
+    <p>
+      El sello solo es cualificado si la autoridad de sellado es un prestador
+      cualificado. Acredita que el manifiesto existía en esa fecha, no el
+      momento en que se hizo la adquisición. Sin sello, las fechas del
+      expediente proceden del reloj del equipo, y el informe lo dice.
+    </p>
+
+    <h2 id="externa">Firma externa</h2>
+    <p>
+      Si tu organización firma con otra herramienta, como la firma CAdES de
+      AutoFirma sobre <code>manifest.json</code>, puedes adjuntar esa firma al
+      expediente:
+    </p>
+    <pre><code><span class="k">foruster-cli</span> attach-signature /casos/EXP-1-2026 --file firma.csig \
+  --signer <span class="c">"Nombre Apellidos"</span> --signer-id <span class="c">"ID-0001"</span></code></pre>
+    <p>
+      Foruster copia el fichero, anota su hash SHA-256 y un asiento de custodia,
+      y lo cita en el informe. <b>Foruster guarda esa firma, pero no la
+      comprueba.</b> Se comprueba con la herramienta que la creó, o con
+      <code>openssl cms -verify</code>.
+    </p>
+    <figure>
+      <img src="../../assets/app-sello.png" width="1215" height="476" loading="lazy"
+           alt="Pestaña «Sello y firmas» de un expediente: sello de tiempo presente con la huella coincidente, y una firma externa .csig adjunta, marcada como sin comprobar por Foruster">
+      <figcaption>El sello de tiempo y una firma externa adjunta. La firma
+        externa figura como «Sin comprobar por Foruster».</figcaption>
+    </figure>
+
+    <h2 id="verificacion">Verificación</h2>
+    <p>
+      Foruster revisa el manifiesto, la cadena de auditoría y el hash de
+      cada elemento; con <code>--public-key</code>, también la firma. Sale
+      con código distinto de cero si algo no concuerda. Añade
+      <code>--json</code> y obtendrás un campo <code>pass</code>, para no
+      tener que leer la prosa desde un script.
+    </p>
+    <pre><code><span class="k">foruster-cli</span> verify /casos/EXP-1-2026 --public-key laboratorio.pub
+<span class="k">foruster-cli</span> verify /casos/EXP-1-2026 --public-key laboratorio.pub --json</code></pre>
+    <p>
+      Con <code>--json</code>, el campo <code>pass</code> vale
+      <code>true</code> o <code>false</code> y resume el resultado. El código de
+      salida sigue siendo distinto de cero si falla.
+    </p>
+    <p>
+      Borrar la firma no sirve para pasar la comprobación: con
+      <code>--public-key</code>, un expediente sin firma falla, y también falla
+      uno cuya auditoría anota una firma que ya no está.
+    </p>
+    <h3>Por un tercero</h3>
+    <p>
+      La firma se calcula sobre los bytes del manifiesto tal y como están
+      guardados. Por eso se comprueba sin ejecutar Foruster:
+    </p>
+    <pre><code>openssl pkeyutl -verify -pubin -inkey laboratorio.pub \
+  -rawin -in manifest.json -sigfile manifest.sig</code></pre>
+    <p>
+      Una imagen E01 se comprueba con <code>ewfverify</code>; lo explica
+      <a href="../imagen/#tercero">Imagen de volúmenes y discos</a>.
+    </p>
+
+    <h2 id="custodia">Custodia</h2>
+    <p>
+      Cada traspaso se añade al final de la misma cadena. Si vuelves a
+      comprobar el expediente, verás que ese añadido no la rompió.
+    </p>
+    <pre><code><span class="k">foruster-cli</span> custody /casos/EXP-1-2026 --to <span class="c">"Secretaría"</span> \
+  --operator <span class="c">"Nombre Apellidos"</span> --operator-id <span class="c">"ID-0001"</span></code></pre>
+    <figure>
+      <img src="../../assets/app-custodia.png" width="1215" height="558" loading="lazy"
+           alt="Pestaña «Custodia» de un expediente: la cadena de custodia válida con el último traspaso, y el formulario para registrar uno nuevo">
+      <figcaption>Cada traspaso se registra con la identidad de quien
+        entrega.</figcaption>
+    </figure>
+    <p>
+      La firma y el sello cubren la auditoría hasta el cierre del manifiesto.
+      Los asientos posteriores, como los traspasos, las firmas y los sellos,
+      quedan encadenados: si se altera uno anterior, la comprobación lo
+      detecta. Si se añaden o se quitan asientos al final, no lo detecta.
+      El informe lo declara.
+    </p>
+    <div class="note">
+      <p>
+        <b>Foruster respalda la cadena de custodia; no la sustituye.</b> El
+        hash y el registro de auditoría muestran si el expediente cambió. La
+        custodia física del soporte y su documentación siguen siendo del
+        procedimiento de tu organización.
+      </p>
+    </div>
+  </main>
+</div>
+
+<div class="wrap pasos">
+    <a class="prev" href="../acta/"><span>Anterior</span>El acta de volcado</a>
+    <a class="next" href="../clasificar/"><span>Siguiente</span>Clasificar lo adquirido</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.<br>
+      Software propietario ·
+      <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+      <a href="../../">Inicio</a> ·
+      <a href="https://github.com/m4rz3r0/foruster">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

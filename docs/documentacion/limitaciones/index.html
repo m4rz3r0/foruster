@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lo que Foruster no hace — Foruster</title>
+<meta name="description" content="Declarado aquí, y no escondido. Si alguna de estas limitaciones es determinante para tu caso, conviene saberlo antes de la actuación.">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="preload" href="../../assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/doc.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../../">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a href="../../">Inicio</a>
+    <a href="../../#contacto">Contacto</a>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <h1>Lo que Foruster no hace</h1>
+    <p>Declarado aquí, y no escondido. Si alguna de estas limitaciones es determinante para tu caso, conviene saberlo antes de la actuación.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside>
+      <p>Documentación</p>
+      <a href="../">Alcance</a>
+      <a href="../requisitos/">Requisitos</a>
+      <a href="../adquirir/">Adquirir la evidencia</a>
+      <a href="../imagen/">Imagen de discos</a>
+      <a href="../expediente/">El expediente</a>
+      <a href="../acta/">Acta de volcado</a>
+      <a href="../firma/">Firma y custodia</a>
+      <a href="../clasificar/">Clasificar lo adquirido</a>
+      <a href="../analisis/">Analizar la memoria</a>
+      <a href="../limitaciones/" class="aqui">Lo que no hace</a>
+      <a href="../seguridad/">Seguridad</a>
+  </aside>
+
+  <main>
+    <h2 id="limitaciones">Limitaciones</h2>
+    <p>
+      Esto es lo que Foruster no hace, o no hace del todo. Lo que afecta a un
+      expediente concreto lo repite el informe, en su apartado de limitaciones
+      conocidas, y el acta.
+    </p>
+
+    <h3 id="validez">Validez y habilitación</h3>
+    <ul>
+      <li><b>Foruster no está homologado, certificado ni validado</b> por
+        ningún organismo, y no garantiza la validez de la prueba. Esa
+        decisión corresponde al juzgado.</li>
+      <li><b>Foruster registra la habilitación que declaras; no comprueba que
+        exista</b> ni que cubra la actuación.</li>
+      <li><b>El alcance actúa sobre las fuentes y las rutas, no sobre el
+        contenido.</b> Un fichero de una categoría autorizada se copia entero,
+        guarde o no relación con los hechos.</li>
+    </ul>
+
+    <h3 id="firma">Firma, sello y custodia</h3>
+    <ul>
+      <li><b>Sin firma, la cadena de auditoría no acredita quién generó el
+        expediente.</b> Detecta que se altere una parte, pero no lleva ningún
+        secreto: quien pueda modificar el expediente puede rehacerla entera.
+        Solo una firma comprobada con una clave de confianza lo impide.</li>
+      <li><b>La firma no es cualificada</b> en el sentido de eIDAS: la firma
+        Ed25519 del manifiesto es una firma avanzada. El sello de tiempo solo es
+        cualificado si la autoridad de sellado es un prestador cualificado.</li>
+      <li><b>Lo que se anota después del cierre no lo cubren ni la firma ni el
+        sello.</b> Los traspasos, las firmas y los sellos posteriores quedan
+        encadenados, pero añadir o quitar asientos al final no se detecta.</li>
+      <li><b>Sin sello de tiempo, las fechas proceden del reloj del equipo</b>
+        y no dan fecha cierta frente a un tercero. Con sello, la fecha acredita
+        que el manifiesto existía, no el momento de la adquisición.</li>
+      <li><b>Foruster no comprueba la firma de la autoridad de sellado.</b>
+        Comprueba que el sello corresponde al manifiesto; la firma y la cadena de
+        certificados de la autoridad se comprueban con
+        <code>openssl ts -verify</code>. Solo pide el sello directamente a una
+        autoridad <code>http://</code>; con una <code>https://</code>, la
+        respuesta se obtiene aparte y se carga.</li>
+      <li><b>Foruster no comprueba las firmas externas</b> que se adjuntan al
+        expediente. Las guarda, anota su hash y las cita en el informe.</li>
+    </ul>
+
+    <h3 id="adquisicion">Adquisición</h3>
+    <ul>
+      <li><b>Una imagen de memoria nunca está completa.</b> El equipo sigue en
+        marcha mientras se copia, así que no es una instantánea. Los tramos
+        que no se pudieron leer se rellenan a cero y sus direcciones quedan
+        escritas en el manifiesto. Si el kernel oculta las direcciones de sus
+        símbolos, el análisis dependerá de una tabla externa.</li>
+      <li><b>En Windows no se adquiere memoria física.</b> Se adquiere la memoria
+        de los procesos, que no es una imagen del equipo y se declara como tal.
+        No incluye la memoria del núcleo, y los procesos protegidos se niegan.
+        También se recogen los ficheros de hibernación y paginación, que son
+        memoria escrita en disco.</li>
+      <li><b>La imagen de un soporte en uso no es atómica.</b> El equipo sigue
+        escribiendo mientras se copia, y la sesión nunca figura como completa.
+        Foruster no crea instantáneas.</li>
+      <li><b>En Linux, Foruster no impide que el equipo se suspenda</b> durante
+        una copia. Si se suspende, la imagen puede quedar cortada y la
+        auditoría lo registra. En Windows sí lo impide.</li>
+      <li><b>No extrae material de clave</b> de BitLocker ni de LUKS y no
+        desbloquea nada. Puede copiar un volumen que el sistema ya expone
+        descifrado, y lo declara como tal.</li>
+      <li><b>Foruster no cifra el expediente.</b> Una imagen de un volumen
+        descifrado contiene sus datos en claro.</li>
+      <li><b>Con <code>--allow-same-device</code>, la adquisición escribe en el
+        equipo intervenido.</b> Sin esa opción, Foruster no lo permite; con
+        ella, el informe lo declara.</li>
+      <li><b>La compresión E01 es limitada.</b> Reduce las zonas vacías o
+        repetidas, pero un E01 de un volumen lleno ocupa casi lo mismo que la
+        imagen raw.</li>
+      <li><b>La interfaz de terminal solo explora.</b> Para adquirir desde una
+        terminal, usa la línea de comandos.</li>
+    </ul>
+
+    <h3 id="analisis">Análisis</h3>
+    <ul>
+      <li><b>Los artefactos de Windows se recogen, no se interpretan.</b>
+        Foruster no analiza colmenas, registros de eventos, prefetch,
+        <code>$MFT</code> ni el diario USN. Un fichero que es solo un marcador
+        de la nube se declara como tal.</li>
+      <li><b>De los artefactos, Foruster solo interpreta las cookies y el historial
+        de navegador.</b> Su
+        lector de SQLite no reproduce el WAL, no sigue cadenas de
+        <i>overflow</i> y no recupera registros borrados. El informe declara el
+        WAL sin reproducir; una fila omitida por <i>overflow</i>, no. El lector
+        es de solo lectura precisamente para no escribir sobre la evidencia,
+        que es lo que haría una biblioteca de SQLite completa.</li>
+      <li><b>No rompe el cifrado del sistema operativo y no detecta CSAM.</b></li>
+    </ul>
+
+    <h3 id="datos">Datos personales</h3>
+    <ul>
+      <li><b>Foruster no expurga ni purga datos personales de un
+        expediente.</b> La conservación y la destrucción siguen el
+        procedimiento de tu organización.</li>
+    </ul>
+  </main>
+</div>
+
+<div class="wrap pasos">
+    <a class="prev" href="../analisis/"><span>Anterior</span>Analizar la memoria</a>
+    <a class="next" href="../seguridad/"><span>Siguiente</span>Avisar de una vulnerabilidad</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.<br>
+      Software propietario ·
+      <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+      <a href="../../">Inicio</a> ·
+      <a href="https://github.com/m4rz3r0/foruster">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
