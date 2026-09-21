@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Imagen de volúmenes y discos — Foruster</title>
+<meta name="description" content="Copia completa de un volumen, un disco o una instantánea, en raw o en E01, y cómo la comprueba un tercero.">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="preload" href="../../assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/doc.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../../">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a href="../../">Inicio</a>
+    <a href="../../#contacto">Contacto</a>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <h1>Imagen de volúmenes y discos</h1>
+    <p>Copia completa de un volumen, un disco o una instantánea, en raw o en E01, y cómo la comprueba un tercero.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside>
+      <p>Documentación</p>
+      <a href="../">Alcance</a>
+      <a href="../requisitos/">Requisitos</a>
+      <a href="../adquirir/">Adquirir la evidencia</a>
+      <a href="../imagen/" class="aqui">Imagen de discos</a>
+      <a href="../expediente/">El expediente</a>
+      <a href="../acta/">Acta de volcado</a>
+      <a href="../firma/">Firma y custodia</a>
+      <a href="../clasificar/">Clasificar lo adquirido</a>
+      <a href="../analisis/">Analizar la memoria</a>
+      <a href="../limitaciones/">Lo que no hace</a>
+      <a href="../seguridad/">Seguridad</a>
+  </aside>
+
+  <main>
+    <h2 id="fuentes">Qué se puede copiar</h2>
+    <p>
+      Foruster copia byte a byte, en solo lectura, un volumen, un disco
+      completo o una instantánea de Windows que ya exista. Necesita root en
+      Linux o una sesión de administrador en Windows, y una
+      <a href="../requisitos/#licencia">licencia</a>.
+    </p>
+    <pre><code><span class="k">foruster-cli</span> volumes</code></pre>
+    <p>
+      <code>volumes</code> indica el tipo, el tamaño y si la fuente está en uso
+      o cifrada. El tipo lo determina Foruster, y el alcance lo autoriza por
+      tipo: <code>volume-image</code> no deja pasar un disco completo.
+    </p>
+
+    <h2 id="formato">Raw o E01</h2>
+    <table>
+      <tr><th>Formato</th><th>Qué es</th></tr>
+      <tr><td><code>raw</code></td><td>Imagen en bruto. Formato por defecto en
+        la línea de comandos.</td></tr>
+      <tr><td><code>e01</code></td><td>Expert Witness, variante EnCase&nbsp;6,
+        segmentado y con los hashes del soporte dentro. Formato por defecto en
+        la aplicación.</td></tr>
+    </table>
+    <p>
+      En los dos, Foruster calcula MD5, SHA-1 y SHA-256 del soporte durante la
+      copia. Los segmentos E01 miden 2&nbsp;GiB salvo que indiques otro tamaño
+      con <code>--segment-size</code>. La variable <code>CASO</code> se explica
+      en <a href="../adquirir/#caso">Identificación</a>.
+    </p>
+    <pre><code><span class="k">foruster-cli</span> image --device /dev/sdb1 --format e01 \
+  --output /casos/EXP-1-2026-img <span class="c">"${CASO[@]}"</span> --scope volume-image
+
+<span class="k">foruster-cli</span> image --device /dev/sdb --format e01 \
+  --output /casos/EXP-1-2026-disco <span class="c">"${CASO[@]}"</span> --scope disk-image</code></pre>
+    <p>
+      El destino necesita el tamaño del soporte más un 1&nbsp;% y 16&nbsp;MiB.
+      Para las imágenes no hay excepción a la regla del
+      <a href="../adquirir/#destino">destino</a>.
+    </p>
+    <p>
+      Si un bloque falla, Foruster lo reintenta sector a sector. Lo que sigue
+      ilegible se rellena a cero y queda anotado con su posición. Si el
+      dispositivo desaparece, la imagen se corta ahí y el informe lo dice.
+    </p>
+
+    <h2 id="en-uso">Un soporte en uso</h2>
+    <div class="note">
+      <p>
+        <b>La imagen de un soporte en uso no es atómica.</b> El sistema sigue
+        escribiendo mientras se copia, así que la sesión nunca figura como
+        completa.
+      </p>
+    </div>
+    <p>
+      Foruster no crea instantáneas. En Linux tampoco impide que el equipo se
+      suspenda; si ocurre, la auditoría lo registra.
+    </p>
+
+    <h2 id="cifrado">Volúmenes cifrados</h2>
+    <p>
+      De un volumen BitLocker o LUKS abierto puedes copiar la partición, que se
+      lee cifrada, o el volumen que el sistema expone descifrado. Foruster no
+      desbloquea nada ni extrae claves. Una imagen descifrada se declara como
+      tal y contiene los datos en claro, y Foruster no cifra el expediente.
+    </p>
+
+    <h2 id="tercero">Comprobación por un tercero</h2>
+    <p>
+      Un tercero no necesita Foruster. Un E01 se comprueba con
+      <code>ewfverify</code>, de libewf, contra los hashes que lleva dentro:
+    </p>
+    <pre><code>ewfverify /casos/EXP-1-2026-img/raw/EV-…-image.E01</code></pre>
+    <p>
+      Una imagen raw se comprueba comparando su SHA-256 con el de
+      <code>manifest.json</code>. <code>EV-…</code> es el identificador del
+      elemento en el manifiesto.
+    </p>
+    <pre><code>sha256sum /casos/EXP-1-2026-disco/raw/EV-…-image.raw</code></pre>
+  </main>
+</div>
+
+<div class="wrap pasos">
+    <a class="prev" href="../adquirir/"><span>Anterior</span>Adquirir la evidencia</a>
+    <a class="next" href="../expediente/"><span>Siguiente</span>El expediente y el informe</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.<br>
+      Software propietario ·
+      <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+      <a href="../../">Inicio</a> ·
+      <a href="https://github.com/m4rz3r0/foruster">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,71 @@
+FORUSTER — SOFTWARE PROPIETARIO / PROPRIETARY SOFTWARE
+
+Copyright (c) 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.
+All rights reserved.
+
+English summary: this is proprietary software. No permission is granted to use,
+copy, modify, distribute or access the source code. The authoritative text is
+the Spanish one below; Spanish law governs.
+
+─────────────────────────────────────────────────────────────────────────────
+
+1. TITULARIDAD
+
+El código fuente, la documentación, los recursos gráficos y cualquier material
+asociado de Foruster (en adelante, el "Software") son propiedad exclusiva del
+titular indicado arriba y están protegidos por el Real Decreto Legislativo
+1/1996, de 12 de abril, por el que se aprueba el texto refundido de la Ley de
+Propiedad Intelectual, y por los tratados internacionales aplicables.
+
+2. AUSENCIA DE CESIÓN DE DERECHOS
+
+No se concede ninguna licencia, expresa ni implícita, sobre el Software. En
+particular, y sin que la enumeración sea exhaustiva, queda prohibido sin
+autorización previa y por escrito del titular:
+
+  a) acceder, copiar, reproducir o almacenar el código fuente;
+  b) modificar, adaptar, traducir o crear obras derivadas;
+  c) distribuir, sublicenciar, vender, alquilar, ceder o poner el Software a
+     disposición de terceros, en todo o en parte;
+  d) realizar ingeniería inversa, descompilar o desensamblar los binarios, más
+     allá de lo que permita imperativamente el artículo 100 del texto refundido
+     de la Ley de Propiedad Intelectual;
+  e) suprimir o alterar los avisos de titularidad o las atribuciones de
+     terceros incluidas en el Software.
+
+3. DISTRIBUCIÓN DE BINARIOS
+
+Cualquier entrega de binarios irá acompañada de sus propias condiciones de uso,
+que prevalecerán para esa entrega concreta. No debe inferirse de este fichero
+cómo queda licenciado un binario determinado: consúltese el aviso que acompañe
+a esa compilación.
+
+4. COMPONENTES DE TERCEROS
+
+El Software incorpora componentes de terceros bajo sus propias licencias, que
+permanecen vigentes y no se ven alteradas por este fichero:
+
+  - Slint (interfaz gráfica), conforme a los términos de su licencia.
+  - DejaVu Sans (tipografía embebida en los informes PDF), bajo licencia
+    Bitstream Vera / DejaVu.
+  - Bibliotecas del ecosistema Rust, mayoritariamente bajo licencias MIT y
+    Apache-2.0.
+
+5. AUSENCIA DE GARANTÍA
+
+El Software se proporciona "TAL CUAL", sin garantía de ningún tipo. En
+particular, y con independencia de cualquier otra consideración: Foruster no
+está homologado, certificado ni validado oficialmente por ningún organismo, y
+nada en este fichero ni en su documentación debe interpretarse como tal. La
+idoneidad de la herramienta para un procedimiento concreto es responsabilidad
+del laboratorio o del perito que la emplee.
+
+6. LEGISLACIÓN APLICABLE
+
+Este aviso se rige por la legislación española. Para cualquier controversia, las
+partes se someten a los juzgados y tribunales que correspondan conforme a
+derecho.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Contacto sobre licencias: 30533649+m4rz3r0@users.noreply.github.com

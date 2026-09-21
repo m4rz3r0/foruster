@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lo que Foruster no hace — Foruster</title>
+<meta name="description" content="Si alguna es determinante para tu caso, conviene conocerla antes de la actuación.">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="preload" href="../../assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/doc.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../../">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a href="../../">Inicio</a>
+    <a href="../../#contacto">Contacto</a>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <h1>Lo que Foruster no hace</h1>
+    <p>Si alguna es determinante para tu caso, conviene conocerla antes de la actuación.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside>
+      <p>Documentación</p>
+      <a href="../">Alcance</a>
+      <a href="../requisitos/">Requisitos</a>
+      <a href="../adquirir/">Adquirir la evidencia</a>
+      <a href="../imagen/">Imagen de discos</a>
+      <a href="../expediente/">El expediente</a>
+      <a href="../acta/">Acta de volcado</a>
+      <a href="../firma/">Firma y custodia</a>
+      <a href="../clasificar/">Clasificar lo adquirido</a>
+      <a href="../analisis/">Analizar la memoria</a>
+      <a href="../limitaciones/" class="aqui">Lo que no hace</a>
+      <a href="../seguridad/">Seguridad</a>
+  </aside>
+
+  <main>
+    <h2 id="limitaciones">Limitaciones</h2>
+    <p>
+      Las que afectan a un expediente concreto aparecen también en su informe y
+      en su acta.
+    </p>
+
+    <h3 id="validez">Validez y habilitación</h3>
+    <ul>
+      <li><b>Foruster no está homologado, certificado ni validado</b> por
+        ningún organismo, y no garantiza la validez de la prueba. Eso lo decide
+        el juzgado.</li>
+      <li><b>Registra la habilitación que declaras; no comprueba que
+        exista.</b></li>
+      <li><b>El alcance se aplica a fuentes y rutas, no al contenido.</b></li>
+    </ul>
+
+    <h3 id="firma">Firma, sello y custodia</h3>
+    <ul>
+      <li><b>Sin firma, la cadena de auditoría no acredita quién generó el
+        expediente.</b> Detecta que se altere una parte, pero quien pueda
+        modificar el expediente puede rehacerla entera.</li>
+      <li><b>La firma Ed25519 no es cualificada</b> en el sentido de eIDAS. El
+        sello solo lo es si la autoridad de sellado es un prestador
+        cualificado.</li>
+      <li><b>Sin sello, las fechas proceden del reloj del equipo.</b></li>
+      <li><b>Lo anotado después del cierre no lo cubren la firma ni el
+        sello</b>, y añadir o quitar asientos al final no se detecta.</li>
+      <li><b>Foruster no comprueba la firma de la autoridad de sellado</b> ni
+        las firmas externas. Solo pide el sello a una autoridad
+        <code>http://</code>.</li>
+    </ul>
+
+    <h3 id="adquisicion">Adquisición</h3>
+    <ul>
+      <li><b>Una imagen de memoria nunca está completa</b>, y si el kernel oculta
+        sus símbolos, el análisis dependerá de una tabla externa.</li>
+      <li><b>En Windows no se adquiere memoria física</b>, solo la de los
+        procesos, y los procesos protegidos se niegan.</li>
+      <li><b>La imagen de un soporte en uso no es atómica</b>, y Foruster no crea
+        instantáneas.</li>
+      <li><b>En Linux no impide que el equipo se suspenda</b> durante una
+        copia.</li>
+      <li><b>No extrae claves de BitLocker ni de LUKS</b> ni desbloquea nada.</li>
+      <li><b>No cifra el expediente.</b> Una imagen de un volumen descifrado
+        contiene los datos en claro.</li>
+      <li><b>La compresión E01 es limitada</b>: un E01 de un volumen lleno ocupa
+        casi lo mismo que la imagen raw.</li>
+      <li><b>La interfaz de terminal solo explora.</b> Para adquirir desde una
+        terminal se usa la línea de comandos.</li>
+    </ul>
+
+    <h3 id="analisis">Análisis</h3>
+    <ul>
+      <li><b>Los artefactos de Windows se copian, no se interpretan.</b></li>
+      <li><b>De los artefactos, solo interpreta las cookies y el historial de
+        navegador.</b> Su lector de SQLite no reproduce el WAL, no sigue cadenas
+        de <i>overflow</i> y no recupera registros borrados. Una fila omitida
+        por <i>overflow</i> no se declara en el informe.</li>
+      <li><b>No rompe el cifrado del sistema operativo y no detecta CSAM.</b></li>
+      <li><b>No expurga datos personales de un expediente.</b> La conservación y
+        la destrucción siguen el procedimiento de tu organización.</li>
+    </ul>
+  </main>
+</div>
+
+<div class="wrap pasos">
+    <a class="prev" href="../analisis/"><span>Anterior</span>Analizar la memoria</a>
+    <a class="next" href="../seguridad/"><span>Siguiente</span>Avisar de una vulnerabilidad</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.<br>
+      Software propietario ·
+      <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+      <a href="../../">Inicio</a> ·
+      <a href="https://github.com/m4rz3r0/foruster">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Requisitos y primer vistazo — Foruster</title>
+<meta name="description" content="Qué debe cumplir el equipo, qué privilegios pide cada función y cómo se organiza la aplicación.">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="preload" href="../../assets/plex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/doc.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../../">
+      <b>Foruster</b>
+    </a>
+    <span class="sp"></span>
+    <a href="../../">Inicio</a>
+    <a href="../../#contacto">Contacto</a>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <h1>Requisitos y primer vistazo</h1>
+    <p>Qué debe cumplir el equipo, qué privilegios pide cada función y cómo se organiza la aplicación.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <aside>
+      <p>Documentación</p>
+      <a href="../">Alcance</a>
+      <a href="../requisitos/" class="aqui">Requisitos</a>
+      <a href="../adquirir/">Adquirir la evidencia</a>
+      <a href="../imagen/">Imagen de discos</a>
+      <a href="../expediente/">El expediente</a>
+      <a href="../acta/">Acta de volcado</a>
+      <a href="../firma/">Firma y custodia</a>
+      <a href="../clasificar/">Clasificar lo adquirido</a>
+      <a href="../analisis/">Analizar la memoria</a>
+      <a href="../limitaciones/">Lo que no hace</a>
+      <a href="../seguridad/">Seguridad</a>
+  </aside>
+
+  <main>
+    <h2 id="requisitos">Requisitos</h2>
+    <table>
+      <tr><th>Concepto</th><th>Requisito</th></tr>
+      <tr><td>Sistemas</td><td>Linux y Windows de 64 bits.</td></tr>
+      <tr><td>Despliegue</td><td>Desde un USB, sin instalar nada en el equipo
+        intervenido.</td></tr>
+      <tr><td>Interfaces</td><td>Aplicación gráfica y línea de comandos. La
+        interfaz de terminal solo explora.</td></tr>
+      <tr><td>Destino</td><td>Un soporte propio, nunca el disco de origen. Ver
+        <a href="../adquirir/#destino">Destino</a>.</td></tr>
+      <tr><td>Licencia</td><td>Solo para adquirir. Ver
+        <a href="#licencia">Licencia</a>.</td></tr>
+    </table>
+
+    <h2 id="privilegios">Privilegios</h2>
+    <p>
+      Si faltan privilegios, Foruster lo dice y no presenta la adquisición como
+      completa.
+    </p>
+    <table>
+      <tr><th>Función</th><th>Hace falta</th></tr>
+      <tr><td>Memoria física (Linux)</td><td>Root.</td></tr>
+      <tr><td>Memoria de procesos (Windows)</td><td>Sesión de administrador.</td></tr>
+      <tr><td>Imagen de volumen, disco o instantánea</td><td>Root en Linux;
+        sesión de administrador en Windows.</td></tr>
+      <tr><td>Artefactos de Windows</td><td>Sesión de administrador.</td></tr>
+      <tr><td>Artefactos de navegador y ficheros</td><td>Permiso de lectura sobre
+        lo que se recoge.</td></tr>
+      <tr><td>Comprobar, firmar, sellar, custodia, informe, acta y
+        diagnóstico</td><td>Ninguno especial, ni licencia.</td></tr>
+    </table>
+    <p>
+      <code>foruster-cli preflight</code> informa del estado del equipo y de la
+      memoria que puede adquirirse en él.
+    </p>
+
+    <h2 id="licencia">Licencia</h2>
+    <p>
+      La licencia es un fichero firmado, <code>licencia.json</code>, que Foruster
+      comprueba sin conexión. Solo la exige la adquisición: con la licencia
+      caducada, un expediente se sigue pudiendo comprobar, firmar, sellar,
+      custodiar e informar.
+    </p>
+    <p>
+      Foruster la busca en este orden: la ruta de <code>--license</code>; la
+      variable <code>FORUSTER_LICENSE</code>; <code>foruster-data/licencia.json</code>
+      y <code>licencia.json</code>, junto al ejecutable.
+    </p>
+    <pre><code><span class="k">foruster-cli</span> license</code></pre>
+
+    <h2 id="aplicacion">La aplicación</h2>
+    <p>La pantalla de inicio ofrece dos maneras de empezar:</p>
+    <table>
+      <tr><th>Explorar un equipo</th><td>Recorre los discos montados y clasifica
+        lo que encuentra. No copia nada.</td></tr>
+      <tr><th>Adquirir evidencia</th><td>Copia memoria, ficheros o un soporte
+        entero a un expediente, con el hash calculado durante la copia.</td></tr>
+    </table>
+    <p>
+      Lo habitual es explorar, marcar lo que interese y adquirir solo eso.
+      Durante la adquisición, la aplicación muestra en qué fase está:
+      <b>Identificación</b>, <b>Adquisición</b>, <b>Verificación</b> o
+      <b>Informe</b>.
+    </p>
+    <p>
+      Los expedientes guardados están en <b>Anteriores</b>. Desde cada uno se
+      comprueba, se firma, se anota un traspaso y se generan el informe y el
+      acta.
+    </p>
+    <figure>
+      <img src="../../assets/app-inicio.png" width="1112" height="422" loading="lazy"
+           alt="Pantalla de inicio de la aplicación: las tarjetas «Explorar el equipo» y «Adquirir evidencia», y debajo los expedientes y análisis recientes">
+      <figcaption>La pantalla de inicio.</figcaption>
+    </figure>
+  </main>
+</div>
+
+<div class="wrap pasos">
+    <a class="prev" href="../"><span>Anterior</span>Documentación</a>
+    <a class="next" href="../adquirir/"><span>Siguiente</span>Adquirir la evidencia</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Marcos Jesús Sequera Fernández. Todos los derechos reservados.<br>
+      Software propietario ·
+      <a href="mailto:contacto@mjsequera.com">contacto@mjsequera.com</a> ·
+      <a href="../../">Inicio</a> ·
+      <a href="https://github.com/m4rz3r0/foruster">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
